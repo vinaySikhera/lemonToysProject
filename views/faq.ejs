@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ Page</title>
+    <link rel="stylesheet" href="/css/navbar.css">
+
+    <style>
+        body {
+            font-family: cursive;
+        }
+
+        .Faq {
+            margin-left: 70px;
+        }
+
+        .Questions {
+            box-sizing: border-box;
+            padding: 20px;
+            margin: 20px 50px;
+            border: 3px solid black;
+            border-radius: 20px;
+            font-size: 15px;
+        }
+
+        .Questions h2 {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .Questions h2 i {
+            margin-right: 10px;
+        }
+
+        .answer {
+            display: none;
+            padding: 10px;
+            margin-left: 20px;
+            font-size: 15px;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <%- include('common/navbar.ejs') %>
+
+        <div class="Faq">
+            <h1>FAQ'S</h1>
+        </div>
+
+        <div class="Questions">
+            <h2><i class="fa fa-plus"></i> How will my order be delivered to me?</h2>
+            <p class="answer">Your order will be delivered via our partnered courier services.</p>
+
+            <h2><i class="fa fa-plus"></i> How do I need to know?</h2>
+            <p class="answer">You need to provide accurate address details for smooth delivery.</p>
+
+            <h2><i class="fa fa-plus"></i> How will I know if my order is placed successfully?</h2>
+            <p class="answer">You will receive a confirmation email and SMS with order details.</p>
+
+            <h2><i class="fa fa-plus"></i> How do I check the status of my order?</h2>
+            <p class="answer">Track your order in the 'My Orders' section after logging in.</p>
+
+            <h2><i class="fa fa-plus"></i> Can I cancel my order?</h2>
+            <p class="answer">Yes, you can cancel your order within 24 hours of placing it.</p>
+        </div>
+
+        <%- include('common/footer.ejs') %>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    document.querySelectorAll(".Questions h2").forEach(question => {
+                        question.addEventListener("click", function () {
+                            let answer = this.nextElementSibling;
+                            let icon = this.querySelector("i");
+
+                            if (answer.style.display === "block") {
+                                answer.style.display = "none";
+                                icon.classList.remove("fa-minus");
+                                icon.classList.add("fa-plus");
+                            } else {
+                                document.querySelectorAll(".answer").forEach(ans => ans.style.display = "none");
+                                document.querySelectorAll(".Questions h2 i").forEach(ic => {
+                                    ic.classList.remove("fa-minus");
+                                    ic.classList.add("fa-plus");
+                                });
+
+                                answer.style.display = "block";
+                                icon.classList.remove("fa-plus");
+                                icon.classList.add("fa-minus");
+                            }
+                        });
+                    });
+                });
+            </script>
+
+</body>
+
+</html>

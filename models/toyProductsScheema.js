@@ -30,9 +30,14 @@ const toyProductsScheema = mongoose.Schema({
         type: String,
         require: false,
         trim: true
+    },
+    qrCodeUrl: {
+        type: String
     }
-})
+},
+    { timestamps: true }
+)
 
 const ToyScheema = mongoose.model("toys", toyProductsScheema);
 
-module.exports = {ToyScheema}
+module.exports = { ToyScheema }

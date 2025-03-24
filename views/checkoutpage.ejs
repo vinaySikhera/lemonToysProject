@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <link rel="stylesheet" href="Delivery.css"> -->
+     <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .main {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            display: flex;
+            margin: auto;
+        }
+
+        .delivery {
+            padding: 20px;
+            margin: 20px;
+            box-shadow: rgba(212, 59, 59, 0.2) 0px 2px 8px 0px;
+            border-radius: 15px;
+
+        }
+
+        .upper {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            width: 1150px;
+            margin: auto;
+            gap: 2px;
+        }
+
+        .submain {
+            width: 330px;
+            margin: auto;
+            padding: 30px;
+            margin-top: 25px;
+        }
+
+        .name {
+            width: 432px;
+            display: flex;
+            margin: auto;
+            border-radius: 3px;
+            gap: 8px;
+
+        }
+
+        .contacts {
+            border-radius: 5px;
+        }
+
+        .checkout {
+            width: 350px;
+            padding: 35px;
+            margin: 12px;
+
+            margin: auto;
+            box-shadow: rgba(212, 59, 59, 0.2) 0px 2px 8px 0px;
+            border-radius: 15px;
+        }
+
+        .order {
+            display: flex;
+
+            margin: auto;
+            justify-content: space-between;
+            border-bottom: 1px solid black;
+            padding: 12px;
+        }
+
+        .img {
+            width: 70px;
+            padding: 10px;
+            margin: 10
+        }
+
+        .account {
+            display: flex;
+            justify-content: space-between;
+
+        }
+
+        .total {
+            width: 341px;
+            padding: 30px;
+            margin: auto;
+
+            gap: 20px;
+            line-height: 25px;
+            margin-top: 25px;
+        }
+
+        .pay {
+            width: 335px;
+            padding: 40px;
+            margin: 12px;
+            justify-content: left;
+            margin: auto;
+            box-shadow: rgba(212, 59, 59, 0.2) 0px 2px 8px 0px;
+            border-radius: 15px;
+        }
+
+        .btn {
+            width: 300px;
+            border-radius: 2px;
+            padding: 15px;
+            background-color: #0F83B2;
+            color: aliceblue;
+            border-radius: 4px;
+        }
+
+        .card {
+            display: flex;
+        }
+
+        .contact {
+            width: 300px;
+            padding: 15px;
+            border-radius: 2px solid;
+            justify-content: space-between;
+            margin-top: 10px;
+
+        }
+
+        .check-int {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('common/navbar.ejs') %>
+        <div class="main">
+            <div class="upper">
+                <div class="delivery">
+                    <h1>
+                        Delivery Info
+                    </h1>
+                    <div class="submain">
+                        <div class="name">
+                            <div>
+                                <p> First Name*</p>
+                                <input type="text" id="fname" name="fname" placeholder="First  Name"
+                                    class="contacts"><br>
+                            </div>
+
+                            <div>
+                                <p> Last Name*</p>
+                                <input type="text" id="fname" name="fname" placeholder="Last Name" class="contacts"><br>
+                            </div>
+                        </div>
+                        <div>
+                            <p>Street Address</p>
+                            <input type="text" id="fname" name="fname" placeholder="Address" class="contacts"><br>
+                        </div>
+
+                        <div class="name">
+                            <div>
+                                <p> Town/City*</p>
+                                <input type="text" id="fname" name="fname" placeholder="City" class="contacts"><br>
+                            </div>
+                            <div>
+                                <p>
+                                    State*
+                                </p> <input type="text" id="fname" name="fname" placeholder="State"
+                                    class="contacts"><br>
+                            </div>
+                        </div>
+
+                        <div class="name">
+                            <div>
+                                <p> Zip Code*</p>
+                                <input type="text" id="fname" name="fname" placeholder="Zip Code" class="contacts"><br>
+                            </div>
+                            <div>
+                                <p>
+                                    Phone*</p>
+                                <input type="tel" id="phone" name="phone" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
+                                    class="contacts"><br>
+
+                            </div>
+                        </div>
+
+                        <div>
+                            <p> Email Address* </p>
+                            <input type="email" id="email" name="email" placeholder="Email@gmail.com"
+                                class="contact"><br>
+                        </div>
+
+                        <div>
+                            <p> Order notes(optional*)</p>
+                            <input type="text" id="fname" name="fname"
+                                placeholder="Notes about your order, e.g special notes fo" class="contact"><br>
+                        </div>
+                    </div>
+                </div>
+                <div class="checkout">
+                    <div>
+                        <p>
+                        <h1> Check Out</h1>
+                        </p>
+                        <div>
+                            <p>
+                            <h2>Your Order</h2>
+                            </p>
+                            <div>
+                                <div class="order">
+                                    <div><img src="/images/toycheckout.png" class="img">
+                                    </div>
+                                    <div>
+                                        <p>Blocks shape-sorting Toy</p>
+                                        <p>Amount:2</p>
+                                    </div>
+                                    <div>
+                                        <p>$78.00</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="order">
+                                        <div><img src="./images/toycheckout.png" class="img"></div>
+                                        <div>
+                                            <p>Blocks shape-sorting Toy</p>
+                                            <p>Amount:2</p>
+                                        </div>
+                                        <div>
+                                            <p>$78.00</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="order">
+                                            <div><img src="images/toycheckout.png" class="img"></div>
+                                            <div>
+                                                <p>Blocks shape-sorting Toy</p>
+                                                <p>Amount:2</p>
+                                            </div>
+                                            <div>
+                                                <p>$78.00</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="total">
+                        <div class="account">
+                            <div>
+                                Subtotal
+                            </div>
+                            <div>
+                                $185.00
+                            </div>
+                        </div>
+
+                        <div class="account">
+                            <div>
+                                Shipping
+                            </div>
+                            <div>
+                                $185.00
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="account">
+                            <div>
+                                Total
+                            </div>
+                            <div>
+                                $185.00
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- this is a pay div start here -->
+        <div class="pay">
+            <div>
+                <p>
+                <h1>Payment</h1>
+                </p>
+                <p>All transaction are secured and encrypted</p>
+            </div>
+            <div>
+                <div style="display: flex; justify-content: space-between;">
+                    <div style="display: flex;"> <input type="radio" id="radio" name="brand" value="Credit Card">
+                        Credit Card</div>
+
+                    <!-- <label for="radio">Credit Card  </label> -->
+                    <div>
+                        <div class="star">
+                            <i class="fa fa-star-o"></i>
+                            <i class="fa fa-star-o"></i>
+                            <i class="fa fa-star-o"></i>
+                            <i class="fa fa-star-o"></i>
+                            <i class="fa fa-star-o"></i>
+                        </div>
+                    </div>
+                </div>
+                <div>
+
+                    <div><input type="text" id="fname" name="fname" placeholder="Card Number" class="contact"><br>
+                        <div> <input type="text" id="fname" name="fname" placeholder="Name of card" class="contact"><br>
+                        </div>
+                        <div>
+                            <div> <input type="text" id="fname" name="fname" placeholder="Expiration Date"
+                                    class="contact"><br></div>
+                            <div> <input type="text" id="fname" name="fname" placeholder="Security Code"
+                                    class="contact"><br></div>
+                        </div>
+
+                    </div>
+                    <div class="check-int"> <input type="checkbox" id="payment" name="payment" value="234">
+                        <label for="payment"> Use shipping address as billing address</label><br>
+                    </div>
+                    <div class="check-int"> <input type="checkbox" id="payment" name="payment" value="234">
+                        <label for="payment"> Pay PaL</label><br>
+                    </div>
+                    <div class="check-int">
+                        <button class="btn" class="btn" "button">Place Order</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <%- include('common/footer.ejs') %>
+</body>
+
+</html>

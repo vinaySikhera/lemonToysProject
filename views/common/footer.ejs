@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footer Design</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            /* background: #f5f5f5; */
+        }
+        .footer {
+            background-image: url(https://s3-alpha-sig.figma.com/img/54e9/985f/8bde43e7711690d8f6c15d14a44e6d4e?Expires=1742774400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=ncO~sWc1habqcSjiAVSkP2UiDmMdGjHx7GDJyVKs3JZHOQjlqcGwmFZMDaNx5gcr2Gps0LjURQnorzquNS5oeJ8zA3iIxEND4lJAVYsbGKZBD8D5hl~1gBtqUZbly-2z1mNgenmPIXLTzlWuPMs~hRHS8rXdC2Nk8ArOp-RamwIhk~DDm0tIko1lOv1o56RA~XJNJy8TcIPw4JBKySCTdMOfsbJ~hgmlaSALfoyyJBi0T47-NQdWdexhWqVeNOWagGREiSVeYUxsKQVBM86Axna6dwI7sUfD8qInDAIxz3sJFttMUbyiFbIwWxQjwMjYMHBldIooALePrseUH3Q6nw__);
+            background-repeat: no-repeat;
+            background-size: cover;
+            /* background: #e3f2f1; */
+            padding: 40px 10%;
+            padding-bottom: 150px;
+            display: flex;
+         
+           
+        }
+         .foot{
+            /* border: 1px solid black; */
+            width: 75%;
+            display: flex ;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 50px;
+            flex-wrap: wrap;
+            position: relative;
+         }
+        .footer div {
+            margin-bottom: 20px;
+        }
+        .footer h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #333;
+        }
+        .footer p, .footer a {
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .social-icons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .social-icons>a>i{
+            color: red;
+        }
+        .social-icons a {
+            font-size: 20px;
+            color: #333;
+        }
+        .customer-service a {
+            color: #007bff;
+        }
+        .customer-service a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .footer {
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+            }
+        }
+    </style>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <footer class="footer">
+        <div class="foot">
+        <div>
+            <p>Nunc consequat interdum varius sit amet mattis.</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-pinterest"></i></a>
+            </div>
+        </div>
+        <div>
+            <h3>My account</h3>
+            <div>
+                <p> <a href="#">Track my order</a></p>
+                <p>  <a href="#">Terms of use</a></p>
+                <p><a href="#">Wishlist</a></p>
+                <p> <a href="#">Submit Your feedback</a></p>
+        </div>
+        </div>
+        <div class="customer-service">
+            <h3>Customer service</h3>
+            <p>Monday to Friday<br>10am - 6pm (New York time)</p>
+            <p>Call us: <a href="tel:123-456-7868">123-456-7868</a></p>
+            <p>Email us: <a href="mailto:info@example.com">info@example.com</a></p>
+        </div>
+    </div>
+    </footer>
+</body>
+</html>
+ 

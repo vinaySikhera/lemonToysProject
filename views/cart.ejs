@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cart</title>
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <style>
+        .cart-container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            font-family: cursive;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        td {
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            padding: 25px;
+            background: #eee;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        img {
+            padding: 10px;
+            height: 80px;
+            width: 90px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            margin-right: 20px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+        }
+
+        .quantity {
+            display: flex;
+        }
+
+        .quantity button {
+            font-size: 20px;
+            width: 27px;
+            height: auto;
+            text-align: center;
+            background-color: white;
+        }
+
+        .input-box {
+            width: 50px;
+            text-align: center;
+            border: 3px solid #3498db;
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        .plus {
+            border: 3px solid #3498db;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            border-left: none;
+        }
+
+        .minus {
+            border: 3px solid #3498db;
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+            border-right: none;
+        }
+
+        .btn input {
+            font-family: cursive;
+            border: 2px solid #eee;
+            margin-top: 30px;
+            margin-right: 10px;
+            padding: 5px;
+            border-radius: 7px;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .Apply,
+        .UC {
+            justify-content: space-between;
+            font-family: cursive;
+            background-color: #3498db;
+            border-radius: 7px;
+            border: none;
+            color: #eee;
+            height: 30px;
+            width: fit-content;
+        }
+
+        .CS {
+            justify-content: space-between;
+            font-family: cursive;
+            border-radius: 7px;
+            border: none;
+            height: 30px;
+            width: fit-content;
+        }
+
+        .btn {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn button {
+            margin-top: 30px;
+            margin-right: 10px;
+            padding: 5px;
+        }
+
+        .Cart-info {
+            width: fit-content;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 2px solid #eee;
+            float: right;
+        }
+
+        .Cart-info button {
+            font-family: cursive;
+            background-color: rgb(255, 225, 0);
+            border: none;
+            border-radius: 8px;
+            width: 300px;
+            height: 40px;
+            margin-right: 10px;
+            margin-left: 10px;
+        }
+
+        .details {
+            margin-right: 10px;
+            margin-left: 10px;
+            margin-top: 5px;
+
+        }
+
+        .amount {
+            margin-right: 10px;
+            margin-left: 10px;
+        }
+
+        .align {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('common/navbar.ejs') %>
+        <div class="cart-container">
+            <h2>Your Cart</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th></th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><img src="images/alphabets.jpg" alt="Blocks Toy"></td>
+                        <td>Blocks shape-sorting Toy</td>
+                        <td>$39.00</td>
+                        <td>
+                            <div class="quantity">
+                                <button class="minus">&minus;</button>
+                                <input type="number" class="input-box" value="1" min="1" max="10">
+                                <button class="plus">&plus;</button>
+                            </div>
+                        </td>
+                        <td>$78.00</td>
+                        <td><button class="remove-btn">&times;</button></td>
+                    </tr>
+                    <tr>
+                        <td><img src="images/fruit cart.jpg" alt="Carrot Toy"></td>
+                        <td>Carrot harvest wooden Toy</td>
+                        <td>$29.00</td>
+                        <td>
+                            <div class="quantity">
+                                <button class="minus">&minus;</button>
+                                <input type="number" class="input-box" value="1" min="1" max="10">
+                                <button class="plus">&plus;</button>
+                            </div>
+                        </td>
+                        <td>$29.00</td>
+                        <td><button class="remove-btn">&times;</button></td>
+                    </tr>
+                    <tr>
+                        <td><img src="/images/cards.jpg" alt="Flashcards"></td>
+                        <td>Talking flash cards learning Toys</td>
+                        <td>$39.00</td>
+                        <td>
+                            <div class="quantity">
+                                <button class="minus">&minus;</button>
+                                <input type="number" class="input-box" value="1" min="1" max="10">
+                                <button class="plus">&plus;</button>
+                            </div>
+
+                        </td>
+                        <td>$78.00</td>
+                        <td><button class="remove-btn">&times;</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="btn">
+                <div>
+                    <input type="text" placeholder="Coupon Code">
+                    <button class="Apply">Apply</button>
+                </div>
+
+                <div><button class="CS">Continue Shopping</button>
+                    <button class="UC">Update Cart</button>
+                </div>
+            </div>
+            <div class="Cart-info">
+                <div class="align">
+                    <div class="details"><strong>Cart total</strong>
+                        <p>Subtotal</p>
+                        <p>Total</p>
+                    </div>
+                    <div class="amount">
+                        <p><br>$185.00</p>
+                        <p>$205.00</p>
+                    </div>
+                </div>
+                <button><a href="/checkout">Proceed to checkout</a></button>
+            </div>
+        </div>
+        <%- include('common/footer.ejs') %>
+</body>
+
+</html>

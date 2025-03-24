@@ -1,5 +1,7 @@
 const express = require("express");
-const { ToyScheema } = require('../modles/toyProductsScheema')
+const { ToyScheema } = require('../models/toyProductsScheema')
+const upload = require("../middleware/fileUpload")
+const QRCode = require('qrcode');
 
 const toyControlerRoute = express.Router();
 
@@ -7,12 +9,72 @@ toyControlerRoute.get('/', (req, res) => {
     res.render('index');
 });
 
-toyControlerRoute.post('/addtoys', async (req, res) => {
-    console.log(req.body);
+// get all toys 
+toyControlerRoute.get('/alltoys', async (req, res) => {
     try {
-        const addToy = new ToyScheema(req.body);
+        const { price, category, page = 1, limit = 6 } = req.query;
+        const filter = {};
+
+        if (price) {
+            filter.price = { $lte: Number(price) };
+        }
+        if (category) {
+            filter.category = category;
+        }
+
+        const allCategories = await ToyScheema.distinct("category");
+        const totalToys = await ToyScheema.countDocuments(filter);
+        const totalPages = Math.ceil(totalToys / limit);
+
+        const getAllToys = await ToyScheema.find(filter)
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .sort({ price: 1 });
+
+        res.render('toylists', {
+            allCategories,
+            getAllToys,
+            currentPage: Number(page),  // Convert page to number
+            totalPages,
+            totalToys,
+            price: price || '',  // ✅ Ensure price is always defined
+            category: category || '' // ✅ Ensure category is always defined
+        });
+    } catch (error) {
+        console.error("Error fetching toys:", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+
+// add toys 
+toyControlerRoute.get('/addtoys', (req, res) => {
+    res.render('addToys')
+})
+
+toyControlerRoute.post('/addtoys', upload.single('imageUrl'), async (req, res) => {
+    try {
+        console.log(req.body);
+        const { name, title, price, description, category, imageUrl } = req.body;
+
+        // console.log(req.file.path)
+        const getImage = req.file.path
+        const toyUrl = `http://localhost:3003/toydetails/${name.replace(/\s/g, "-")}`;
+
+        const qrCode = await QRCode.toDataURL(toyUrl);
+        const addToyNewDetails = {
+            name,
+            title,
+            price,
+            description,
+            category,
+            imageUrl: getImage,
+            qrCodeUrl: qrCode
+        }
+        const addToy = new ToyScheema(addToyNewDetails);
         await addToy.save();
-        res.status(201).json({ message: "new data added" });
+        res.redirect('/toys/alltoys');
+        // res.status(201).json({ message: "new data added" });
 
     } catch (error) {
         console.log("new data are not added", error)
@@ -20,6 +82,7 @@ toyControlerRoute.post('/addtoys', async (req, res) => {
     }
 });
 
+// updata toys 
 toyControlerRoute.patch('/update/:id', async (req, res) => {
     const { id } = req.params;
     console.log(req.body);
@@ -33,6 +96,7 @@ toyControlerRoute.patch('/update/:id', async (req, res) => {
     }
 });
 
+// delete toys
 toyControlerRoute.delete('/delete/:id', async (req, res) => {
     const { id } = req.params;
     console.log(id);

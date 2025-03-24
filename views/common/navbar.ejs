@@ -1,0 +1,54 @@
+<link rel="stylesheet" href="/css/navbar.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+
+<div class="up-header">
+    <div class="ltext">
+        <p><i class="fas fa-truck"></i> Free free shipping with over $150 </p>
+    </div>
+    <div class="losi">
+        <a href="/login">Login</a>
+        <a href="/register">Sign-up</a>
+    </div>
+</div>
+<div class="header">
+    <a href="/toys">
+        <div class="logo">
+            <img  src="/images/abcDice.jpg" alt="Logo" />
+        </div>
+    </a>
+
+    <nav>
+        <div class="hamburger" id="hamburger">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+        <ul class="navbar" id="navbar">
+            <li><a href="/toys">Home</a></li>
+            <li><a href="/toys/alltoys/">Shop</a></li>
+            <!-- <li><a href="/blog">Pages</a></li> -->
+            <li><a href="/faq">Faq</a></li>
+            <li><a href="/contact">Contact</a></li>
+
+            <div class="bticons">
+                <div class="addtokt">
+                    <a href="/cart"> <i class="fa fa-shopping-cart"></i></a>
+                </div>
+                <div class="whatsapp">
+                    <input type="search" placeholder="Search">
+                    <div class="search-icon"> <i class='fab fa-sistrix'></i> </div>
+                </div>
+            </div>
+        </ul>
+    </nav>
+</div>
+
+<script>
+    const hamburger = document.getElementById("hamburger");
+    const navbar = document.getElementById("navbar");
+
+    hamburger.addEventListener("click", () => {
+        navbar.classList.toggle("active");
+    });
+</script>

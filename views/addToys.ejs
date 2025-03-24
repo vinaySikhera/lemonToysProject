@@ -5,17 +5,114 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ADD TOYS</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        #header-title {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 32px;
+            color: #333;
+        }
+
+        /* Form styles */
+        #add-toy-form {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
+            border-color: #0056b3;
+            outline: none;
+        }
+
+        /* Submit Button Styles */
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            color: #fff;
+            background-color: #28a745;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        .submit-btn:focus {
+            outline: none;
+        }
+
+        /* File input styling */
+        #imageUrl {
+            padding: 10px;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>add Toys</h1>
-    <form action="/addtoys" method="post" enctype="multipart/form-data">
-        <input type="text" name="toyName" placeholder="Enter Toy Name" required>
-        <input type="text" name="title" placeholder="title">
-        <input type="number" name="price" placeholder="price">
-        <input type="text" name="description" placeholder="description">
-        <input type="text" name="category" placeholder="category">
-        <button type="submit">Add Data</button>
+    <h1 id="header-title">Add Toys</h1>
+    <form id="add-toy-form" action="/toys/addtoys" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="imageUrl" class="form-label">Toy Image:</label>
+            <input type="file" name="imageUrl" id="imageUrl" class="form-input" required>
+        </div>
+        <div class="form-group">
+            <label for="name" class="form-label">Toy Name:</label>
+            <input type="text" name="name" id="name" class="form-input" placeholder="Enter Toy Name" required>
+        </div>
+        <div class="form-group">
+            <label for="title" class="form-label">Title:</label>
+            <input type="text" name="title" id="title" class="form-input" placeholder="Title">
+        </div>
+        <div class="form-group">
+            <label for="price" class="form-label">Price:</label>
+            <input type="number" name="price" id="price" class="form-input" placeholder="Price">
+        </div>
+        <div class="form-group">
+            <label for="category" class="form-label">Category:</label>
+            <input type="text" name="category" id="category" class="form-input" placeholder="Category">
+        </div>
+        <div class="form-group">
+            <label for="description" class="form-label">Description:</label>
+            <textarea type="text" name="description" id="description" class="form-input" placeholder="Description"></textarea>
+        </div>
+        <button type="submit" id="submit-button" class="submit-btn">Add Data</button>
     </form>
 </body>
 

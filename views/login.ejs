@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa&family=Consolas&display=swap" rel="stylesheet">
+    <style>
+
+        .login {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 400px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin: auto;
+        }
+
+        .head p {
+            margin: 5px 0;
+        }
+
+        .role-head {
+            text-align: left;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .role-selection {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+
+        .role {
+            flex: 1;
+            margin: 5px;
+            padding: 15px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            user-select: none;
+        }
+
+        .role:hover {
+            border-color: #007bff;
+        }
+
+        .role img {
+            width: 40px;
+        }
+
+        .role span {
+            display: block;
+            font-size: 12px;
+            color: #007bff;
+        }
+
+        .selected {
+            border-color: #007bff;
+            background: rgba(0, 123, 255, 0.1);
+        }
+
+        .input-details {
+            text-align: left;
+            margin: 10px 0 5px;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .account {
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .account a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .account a:hover {
+            text-decoration: underline;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            background: darkred;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('common/navbar.ejs') %>
+    <div class="login">
+        <div class="head">
+            <p style="font-size: 25px;">Welcome Back!</p>
+            <p>Please login to continue</p>
+        </div>
+
+        <form action="/login" method="POST">
+            <div class="role-head">
+                <p>Select Your Role</p>
+            </div>
+
+            <div class="role-selection">
+                <div class="role" data-role="Admin">
+                    <img src="/images/Vector.png" alt="Admin">
+                    <strong>Admin</strong>
+                    <span>Wholeseller</span>
+                </div>
+                <div class="role" data-role="Retailer">
+                    <img src="/images/Group.png" alt="Retailer">
+                    <strong>Retailer</strong>
+                    <span>Store Owner</span>
+                </div>
+                <div class="role" data-role="Customer">
+                    <img src="/images/Vector (1).png" alt="Customer">
+                    <strong>Customer</strong>
+                    <span>Buyer</span>
+                </div>
+            </div>
+
+            <input type="hidden" id="selectedRole" name="role" value="">
+
+            <div class="input-details">
+                <label for="email">Email Address</label>
+            </div>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+            <div class="input-details">
+                <label for="password">Password</label>
+            </div>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+            <div class="account" style="text-align: right;">
+                <a href="#">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+
+        <div class="account">
+            <p>Don't have an account? <a href="/register">Create Account</a></p>
+        </div>
+    </div>
+
+    <%- include('common/footer.ejs') %>
+</body>
+<script>
+    // Role Selection Functionality
+    const roles = document.querySelectorAll(".role");
+    const selectedRoleInput = document.getElementById("selectedRole");
+
+    roles.forEach(role => {
+        role.addEventListener("click", function () {
+            roles.forEach(r => r.classList.remove("selected"));
+            this.classList.add("selected");
+            selectedRoleInput.value = this.getAttribute("data-role");
+        });
+    });
+</script>
+
+</html>
