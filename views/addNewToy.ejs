@@ -46,14 +46,12 @@
 
     <h2>Add New Toy Product</h2>
 
-    <form id="add-toy-form" action="/toys/addtoys" method="post" enctype="multipart/form-data">
+    <form id="add-toy-form" action="/addnewtoys" method="post" enctype="multipart/form-data">
 
         <!-- Toy Image Upload -->
         <div class="form-group">
             <label for="single_image" class="form-label">Toy Image:</label>
             <input type="file" name="single_image" id="single_image" class="form-input" required>
-            <img id="image-preview" src="#" alt="Image Preview"
-                style="display:none; max-width: 200px; margin-top: 10px;">
         </div>
 
         <!-- Toy Name -->
@@ -62,37 +60,31 @@
             <input type="text" name="name" id="name" class="form-input" placeholder="Enter Toy Name" required>
         </div>
 
-        <!-- Category (Dropdown for predefined categories) -->
+        <!-- Category -->
         <div class="form-group">
             <label for="category" class="form-label">Category:</label>
-            <select name="category" id="category" class="form-input" required>
-                <option value="" selected disabled>Select Category</option>
-                <option value="Educational">Educational</option>
-                <option value="Action Figures">Action Figures</option>
-                <option value="Dolls">Dolls</option>
-                <option value="Puzzles">Puzzles</option>
-            </select>
+            <input type="text" name="category" id="category" class="form-input" placeholder="Category">
         </div>
 
         <!-- Minimum Order Quantity -->
         <div class="form-group">
             <label for="minimum_order_quantity" class="form-label">Minimum Order Quantity:</label>
             <input type="number" name="minimum_order_quantity" id="minimum_order_quantity" class="form-input"
-                placeholder="Enter Minimum Order Quantity" min="1">
+                placeholder="Enter Minimum Order Quantity">
         </div>
 
         <!-- Price -->
         <div class="form-group">
             <label for="price" class="form-label">Price:</label>
-            <input type="number" name="price" id="price" class="form-input" placeholder="Enter Price" min="1" required>
+            <input type="number" name="price" id="price" class="form-input" placeholder="Enter Price" required>
         </div>
 
         <!-- Price Type -->
         <div class="form-group">
             <label for="price_type" class="form-label">Price Type:</label>
             <select name="price_type" id="price_type" class="form-input">
-                <option value="pcs">Per Piece</option>
-                <option value="Dozen">Per Dozen</option>
+                <option value="pcs">pcs</option>
+                <option value="Dozen">Dozen</option>
             </select>
         </div>
 
@@ -110,25 +102,35 @@
         <div class="form-group">
             <label for="product_owner" class="form-label">Product Owner:</label>
             <input type="text" name="product_owner" id="product_owner" class="form-input"
-                placeholder="Enter Product Owner Name" required>
+                placeholder="Enter Product Owner Name">
         </div>
 
-        <!-- User Amount Fields -->
+        <!-- A User Amount -->
         <div class="form-group">
             <label for="a_user_amount" class="form-label">A User Amount:</label>
-            <input type="number" name="a_user_amount" id="a_user_amount" class="form-input" min="0">
+            <input type="number" name="a_user_amount" id="a_user_amount" class="form-input"
+                placeholder="Enter A User Amount">
         </div>
+
+        <!-- B User Amount -->
         <div class="form-group">
             <label for="b_user_amount" class="form-label">B User Amount:</label>
-            <input type="number" name="b_user_amount" id="b_user_amount" class="form-input" min="0">
+            <input type="number" name="b_user_amount" id="b_user_amount" class="form-input"
+                placeholder="Enter B User Amount">
         </div>
+
+        <!-- C User Amount -->
         <div class="form-group">
             <label for="c_user_amount" class="form-label">C User Amount:</label>
-            <input type="number" name="c_user_amount" id="c_user_amount" class="form-input" min="0">
+            <input type="number" name="c_user_amount" id="c_user_amount" class="form-input"
+                placeholder="Enter C User Amount">
         </div>
+
+        <!-- D User Amount -->
         <div class="form-group">
             <label for="d_user_amount" class="form-label">D User Amount:</label>
-            <input type="number" name="d_user_amount" id="d_user_amount" class="form-input" min="0">
+            <input type="number" name="d_user_amount" id="d_user_amount" class="form-input"
+                placeholder="Enter D User Amount">
         </div>
 
         <!-- Product Description -->
@@ -146,19 +148,3 @@
 </body>
 
 </html>
-<script>
-    document.getElementById("single_image").addEventListener("change", function (event) {
-        const preview = document.getElementById("image-preview");
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function () {
-                preview.src = reader.result;
-                preview.style.display = "block";
-            };
-            reader.readAsDataURL(file);
-        } else {
-            preview.style.display = "none";
-        }
-    });
-</script>

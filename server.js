@@ -4,8 +4,11 @@ const toyControlerRoute = require('./controller/toycontroler');
 const { ToyScheema } = require('./models/toyProductsScheema')
 const path = require("path");
 const userModel = require('./models/userDetails'); // Fixed spelling issue from "modles" to "models"
+const { AddUsersScheema } = require('./models/addUser')
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
+const upload = require('./middleware/fileUpload');
+const { findByIdAndUpdate } = require("./models/toyAddProductScheema");
 
 const app = express();
 app.use(express.json());
@@ -35,7 +38,7 @@ app.get('/cart', async (req, res) => {
     try {
         // Extract only email and role from cookies (Remove password check)
         const { email, role } = req.cookies;
-        
+
         // If email or role is missing, redirect to login
         if (!email || !role) {
             console.log("Missing email or role in cookies. Redirecting to login...");
@@ -101,6 +104,161 @@ app.post('/register', async (req, res) => {
     }
 });
 
+// add user start here----------------------------------------------------------------------------
+
+app.get('/adduser', (req, res) => {
+    res.render('addUser');
+});
+
+app.post('/adduser', upload.single('profilePic'), async (req, res) => {
+    try {
+        const { userCategory, name, phone, email, password, profilePic, address, about, status, role } = req.body;
+        console.log(req.body)
+        // Check if the user already exists
+        const isUserAlready = await AddUsersScheema.findOne({ email });
+        if (isUserAlready) {
+            return res.status(400).json({ message: "User already exists" });
+        }
+
+        // Use bcrypt for secure password hashing instead of Cryptr
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        const getImage = req.file.path;
+        // const getImage = req.file ? `/uploads/${req.file.filename}` : null;
+
+        const userDetails = {
+            userCategory,
+            phone,
+            profilePic: getImage,
+            address,
+            status,
+            about,
+            role,
+            name,
+            email,
+            password: hashedPassword
+        };
+
+        const addNewUser = new AddUsersScheema(userDetails);
+        await addNewUser.save(); // Ensuring user is saved before redirecting
+        res.json({ message: "new user added successfully" })
+        // res.redirect('/login'); // Removed extra res.json() to avoid multiple responses
+    } catch (error) {
+        console.error('Error registering new user:', error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+app.patch('/updateuser/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log(id)
+        const { userCategory, name, phone, email, password, profilePic, address, about, status } = req.body;
+        await AddUsersScheema.findByIdAndUpdate(id, { userCategory, name, phone, email, password, profilePic, address, about, status })
+        res.status(201).json({ message: "user update successfully" })
+    } catch (error) {
+        res.status(404).json({ message: "new user not update successfully" });
+    }
+})
+
+app.delete('/deleteuser/:id', async (req, res) => {
+    try {
+        const { id } = req.params
+        await AddUsersScheema.findByIdAndDelete(id);
+        res.status(201).json({ message: "user delete successfully" });
+    } catch (error) {
+        res.status(404).json({ message: "user delete successfully" })
+    }
+})
+
+
+app.get('/allusers', async (req, res) => {
+    try {
+        const { role } = req.query; // Get role from query parameters
+        let query = {};
+
+        if (role) {
+            query.role = role; // Apply role filter if provided
+        }
+
+        const allusers = await AddUsersScheema.find(query);
+        console.log(allusers);
+
+        res.render('getAllUsers', { allusers, selectedRole: role || "" });
+
+    } catch (err) {
+        res.status(404).json({ message: "Users not found" });
+    }
+});
+
+
+
+app.get('/viewUser/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const viewUser = await AddUsersScheema.findById(id);
+        if (!viewUser) {
+            return res.status(404).json({ message: "viewUser not found in your database" })
+        }
+        console.log(viewUser);
+        res.render('userdetails', { viewUser })
+    } catch (error) {
+        res.status(404).json({ message: "viewUser not found here", error })
+    }
+});
+
+
+app.get('/editUser/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const editUser = await AddUsersScheema.findById(id);
+        if (!editUser) {
+            return res.status(404).json({ message: "editUser not found in your database" })
+        }
+        console.log(editUser);
+        res.render('editUser', { editUser })
+    } catch (error) {
+        res.status(404).json({ message: "editUser not found here", error })
+    }
+});
+
+
+app.post('/updateUser/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, phone, email, address, about, role } = req.body;
+
+        const updateUser = await AddUsersScheema.findByIdAndUpdate(id, {
+            name,
+            phone,
+            email,
+            address,
+            about,
+            role
+        }, { new: true });
+
+        if (!updateUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        console.log("User updated:", updateUser);
+        res.redirect(`/viewUser/${id}`);
+
+    } catch (error) {
+        console.error("Error updating user:", error); // ✅ Logs actual error
+        res.status(500).json({ message: "User not updated", error: error.message }); // ✅ Returns detailed error message
+    }
+});
+
+// add user end functionally here--------------------------------------------------------------------------------------------//////
+
+// show all user for dash board-----------------------------
+app.get('/alltoys', (req, res) => {
+    res.render('allToysDashboard')
+})
+// here start for dashboard purpose and 
+
+
 // LOGIN ROUTE
 app.get('/login', (req, res) => {
     res.render('login');
@@ -165,6 +323,44 @@ app.get('/toydetails/:id', async (req, res) => {
 app.get('/faq', (req, res) => {
     res.render('faq')
 })
+app.get('/dashboard', (req, res) => {
+    res.render('dashboard')
+})
+
+app.get('/changePassword', (req, res) => {
+    res.render('changePassword'); // Create change-password.ejs
+});
+app.post('/changePassword', async (req, res) => {
+    try {
+        const { email } = req.cookies; // Get the email from cookies (assuming user is logged in)
+        const { oldPassword, newPassword } = req.body;
+
+        // Find user in the database
+        const user = await userModel.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        // Verify old password
+        const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+        if (!isPasswordValid) {
+            return res.status(400).json({ message: "Incorrect old password" });
+        }
+
+        // Hash the new password
+        const saltRounds = 10;
+        user.password = await bcrypt.hash(newPassword, saltRounds);
+        await user.save();
+
+        res.json({ message: "Password updated successfully!" });
+
+    } catch (error) {
+        console.error("Error changing password:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+
 
 // Start server only after database connection is successful
 dbConnected()

@@ -381,7 +381,7 @@
             <div class="upper">
                 <div class="leftbar">
                     <div>
-                        <div><img class="upperimage" src="/<%= singleToy.imageUrl.replace(/\\/g, '/') %>">
+                        <div><img class="upperimage" src="/<%= singleToy.imageUrl %>">
                         </div>
                     </div>
                 </div>
@@ -547,7 +547,7 @@
                 id: "<%= singleToy._id %>",
                 name: "<%= singleToy.name %>",
                 price: "<%= singleToy.price %>",
-                imageUrl: "/<%= singleToy.imageUrl.replace(/\\/g, '/') %>",
+                imageUrl: "/<%= singleToy.imageUrl %>",
                 quantity: parseInt(inputBox.value) || 1,
                 qrCodeUrl: "<%= singleToy.qrCodeUrl %>"
             };

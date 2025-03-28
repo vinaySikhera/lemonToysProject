@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details</title>
+    <link rel="stylesheet" href="/css/style.css"> <!-- Linking CSS file -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .user-card {
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-pic img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Welcome to the User Details Page</h1>
+
+        <div class="user-card">
+            <h2>
+                <%= viewUser.name %>
+            </h2>
+            <p><strong>Phone:</strong>
+                <%= viewUser.phone %>
+            </p>
+            <p><strong>Email:</strong>
+                <%= viewUser.email %>
+            </p>
+            <p><strong>Address:</strong>
+                <%= viewUser.address %>
+            </p>
+            <p><strong>About:</strong>
+                <%= viewUser.about %>
+            </p>
+            <p><strong>Role:</strong>
+                <%= viewUser.role %>
+            </p>
+            <% if (viewUser.profilePic) { %>
+                <div class="profile-pic">
+                    <img src="/<%= viewUser.profilePic %>" alt="Profile Picture">
+                </div>
+                <% } %>
+        </div>
+    </div>
+</body>
+
+</html>
