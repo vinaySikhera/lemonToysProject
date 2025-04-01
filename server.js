@@ -182,7 +182,7 @@ app.get('/allusers', async (req, res) => {
         }
 
         const allusers = await AddUsersScheema.find(query);
-        console.log(allusers);
+        // console.log(allusers);
 
         res.render('getAllUsers', { allusers, selectedRole: role || "" });
 
@@ -200,7 +200,7 @@ app.get('/viewUser/:id', async (req, res) => {
         if (!viewUser) {
             return res.status(404).json({ message: "viewUser not found in your database" })
         }
-        console.log(viewUser);
+        // console.log(viewUser);
         res.render('userdetails', { viewUser })
     } catch (error) {
         res.status(404).json({ message: "viewUser not found here", error })
@@ -215,7 +215,7 @@ app.get('/editUser/:id', async (req, res) => {
         if (!editUser) {
             return res.status(404).json({ message: "editUser not found in your database" })
         }
-        console.log(editUser);
+        // console.log(editUser);
         res.render('editUser', { editUser })
     } catch (error) {
         res.status(404).json({ message: "editUser not found here", error })
@@ -302,7 +302,7 @@ app.post('/login', async (req, res) => {
 
 app.get('/toydetails/:id', async (req, res) => {
     try {
-        console.log(req.params.id);
+        // console.log(req.params.id);
         const toyId = req.params.id;
         // console.log(new ObjectId(toyId))
         const singleToy = await AddToySchema.findById(toyId);
@@ -310,7 +310,7 @@ app.get('/toydetails/:id', async (req, res) => {
         // const singleToy = await AddToySchema.findOne({ _id:new ObjectId('67e538a9bf7ce9253fcd471c')});
         // const singleToy = await AddToySchema.findOne({_id:toyId});
 
-        console.log(singleToy)
+        // console.log(singleToy)
         // If the toy is not found, return a 404 response
         if (!singleToy) {
             return res.status(404).json({ message: 'Toy not found' });
@@ -377,6 +377,7 @@ app.post('/logout', (req, res) => {
 
     res.redirect('/login');
 });
+
 
 
 // Start server only after database connection is successful

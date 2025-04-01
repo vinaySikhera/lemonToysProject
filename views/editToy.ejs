@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Toy</title>
+    <!-- <link rel="stylesheet" href="/styles.css"> -->
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Container */
+        .container {
+            width: 40%;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        /* Heading */
+        h2 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        /* Form */
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Labels */
+        label {
+            text-align: left;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        /* Input Fields */
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        /* Submit Button */
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #007BFF;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Edit Toy</h2>
+        <form action="/toys/updateToy/<%= toy._id %>" method="POST">
+            <label>Product Name:</label>
+            <input type="text" name="ProductName" value="<%= toy.ProductName %>" required>
+
+            <label>Category:</label>
+            <input type="text" name="Category" value="<%= toy.Category %>" required>
+
+            <label>Price:</label>
+            <input type="number" name="Price" value="<%= toy.Price %>" required>
+
+            <label>Image URL:</label>
+            <input type="text" name="ProductImageURL" value="<%= toy.ProductImageURL %>" required>
+
+            <button type="submit" class="btn">Update Toy</button>
+        </form>
+
+    </div>
+</body>
+
+</html>

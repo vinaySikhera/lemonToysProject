@@ -11,9 +11,6 @@ cloudinary.config({
     api_secret: 'SKq91G4JlTq6dqjNHF3FvNOkbcE' // Click 'View API Keys' above to copy your API secret
 });
 
-
-
-
 // Middleware for validating toy input
 const validateToyInput = (req, res, next) => {
     const { name, category, price, minimum_order_quantity } = req.body;
@@ -28,36 +25,21 @@ toyControllerRoute.get('/', (req, res) => {
     res.render('index');
 });
 
-// Get all toys with pagination & filtering
 toyControllerRoute.get('/alltoys', async (req, res) => {
     try {
-        // Extracting price, category, page, and limit from the query parameters
-        const { price, category, page = 1, limit = 9 } = req.query;
-
-        // Initialize the filter object
+        const { price, category, page = 1, limit = 16 } = req.query;
         const filter = {};
-
-        // Apply filter for price and category if provided
         if (price) filter.Price = { $lte: Number(price) };
         if (category) filter.Category = category;
-
-        // Fetch distinct categories for the filter options
         const allCategories = await AddToyScheema.distinct("Category");
-
-        // Count the total number of toys matching the filter
         const totalToys = await AddToyScheema.countDocuments(filter);
-
-        // Calculate total pages for pagination
         const totalPages = Math.ceil(totalToys / limit);
-
-        // Fetch the filtered and paginated toys
         const getAllToys = await AddToyScheema.find(filter)
-            .sort({ Price: price ? 1 : -1, _id: -1 })  // Sorting by price if it's provided
-            .skip((page - 1) * limit) // Skip the results based on the page number
-            .limit(Number(limit));   // Limit the number of results per page
+            .sort({ Price: price ? 1 : -1, _id: -1 })
+            .skip((page - 1) * limit)
+            .limit(Number(limit));
 
         console.log(getAllToys)
-        // Render the page with the fetched data
         res.render('toylists', {
             allCategories,
             getAllToys,
@@ -72,7 +54,6 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 });
-
 
 // Add new toy
 toyControllerRoute.get('/addtoys', (req, res) => {
@@ -166,4 +147,225 @@ toyControllerRoute.delete('/delete/:id', async (req, res) => {
     }
 });
 
+toyControllerRoute.get('/adminToys', async (req, res) => {
+    try {
+        // Extracting price, category, page, and limit from the query parameters
+        const { price, category, page = 1, limit = 9 } = req.query;
+
+        // Initialize the filter object
+        const filter = {};
+
+        // Apply filter for price and category if provided
+        if (price) filter.Price = { $lte: Number(price) };
+        if (category) filter.Category = category;
+
+        // Fetch distinct categories for the filter options
+        const allCategories = await AddToyScheema.distinct("Category");
+
+        // Count the total number of toys matching the filter
+        const totalToys = await AddToyScheema.countDocuments(filter);
+
+        // Calculate total pages for pagination
+        const totalPages = Math.ceil(totalToys / limit);
+
+        // Fetch the filtered and paginated toys
+        const getAllToys = await AddToyScheema.find(filter)
+            .sort({ Price: price ? 1 : -1, _id: -1 })  // Sorting by price if it's provided
+            .skip((page - 1) * limit) // Skip the results based on the page number
+            .limit(Number(limit));   // Limit the number of results per page
+
+        console.log(getAllToys)
+        // Render the page with the fetched data
+        res.render('toyAdiminDashboard', {
+            allCategories,
+            getAllToys,
+            currentPage: Number(page),
+            totalPages,
+            totalToys,
+            price: price || '',
+            category: category || ''
+        });
+    } catch (error) {
+        console.error("Error fetching toys:", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+toyControllerRoute.get('/editToy/:id', async (req, res) => {
+    try {
+        const toy = await AddToyScheema.findById(req.params.id);
+        if (!toy) return res.status(404).send("Toy not found");
+
+        res.render('editToy', { toy });
+    } catch (error) {
+        console.error("Error fetching toy details:", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+toyControllerRoute.post('/updateToy/:id', async (req, res) => {
+    try {
+        const { ProductName, Category, Price, ProductImageURL } = req.body;
+        await AddToyScheema.findByIdAndUpdate(req.params.id, {
+            ProductName,
+            Category,
+            Price,
+            ProductImageURL
+        });
+
+        res.redirect('/adminToys');
+    } catch (error) {
+        console.error("Error updating toy:", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+toyControllerRoute.get('/viewToys/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const toys = await AddToyScheema.findById(id);
+        if (!toys) {
+            return res.status(404).json({ message: "toys not found in your database" })
+        }
+        // console.log(viewUser);
+        res.render('viewToy', { toys });
+
+    } catch (error) {
+        res.status(404).json({ message: "viewUser not found here", error })
+    }
+});
+
+
+
+
+toyControllerRoute.get('/approveToys', async (req, res) => {
+    try {
+        // Extracting price, category, page, and limit from the query parameters
+        const { price, category, page = 1, limit = 9 } = req.query;
+
+        // Initialize the filter object
+        const filter = {};
+
+        // Apply filter for price and category if provided
+        if (price) filter.Price = { $lte: Number(price) };
+        if (category) filter.Category = category;
+
+        // Fetch distinct categories for the filter options
+        const allCategories = await AddToyScheema.distinct("Category");
+
+        // Count the total number of toys matching the filter
+        const totalToys = await AddToyScheema.countDocuments(filter);
+
+        // Calculate total pages for pagination
+        const totalPages = Math.ceil(totalToys / limit);
+
+        // Fetch the filtered and paginated toys
+        const getAllToys = await AddToyScheema.find(filter)
+            .sort({ Price: price ? 1 : -1, _id: -1 })  // Sorting by price if it's provided
+            .skip((page - 1) * limit) // Skip the results based on the page number
+            .limit(Number(limit));   // Limit the number of results per page
+
+        console.log(getAllToys)
+        // Render the page with the fetched data
+        res.render('approveToys', {
+            allCategories,
+            getAllToys,
+            currentPage: Number(page),
+            totalPages,
+            totalToys,
+            price: price || '',
+            category: category || ''
+        });
+    } catch (error) {
+        console.error("Error fetching toys:", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+toyControllerRoute.get('/pendingToys', async (req, res) => {
+    try {
+        // Extracting price, category, page, and limit from the query parameters
+        const { price, category, page = 1, limit = 9 } = req.query;
+
+        // Initialize the filter object
+        const filter = {};
+
+        // Apply filter for price and category if provided
+        if (price) filter.Price = { $lte: Number(price) };
+        if (category) filter.Category = category;
+
+        // Fetch distinct categories for the filter options
+        const allCategories = await AddToyScheema.distinct("Category");
+
+        // Count the total number of toys matching the filter
+        const totalToys = await AddToyScheema.countDocuments(filter);
+
+        // Calculate total pages for pagination
+        const totalPages = Math.ceil(totalToys / limit);
+
+        // Fetch the filtered and paginated toys
+        const getAllToys = await AddToyScheema.find(filter)
+            .sort({ Price: price ? 1 : -1, _id: -1 })  // Sorting by price if it's provided
+            .skip((page - 1) * limit) // Skip the results based on the page number
+            .limit(Number(limit));   // Limit the number of results per page
+
+        console.log(getAllToys)
+        // Render the page with the fetched data
+        res.render('pendingToys', {
+            allCategories,
+            getAllToys,
+            currentPage: Number(page),
+            totalPages,
+            totalToys,
+            price: price || '',
+            category: category || ''
+        });
+    } catch (error) {
+        console.error("Error fetching toys:", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+toyControllerRoute.get('/rejectToys', async (req, res) => {
+    try {
+        // Extracting price, category, page, and limit from the query parameters
+        const { price, category, page = 1, limit = 16 } = req.query;
+
+        // Initialize the filter object
+        const filter = {};
+
+        // Apply filter for price and category if provided
+        if (price) filter.Price = { $lte: Number(price) };
+        if (category) filter.Category = category;
+
+        // Fetch distinct categories for the filter options
+        const allCategories = await AddToyScheema.distinct("Category");
+
+        // Count the total number of toys matching the filter
+        const totalToys = await AddToyScheema.countDocuments(filter);
+
+        // Calculate total pages for pagination
+        const totalPages = Math.ceil(totalToys / limit);
+
+        // Fetch the filtered and paginated toys
+        const getAllToys = await AddToyScheema.find(filter)
+            .sort({ Price: price ? 1 : -1, _id: -1 })  // Sorting by price if it's provided
+            .skip((page - 1) * limit) // Skip the results based on the page number
+            .limit(Number(limit));   // Limit the number of results per page
+
+        console.log(getAllToys)
+        // Render the page with the fetched data
+        res.render('rejectToys', {
+            allCategories,
+            getAllToys,
+            currentPage: Number(page),
+            totalPages,
+            totalToys,
+            price: price || '',
+            category: category || ''
+        });
+    } catch (error) {
+        console.error("Error fetching toys:", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
 module.exports = toyControllerRoute;
