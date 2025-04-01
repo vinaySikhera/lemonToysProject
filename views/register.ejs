@@ -130,7 +130,7 @@
             </div>
 
             <form action="/register" method="POST">
-    
+
                 <div class="input-details">
                     <label for="name">Full Name</label>
                 </div>
@@ -140,6 +140,15 @@
                     <label for="email">Email Address</label>
                 </div>
                 <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <div class="input-details">
+                    <label for="address">Address</label>
+                </div>
+                <input type="address" id="address" name="address" placeholder="Enter your Address" required>
+                <div class="input-details">
+                    <label for="mobileNumber">Phone Number</label>
+                </div>
+                <input type="mobileNumber" id="mobileNumber" name="mobileNumber" placeholder="Enter your Mobile Number"
+                    required>
 
                 <div class="input-details">
                     <label for="password">Password</label>
@@ -158,4 +167,5 @@
         </div>
         <%- include('common/footer.ejs') %>
 </body>
+
 </html>

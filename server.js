@@ -76,7 +76,7 @@ app.get('/register', (req, res) => {
 
 app.post('/register', async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, address, mobileNumber } = req.body;
 
         // Check if the user already exists
         const isUserAlready = await userModel.findOne({ email });
@@ -92,7 +92,9 @@ app.post('/register', async (req, res) => {
             name,
             email,
             password: hashedPassword,
-            role: "Customer"
+            role: "Customer",
+            address: address,
+            phone: mobileNumber
         };
 
         const addNewUser = new userModel(userDetails);
@@ -176,13 +178,13 @@ app.get('/allusers', async (req, res) => {
     try {
         const { role } = req.query; // Get role from query parameters
         let query = {};
-
+        console.log(role)
         if (role) {
             query.role = role; // Apply role filter if provided
         }
-
-        const allusers = await AddUsersScheema.find(query);
-        // console.log(allusers);
+        console.log(query)
+        const allusers = await userModel.find(query);
+        console.log(allusers);
 
         res.render('getAllUsers', { allusers, selectedRole: role || "" });
 
@@ -190,7 +192,6 @@ app.get('/allusers', async (req, res) => {
         res.status(404).json({ message: "Users not found" });
     }
 });
-
 
 
 app.get('/viewUser/:id', async (req, res) => {
@@ -206,7 +207,21 @@ app.get('/viewUser/:id', async (req, res) => {
         res.status(404).json({ message: "viewUser not found here", error })
     }
 });
+app.get('/supplier-count', async (req, res) => {
+    try {
+        const supplierCount = await userModel.countDocuments({ role: "Supplier" });
+        const usersCount = await userModel.countDocuments();
+        const allCategories = await AddToySchema.distinct("Category");
+        const categoryCount = allCategories.length;
+        const allProducts = await AddToySchema.countDocuments();
 
+        res.json({ count: supplierCount, users: usersCount, category: categoryCount, products: allProducts }); // Send JSON response
+    } catch (error) {
+        console.error("Error fetching supplier count:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+
+    }
+});
 
 app.get('/editUser/:id', async (req, res) => {
     try {

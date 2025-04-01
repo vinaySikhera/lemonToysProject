@@ -24,6 +24,11 @@ const userScheema = mongoose.Schema({
         type: String,
         required: true,
         trim: true
+    },
+    address: {
+        type: String,
+        require: true,
+        trim: true
     }
 })
 

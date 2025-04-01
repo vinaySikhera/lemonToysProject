@@ -70,11 +70,10 @@
             <thead class="table-dark">
                 <tr>
                     <th>SR.</th>
-                    <th>Image</th>
-                    <th>Status</th>
                     <th>Name</th>
                     <th>Phone</th>
                     <th>Email</th>
+                    <th>Address</th>
                     <th>Role</th>
                     <th>Action</th>
                 </tr>
@@ -86,16 +85,7 @@
                             <td>
                                 <%= index + 1 %>
                             </td>
-                            <td>
-                                <% if (user.profilePic) { %>
-                                    <img src="<%= user.profilePic %>" alt="Profile Pic" class="profile-pic">
-                                    <% } else { %>
-                                        <img src="/path-to-default-image.png" alt="No Image" class="profile-pic">
-                                        <% } %>
-                            </td>
-                            <td>
-                                <span class="status active">Active</span>
-                            </td>
+
                             <td>
                                 <%= user.name %>
                             </td>
@@ -104,6 +94,9 @@
                             </td>
                             <td>
                                 <%= user.email %>
+                            </td>
+                            <td>
+                                <%= user.address %>
                             </td>
                             <td>
                                 <%= user.role %>

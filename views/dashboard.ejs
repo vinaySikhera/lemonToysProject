@@ -401,6 +401,35 @@
     </div>
 
     <script>
+        async function getData() {
+            try {
+                // Fetch supplier count from API
+                const response = await fetch('/supplier-count');
+                const data = await response.json(); // Parse JSON
+                const supplierCount = data.count;
+                const usersCount = data.users;
+                const categoriesCount = data.category;
+                const productsCount = data.products;
+
+                console.log("Supplier Count:", supplierCount); // Debugging
+
+                // Update UI
+                const supplierDiv = document.querySelector(".card.green");
+                const usersDiv = document.querySelector(".card.yellow");
+                const categoryDiv = document.querySelector(".card.red");
+                const productsDiv = document.querySelector(".card.blue");
+                if (supplierDiv && usersDiv && categoryDiv && productsDiv) {
+                    supplierDiv.innerText = `Suppliers: ${supplierCount}`;
+                    usersDiv.innerText = `Users: ${usersCount}`;
+                    categoryDiv.innerText = `Categories: ${categoriesCount}`;
+                    productsDiv.innerText = `Products: ${productsCount}`;
+                }
+            } catch (error) {
+                console.error("Error fetching supplier count:", error);
+            }
+        }
+
+        getData();
         // Approved Products Chart
         const ctxApproved = document.getElementById('approvedChart').getContext('2d');
         new Chart(ctxApproved, {
