@@ -6,10 +6,12 @@ const path = require("path");
 const userModel = require('./models/userDetails'); // Fixed spelling issue from "modles" to "models"
 const { AddUsersScheema } = require('./models/addUser')
 const cookieParser = require('cookie-parser');
+const AddToySchema = require('./models/toyAddProductScheema')
 const bcrypt = require('bcrypt');
 const upload = require('./middleware/fileUpload');
 const { findByIdAndUpdate } = require("./models/toyAddProductScheema");
-
+const { ObjectId } = require('mongodb'); // Import ObjectId from MongoDB driver
+const mongoose = require('mongoose')
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -30,15 +32,14 @@ app.get('/contact', (req, res) => {
     res.render('contact');
 });
 
-app.get('/checkout', (req, res) => {
-    res.render('checkoutpage');
-});
+// app.get('/checkout', (req, res) => {
+//     res.render('checkoutpage');
+// });
 
 app.get('/cart', async (req, res) => {
     try {
         // Extract only email and role from cookies (Remove password check)
         const { email, role } = req.cookies;
-
         // If email or role is missing, redirect to login
         if (!email || !role) {
             console.log("Missing email or role in cookies. Redirecting to login...");
@@ -75,7 +76,7 @@ app.get('/register', (req, res) => {
 
 app.post('/register', async (req, res) => {
     try {
-        const { role, name, email, password } = req.body;
+        const { name, email, password } = req.body;
 
         // Check if the user already exists
         const isUserAlready = await userModel.findOne({ email });
@@ -88,10 +89,10 @@ app.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         const userDetails = {
-            role,
             name,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            role: "Customer"
         };
 
         const addNewUser = new userModel(userDetails);
@@ -138,7 +139,6 @@ app.post('/adduser', upload.single('profilePic'), async (req, res) => {
             email,
             password: hashedPassword
         };
-
         const addNewUser = new AddUsersScheema(userDetails);
         await addNewUser.save(); // Ensuring user is saved before redirecting
         res.json({ message: "new user added successfully" })
@@ -266,8 +266,8 @@ app.get('/login', (req, res) => {
 
 app.post('/login', async (req, res) => {
     try {
-        const { email, password, role } = req.body;
-        console.log("Login request received:", email, role);
+        const { email, password } = req.body;
+        console.log("Login request received:", email);
 
         const findUser = await userModel.findOne({ email });
         if (!findUser) {
@@ -281,13 +281,13 @@ app.post('/login', async (req, res) => {
             return res.status(400).json({ message: "Invalid credentials" });
         }
 
-        if (findUser.role.toLowerCase() !== role.toLowerCase()) {
-            console.log("Invalid role:", findUser.role, role);
-            return res.status(400).json({ message: "Invalid role" });
-        }
+        // if (findUser.role.toLowerCase() !== role.toLowerCase()) {
+        //     console.log("Invalid role:", findUser.role, role);
+        //     return res.status(400).json({ message: "Invalid role" });
+        // }
 
         res.cookie('email', email, { httpOnly: true });
-        res.cookie('role', role, { httpOnly: true });
+        res.cookie('role', findUser.role, { httpOnly: true });
         console.log("Redirecting to /cart...");
 
         return res.redirect('/cart');
@@ -302,23 +302,34 @@ app.post('/login', async (req, res) => {
 
 app.get('/toydetails/:id', async (req, res) => {
     try {
-        const singleToy = await ToyScheema.findById(req.params.id);
+        console.log(req.params.id);
+        const toyId = req.params.id;
+        // console.log(new ObjectId(toyId))
+        const singleToy = await AddToySchema.findById(toyId);
+        // const singleToy = await AddToySchema.findOne({ ProductName:"009 GUN"});
+        // const singleToy = await AddToySchema.findOne({ _id:new ObjectId('67e538a9bf7ce9253fcd471c')});
+        // const singleToy = await AddToySchema.findOne({_id:toyId});
+
+        console.log(singleToy)
+        // If the toy is not found, return a 404 response
         if (!singleToy) {
             return res.status(404).json({ message: 'Toy not found' });
         }
 
-        // Find related products by category, excluding the current product
-        const relatedToys = await ToyScheema.find({
-            category: singleToy.category, // Match the category
-            _id: { $ne: singleToy._id }   // Exclude the current toy
-        }).limit(4); // Limit the number of related products shown
+        // Find related toys by category, excluding the current toy
+        const relatedToys = await AddToySchema.find({
+            category: singleToy.category, // Match category
+            _id: { $ne: singleToy._id }   // Exclude current toy
+        }).limit(4); // Limit to 4 related products
 
+        // Render the toydetails view and pass the toy and related toys data
         res.render('toydetails', { singleToy, relatedToys });
     } catch (error) {
         console.log('Error fetching toy details:', error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
+
 
 app.get('/faq', (req, res) => {
     res.render('faq')
@@ -359,7 +370,13 @@ app.post('/changePassword', async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
+app.post('/logout', (req, res) => {
+    res.clearCookie('email');
+    res.clearCookie('role');
 
+
+    res.redirect('/login');
+});
 
 
 // Start server only after database connection is successful

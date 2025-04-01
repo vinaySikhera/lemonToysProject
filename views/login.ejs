@@ -7,7 +7,6 @@
     <title>Login Form</title>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa&family=Consolas&display=swap" rel="stylesheet">
     <style>
-
         .login {
             background: white;
             padding: 30px;
@@ -114,73 +113,36 @@
 
 <body>
     <%- include('common/navbar.ejs') %>
-    <div class="login">
-        <div class="head">
-            <p style="font-size: 25px;">Welcome Back!</p>
-            <p>Please login to continue</p>
+        <div class="login">
+            <div class="head">
+                <p style="font-size: 25px;">Welcome Back!</p>
+                <p>Please login to continue</p>
+            </div>
+
+            <form action="/login" method="POST">
+                <div class="input-details">
+                    <label for="email">Email Address</label>
+                </div>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+                <div class="input-details">
+                    <label for="password">Password</label>
+                </div>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+                <div class="account" style="text-align: right;">
+                    <a href="#">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="login-btn">Login</button>
+            </form>
+
+            <div class="account">
+                <p>Don't have an account? <a href="/register">Create Account</a></p>
+            </div>
         </div>
 
-        <form action="/login" method="POST">
-            <div class="role-head">
-                <p>Select Your Role</p>
-            </div>
-
-            <div class="role-selection">
-                <div class="role" data-role="Admin">
-                    <img src="/images/Vector.png" alt="Admin">
-                    <strong>Admin</strong>
-                    <span>Wholeseller</span>
-                </div>
-                <div class="role" data-role="Retailer">
-                    <img src="/images/Group.png" alt="Retailer">
-                    <strong>Retailer</strong>
-                    <span>Store Owner</span>
-                </div>
-                <div class="role" data-role="Customer">
-                    <img src="/images/Vector (1).png" alt="Customer">
-                    <strong>Customer</strong>
-                    <span>Buyer</span>
-                </div>
-            </div>
-
-            <input type="hidden" id="selectedRole" name="role" value="">
-
-            <div class="input-details">
-                <label for="email">Email Address</label>
-            </div>
-            <input type="email" id="email" name="email" placeholder="Enter your email" required>
-
-            <div class="input-details">
-                <label for="password">Password</label>
-            </div>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required>
-
-            <div class="account" style="text-align: right;">
-                <a href="#">Forgot password?</a>
-            </div>
-
-            <button type="submit" class="login-btn">Login</button>
-        </form>
-
-        <div class="account">
-            <p>Don't have an account? <a href="/register">Create Account</a></p>
-        </div>
-    </div>
-
-    <%- include('common/footer.ejs') %>
+        <%- include('common/footer.ejs') %>
 </body>
-<script>
-    // Role Selection Functionality
-    const roles = document.querySelectorAll(".role");
-    const selectedRoleInput = document.getElementById("selectedRole");
-
-    roles.forEach(role => {
-        role.addEventListener("click", function () {
-            roles.forEach(r => r.classList.remove("selected"));
-            this.classList.add("selected");
-            selectedRoleInput.value = this.getAttribute("data-role");
-        });
-    });
-</script>
 
 </html>

@@ -2,8 +2,17 @@ const express = require("express");
 const AddToyScheema = require('../models/toyAddProductScheema');
 const upload = require("../middleware/fileUpload");
 const QRCode = require('qrcode');
-
+const cloudinary = require('cloudinary')
 const toyControllerRoute = express.Router();
+
+cloudinary.config({
+    cloud_name: 'dghkslcr1',
+    api_key: '682495838963169',
+    api_secret: 'SKq91G4JlTq6dqjNHF3FvNOkbcE' // Click 'View API Keys' above to copy your API secret
+});
+
+
+
 
 // Middleware for validating toy input
 const validateToyInput = (req, res, next) => {
@@ -22,23 +31,41 @@ toyControllerRoute.get('/', (req, res) => {
 // Get all toys with pagination & filtering
 toyControllerRoute.get('/alltoys', async (req, res) => {
     try {
-        const { price, category, page = 1, limit = 6 } = req.query;
-        const filter = {};
-        if (price) filter.price = { $lte: Number(price) };
-        if (category) filter.category = category;
+        // Extracting price, category, page, and limit from the query parameters
+        const { price, category, page = 1, limit = 9 } = req.query;
 
-        const allCategories = await AddToyScheema.distinct("category");
+        // Initialize the filter object
+        const filter = {};
+
+        // Apply filter for price and category if provided
+        if (price) filter.Price = { $lte: Number(price) };
+        if (category) filter.Category = category;
+
+        // Fetch distinct categories for the filter options
+        const allCategories = await AddToyScheema.distinct("Category");
+
+        // Count the total number of toys matching the filter
         const totalToys = await AddToyScheema.countDocuments(filter);
+
+        // Calculate total pages for pagination
         const totalPages = Math.ceil(totalToys / limit);
 
+        // Fetch the filtered and paginated toys
         const getAllToys = await AddToyScheema.find(filter)
-            .sort({ price: price ? 1 : -1, _id: -1 })
-            .skip((page - 1) * limit)
-            .limit(Number(limit));
+            .sort({ Price: price ? 1 : -1, _id: -1 })  // Sorting by price if it's provided
+            .skip((page - 1) * limit) // Skip the results based on the page number
+            .limit(Number(limit));   // Limit the number of results per page
 
+        console.log(getAllToys)
+        // Render the page with the fetched data
         res.render('toylists', {
-            allCategories, getAllToys, currentPage: Number(page),
-            totalPages, totalToys, price: price || '', category: category || ''
+            allCategories,
+            getAllToys,
+            currentPage: Number(page),
+            totalPages,
+            totalToys,
+            price: price || '',
+            category: category || ''
         });
     } catch (error) {
         console.error("Error fetching toys:", error);
@@ -46,11 +73,25 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
     }
 });
 
+
 // Add new toy
 toyControllerRoute.get('/addtoys', (req, res) => {
     res.render('addToys');
 });
 
+const uploadFile = async (url, name) => {
+    const uploadResult = await cloudinary.uploader
+        .upload(
+            url, {
+            public_id: name.toString(),
+        }
+        )
+        .catch((error) => {
+            console.log(error);
+        });
+    console.log(uploadResult.url)
+    return uploadResult.url
+}
 toyControllerRoute.post('/addtoys', upload.single('single_image'), validateToyInput, async (req, res) => {
     try {
         const { name, category, minimum_order_quantity, price, price_type, visibility_status, product_owner, a_user_amount, b_user_amount, c_user_amount, d_user_amount, product_description } = req.body;
@@ -58,25 +99,34 @@ toyControllerRoute.post('/addtoys', upload.single('single_image'), validateToyIn
         const getImage = req.file ? req.file.path : null;
         const toyUrl = `http://localhost:3003/toydetails/${encodeURIComponent(name)}`;
         const qrCode = await QRCode.toDataURL(toyUrl);
-
+        console.log(getImage)
+        uploadImage = await uploadFile(getImage, name)
         const addToy = new AddToyScheema({
-            name,
-            category,
-            single_image: getImage,
-            minimum_order_quantity,
-            price, price_type,
-            visibility_status,
-            product_owner,
-            a_user_amount,
-            b_user_amount,
-            c_user_amount,
-            d_user_amount,
-            product_description,
+            ProductName: name,
+            Category: category,
+            ProductImageURL: uploadImage.toString(),
+            MinimumOrderQuantity: minimum_order_quantity,
+            Price: price,
+            PriceType: price_type,
+            VisibilityStatus: visibility_status,
+            ProductOwner: product_owner,
+            PriceA: a_user_amount,
+            PriceB: b_user_amount,
+            PriceC: c_user_amount,
+            PriceD: d_user_amount,
+            ProductDescription: product_description,
             qrCodeUrl: qrCode
         });
 
-        await addToy.save();
+        await addToy.save().then((user) => {
+            console.log('toy added:', user);
+        })
+            .catch((error) => {
+                console.error('Error adding toy:', error);
+            });
+
         res.redirect('/toys/alltoys');
+        // res.status(202).json({ message: "New data consoled" });
     } catch (error) {
         console.error("New data not added", error);
         res.status(500).json({ message: "New data not added" });

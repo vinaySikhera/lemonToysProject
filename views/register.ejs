@@ -130,30 +130,7 @@
             </div>
 
             <form action="/register" method="POST">
-                <div class="role-head">
-                    <p>Select Your Role</p>
-                </div>
-
-                <div class="role-selection">
-                    <div class="role" data-role="Admin">
-                        <img src="/images/Vector.png" alt="Admin">
-                        <strong>Admin</strong>
-                        <span>Wholeseller</span>
-                    </div>
-                    <div class="role" data-role="Retailer">
-                        <img src="/images/Group.png" alt="Retailer">
-                        <strong>Retailer</strong>
-                        <span>Store Owner</span>
-                    </div>
-                    <div class="role" data-role="Customer">
-                        <img src="/images/Vector (1).png" alt="Customer">
-                        <strong>Customer</strong>
-                        <span>Buyer</span>
-                    </div>
-                </div>
-
-                <input type="hidden" id="selectedRole" name="role" value="">
-
+    
                 <div class="input-details">
                     <label for="name">Full Name</label>
                 </div>
@@ -181,18 +158,4 @@
         </div>
         <%- include('common/footer.ejs') %>
 </body>
-<script>
-    // Role Selection Functionality
-    const roles = document.querySelectorAll(".role");
-    const selectedRoleInput = document.getElementById("selectedRole");
-
-    roles.forEach(role => {
-        role.addEventListener("click", function () {
-            roles.forEach(r => r.classList.remove("selected"));
-            this.classList.add("selected");
-            selectedRoleInput.value = this.getAttribute("data-role");
-        });
-    });
-</script>
-
 </html>

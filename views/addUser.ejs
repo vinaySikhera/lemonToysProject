@@ -7,24 +7,29 @@
     <title>Document</title>
 </head>
 <style>
+    /* General Styling */
     body {
         font-family: 'Comfortaa', sans-serif;
         background: #f8f9fa;
         display: flex;
         justify-content: center;
         align-items: center;
+        height: 100vh;
         margin: 0;
+        padding: 20px;
     }
 
     .register {
         background: white;
         padding: 30px;
         border-radius: 16px;
-        width: 400px;
+        width: 100%;
+        max-width: 400px;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         text-align: center;
     }
 
+    /* Role Selection */
     .role-selection {
         display: flex;
         justify-content: space-between;
@@ -43,8 +48,10 @@
         user-select: none;
     }
 
-    .role:hover {
+    .role:hover,
+    .selected {
         border-color: #007bff;
+        background: rgba(0, 123, 255, 0.1);
     }
 
     .role img {
@@ -57,11 +64,7 @@
         color: #007bff;
     }
 
-    .selected {
-        border-color: #007bff;
-        background: rgba(0, 123, 255, 0.1);
-    }
-
+    /* Input Fields */
     .input-details {
         text-align: left;
         margin: 10px 0 5px;
@@ -83,20 +86,7 @@
         min-height: 60px;
     }
 
-    .account {
-        font-size: 14px;
-        margin-top: 10px;
-    }
-
-    .account a {
-        color: #007bff;
-        text-decoration: none;
-    }
-
-    .account a:hover {
-        text-decoration: underline;
-    }
-
+    /* Register Button */
     .register-btn {
         width: 100%;
         padding: 12px;
@@ -107,10 +97,27 @@
         cursor: pointer;
         font-size: 16px;
         margin-top: 10px;
+        transition: 0.3s;
     }
 
     .register-btn:hover {
         background: darkgreen;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 480px) {
+        .register {
+            padding: 20px;
+        }
+
+        .role-selection {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .role {
+            width: 100%;
+        }
     }
 </style>
 
