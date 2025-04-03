@@ -105,6 +105,7 @@ const uploadFile = async (url, name) => {
     console.log(uploadResult.url)
     return uploadResult.url
 }
+
 toyControllerRoute.post('/addtoys', upload.single('single_image'), validateToyInput, async (req, res) => {
     try {
         const { name, category, minimum_order_quantity, price, price_type, visibility_status, product_owner, a_user_amount, b_user_amount, c_user_amount, d_user_amount, product_description } = req.body;

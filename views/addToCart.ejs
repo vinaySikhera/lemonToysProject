@@ -363,7 +363,10 @@
             let row = document.createElement("tr");
             row.setAttribute("data-id", product.id);
             row.innerHTML = `
-        <td><img src="${product.imageUrl}" alt="${product.name}" width="50"></td>
+        <td>
+            <img src="${product.imageUrl}" alt="${product.name}" width="50">
+            
+            </td>
         <td>${product.name}</td>
         <td>₹${product.price}</td>
         <td>
@@ -374,7 +377,9 @@
             </div>
         </td>
         <td class="subtotal">₹${subtotal}</td>
-        <td><img src="${product.qrCodeUrl}" alt="QR Code for ${product.name}" width="50"></td>
+        <td>
+            <img src="${product.qrCodeUrl}" alt="QR Code for ${product.name}" width="50">
+            </td>
         <td><button class="remove-btn" onclick="removeFromCart('${product.id}')">&times;</button></td>
     `;
 
