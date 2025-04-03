@@ -340,20 +340,20 @@
  
                 <div class="pagination">
                     <% if (currentPage > 1) { %>
-                        <a class="page-link" href="/toys/alltoys?page=<%= currentPage - 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">
+                        <a class="page-link" href="/alltoys?page=<%= currentPage - 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">
                             &#x276E;
                         </a>
                     <% } %>
                
                     <% if (currentPage > 3) { %>
-                        <a class="page-link" href="/toys/alltoys?page=1&price=<%= price || '' %>&category=<%= category || '' %>">1</a>
+                        <a class="page-link" href="/alltoys?page=1&price=<%= price || '' %>&category=<%= category || '' %>">1</a>
                         <% if (currentPage > 4) { %>
                             <span class="ellipsis">...</span>
                         <% } %>
                     <% } %>
                
                     <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
-                        <a href="/toys/alltoys?page=<%= i %>&price=<%= price || '' %>&category=<%= category || '' %>"
+                        <a href="/alltoys?page=<%= i %>&price=<%= price || '' %>&category=<%= category || '' %>"
                             class="page-link <%= currentPage === i ? 'active' : '' %>">
                             <%= i %>
                         </a>
@@ -363,11 +363,11 @@
                         <% if (currentPage < totalPages - 3) { %>
                             <span class="ellipsis">...</span>
                         <% } %>
-                        <a class="page-link" href="/toys/alltoys?page=<%= totalPages %>&price=<%= price || '' %>&category=<%= category || '' %>"><%= totalPages %></a>
+                        <a class="page-link" href="/alltoys?page=<%= totalPages %>&price=<%= price || '' %>&category=<%= category || '' %>"><%= totalPages %></a>
                     <% } %>
                
                     <% if (currentPage < totalPages) { %>
-                        <a class="page-link" href="/toys/alltoys?page=<%= currentPage + 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">
+                        <a class="page-link" href="/alltoys?page=<%= currentPage + 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">
                             &#x276F;
                         </a>
                     <% } %>
@@ -387,14 +387,14 @@
     document.querySelector('.btn').addEventListener('click', () => {
         // console.log('clicked')
         let price = document.getElementById("vol").value;
-        window.location.href = `/toys/alltoys?price=${price}`;
+        window.location.href = `/alltoys?price=${price}`;
     })
  
     // work at category special
     const categoryList = document.querySelectorAll('.categoryList');
     categoryList.forEach((eachCategory, index) => {
         eachCategory.addEventListener("click", () => {
-            window.location.href = `/toys/alltoys/?category=${eachCategory.innerText}`
+            window.location.href = `/alltoys/?category=${eachCategory.innerText}`
         })
     })
  

@@ -82,7 +82,7 @@
 <body>
     <div class="container">
         <h2>Edit Toy</h2>
-        <form action="/toys/updateToy/<%= toy._id %>" method="POST">
+        <form action="/updateToy/<%= toy._id %>" method="POST">
             <label>Product Name:</label>
             <input type="text" name="ProductName" value="<%= toy.ProductName %>" required>
 
@@ -98,7 +98,7 @@
             <button type="submit" class="btn">Update Toy</button>
         </form>
         <br>
-        <a href="/toys/adminToys" class="btn">Back to Dashboard</a>
+        <a href="/adminToys" class="btn">Back to Dashboard</a>
     </div>
 </body>
 

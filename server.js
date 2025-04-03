@@ -35,7 +35,7 @@ app.set('view engine', "ejs");
 
 const PORT = 3003;
 
-app.use('/toys', toyControlerRoute);
+app.use('/', toyControlerRoute);
 
 
 

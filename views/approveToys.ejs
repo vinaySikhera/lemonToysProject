@@ -156,8 +156,8 @@
                                 <td>₹<%= toy.Price %>
                                 </td>
                                 <td>
-                                    <a href="/toys/viewToys/<%= toy._id %>" class="btn">View</a>
-                                    <a href="/toys/editToy/<%= toy._id %>" class="btn edit">Edit</a>
+                                    <a href="/viewToys/<%= toy._id %>" class="btn">View</a>
+                                    <a href="/editToy/<%= toy._id %>" class="btn edit">Edit</a>
                                 </td>
                             </tr>
                             <% }) %>
@@ -168,14 +168,14 @@
                 <div class="pagination">
                     <% if (currentPage> 1) { %>
                         <a class="page-link"
-                            href="/toys/approveToys?page=<%= currentPage - 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">
+                            href="/approveToys?page=<%= currentPage - 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">
                             &#x276E;
                         </a>
                         <% } %>
 
                             <% if (currentPage> 3) { %>
                                 <a class="page-link"
-                                    href="/toys/approveToys?page=1&price=<%= price || '' %>&category=<%= category || '' %>">1</a>
+                                    href="/approveToys?page=1&price=<%= price || '' %>&category=<%= category || '' %>">1</a>
                                 <% if (currentPage> 4) { %>
                                     <span class="ellipsis">...</span>
                                     <% } %>
@@ -183,7 +183,7 @@
 
                                             <% for (let i=Math.max(1, currentPage - 2); i <=Math.min(totalPages,
                                                 currentPage + 2); i++) { %>
-                                                <a href="/toys/approveToys?page=<%= i %>&price=<%= price || '' %>&category=<%= category || '' %>"
+                                                <a href="/approveToys?page=<%= i %>&price=<%= price || '' %>&category=<%= category || '' %>"
                                                     class="page-link <%= currentPage === i ? 'active' : '' %>">
                                                     <%= i %>
                                                 </a>
@@ -194,14 +194,14 @@
                                                             <span class="ellipsis">...</span>
                                                             <% } %>
                                                                 <a class="page-link"
-                                                                    href="/toys/approveToys?page=<%= totalPages %>&price=<%= price || '' %>&category=<%= category || '' %>">
+                                                                    href="/approveToys?page=<%= totalPages %>&price=<%= price || '' %>&category=<%= category || '' %>">
                                                                     <%= totalPages %>
                                                                 </a>
                                                                 <% } %>
 
                                                                     <% if (currentPage < totalPages) { %>
                                                                         <a class="page-link"
-                                                                            href="/toys/approveToys?page=<%= currentPage + 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">
+                                                                            href="/approveToys?page=<%= currentPage + 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">
                                                                             &#x276F;
                                                                         </a>
                                                                         <% } %>
