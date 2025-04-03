@@ -126,43 +126,39 @@ app.get('/adduser', isAdmin, (req, res) => {
     res.render('addUser');
 });
 
-app.post('/adduser', upload.single('profilePic'), async (req, res) => {
+app.post('/adduser', async (req, res) => {
     try {
-        const { userCategory, name, phone, email, password, profilePic, address, about, status, role } = req.body;
-        console.log(req.body)
-        // Check if the user already exists
-        const isUserAlready = await AddUsersScheema.findOne({ email });
+        console.log("🔹 Received Data:", req.body); // Debugging log
+
+        if (!req.body || Object.keys(req.body).length === 0) {
+            return res.status(400).json({ message: "No data received. Check form submission." });
+        }
+
+        const { name, phone, email, password, address, role } = req.body;
+        console.log("📌 Extracted Fields:", { name, phone, email, password, address, role });
+
+        if (!password) {
+            return res.status(400).json({ message: "Password is required" });
+        }
+
+        const isUserAlready = await userModel.findOne({ email });
         if (isUserAlready) {
             return res.status(400).json({ message: "User already exists" });
         }
 
-        // Use bcrypt for secure password hashing instead of Cryptr
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-        const getImage = req.file.path;
-        // const getImage = req.file ? `/uploads/${req.file.filename}` : null;
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        const userDetails = {
-            userCategory,
-            phone,
-            profilePic: getImage,
-            address,
-            status,
-            about,
-            role,
-            name,
-            email,
-            password: hashedPassword
-        };
-        const addNewUser = new AddUsersScheema(userDetails);
-        await addNewUser.save(); // Ensuring user is saved before redirecting
-        res.json({ message: "new user added successfully" })
-        // res.redirect('/login'); // Removed extra res.json() to avoid multiple responses
+        const newUser = new userModel({ phone, address, role, name, email, password: hashedPassword });
+        await newUser.save();
+
+        res.status(201).json({ message: "New user added successfully" });
+
     } catch (error) {
-        console.error('Error registering new user:', error);
-        res.status(500).json({ message: "Internal Server Error" });
+        console.error('❌ Error:', error.message);
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 });
+
 
 app.patch('/updateuser/:id', isAdmin, async (req, res) => {
     try {
