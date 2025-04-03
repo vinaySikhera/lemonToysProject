@@ -128,14 +128,14 @@ app.get('/adduser', isAdmin, (req, res) => {
 
 app.post('/adduser', async (req, res) => {
     try {
-        console.log("🔹 Received Data:", req.body); // Debugging log
+        // console.log("🔹 Received Data:", req.body); // Debugging log
 
         if (!req.body || Object.keys(req.body).length === 0) {
             return res.status(400).json({ message: "No data received. Check form submission." });
         }
 
         const { name, phone, email, password, address, role } = req.body;
-        console.log("📌 Extracted Fields:", { name, phone, email, password, address, role });
+        // console.log("📌 Extracted Fields:", { name, phone, email, password, address, role });
 
         if (!password) {
             return res.status(400).json({ message: "Password is required" });
@@ -163,7 +163,7 @@ app.post('/adduser', async (req, res) => {
 app.patch('/updateuser/:id', isAdmin, async (req, res) => {
     try {
         const { id } = req.params;
-        console.log(id)
+        // console.log(id)
         const { userCategory, name, phone, email, password, profilePic, address, about, status } = req.body;
         await AddUsersScheema.findByIdAndUpdate(id, { userCategory, name, phone, email, password, profilePic, address, about, status })
         res.status(201).json({ message: "user update successfully" })
@@ -214,13 +214,13 @@ app.get('/allusers', isAdmin, async (req, res) => {
     try {
         const { role } = req.query; // Get role from query parameters
         let query = {};
-        console.log(role)
+        // console.log(role)
         if (role) {
             query.role = role; // Apply role filter if provided
         }
-        console.log(query)
+        // console.log(query)
         const allusers = await userModel.find(query);
-        console.log(allusers);
+        // console.log(allusers);
 
         res.render('getAllUsers', { allusers, selectedRole: role || "" });
 
@@ -263,7 +263,7 @@ app.get('/supplier-count', async (req, res) => {
 app.get('/editUser/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        console.log('i m getting id from queries', id)
+        // console.log('i m getting id from queries', id)
         const editUser = await userModel.findById(id);
         if (!editUser) {
             return res.status(404).json({ message: "editUser not found in your database" })
@@ -294,7 +294,7 @@ app.post('/updateUser/:id', async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        console.log("User updated:", updateUser);
+        // console.log("User updated:", updateUser);
         res.redirect(`/viewUser/${id}`);
 
     } catch (error) {
@@ -320,22 +320,22 @@ app.get('/login', isLoginOrNot, (req, res) => {
 app.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log("Login request received:", email);
+        // console.log("Login request received:", email);
 
         const findUser = await userModel.findOne({ email });
         if (!findUser) {
-            console.log("User not found");
+            // console.log("User not found");
             return res.status(400).json({ message: "User not found" });
         }
 
         const isPasswordValid = await bcrypt.compare(password, findUser.password);
         if (!isPasswordValid) {
-            console.log("Invalid credentials");
+            // console.log("Invalid credentials");
             return res.status(400).json({ message: "Invalid credentials" });
         }
         res.cookie('email', email, { httpOnly: true });
         res.cookie('role', findUser.role, { httpOnly: true });
-        console.log("Redirecting to /cart...");
+        // console.log("Redirecting to /cart...");
 
         return res.redirect('/cart');
         // return res.json({ message: "Login successful", redirect: "/cart" });

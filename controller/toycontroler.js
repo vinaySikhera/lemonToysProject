@@ -16,7 +16,7 @@ cloudinary.config({
 // Middleware for validating toy input
 const validateToyInput = (req, res, next) => {
     const { name, category, price, minimum_order_quantity } = req.body;
-    console.log(name, category, price, minimum_order_quantity)
+    // console.log(name, category, price, minimum_order_quantity)
     if (!name || !category || !price || !minimum_order_quantity) {
         return res.status(400).json({ message: "All fields are required!" });
     }
@@ -38,7 +38,7 @@ toyControllerRoute.get('/', async (req, res) => {
             .skip((page - 1) * limit)
             .limit(Number(limit));
 
-        console.log(getAllToys)
+        // console.log(getAllToys)
         res.render('index', {
             allCategories,
             getAllToys,
@@ -69,7 +69,7 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
             .skip((page - 1) * limit)
             .limit(Number(limit));
 
-        console.log(getAllToys)
+        // console.log(getAllToys)
         res.render('toylists', {
             allCategories,
             getAllToys,
@@ -88,7 +88,7 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
 // Add new toy
 toyControllerRoute.get('/addtoys', isAdminOrSupplier, (req, res) => {
     const role = req.cookies.role
-    console.log(role);
+    // console.log(role);
     res.render('addNewToy', { role });
 });
 
@@ -112,7 +112,7 @@ toyControllerRoute.post('/addtoys', upload.single('single_image'), validateToyIn
         const getImage = req.file ? req.file.path : null;
         const toyUrl = `http://localhost:3003/toydetails/${encodeURIComponent(name)}`;
         const qrCode = await QRCode.toDataURL(toyUrl);
-        console.log(getImage)
+        // console.log(getImage)
         uploadImage = await uploadFile(getImage, name)
         const addToy = new AddToyScheema({
             ProductName: name,
@@ -204,7 +204,7 @@ toyControllerRoute.get('/adminToys', isAdmin, async (req, res) => {
             .skip((page - 1) * limit) // Skip the results based on the page number
             .limit(Number(limit));   // Limit the number of results per page
 
-        console.log(getAllToys)
+        // console.log(getAllToys)
         // Render the page with the fetched data
         res.render('toyAdiminDashboard', {
             allCategories,
@@ -272,7 +272,7 @@ toyControllerRoute.get('/approveToys', isAdmin, async (req, res) => {
     try {
         // Extracting price, category, page, and limit from the query parameters
         const { price, category, page = 1, limit = 9, VisibilityStatus } = req.query;
-        console.log(VisibilityStatus)
+        // console.log(VisibilityStatus)
 
         // Initialize the filter object
         const filter = {};
@@ -297,7 +297,7 @@ toyControllerRoute.get('/approveToys', isAdmin, async (req, res) => {
             .skip((page - 1) * limit) // Skip the results based on the page number
             .limit(Number(limit));   // Limit the number of results per page
 
-        console.log(getAllToys)
+        // console.log(getAllToys)
         // Render the page with the fetched data
         res.render('approveToys', {
             allCategories,
@@ -342,7 +342,7 @@ toyControllerRoute.get('/pendingToys', isAdmin, async (req, res) => {
             .skip((page - 1) * limit) // Skip the results based on the page number
             .limit(Number(limit));   // Limit the number of results per page
 
-        console.log(getAllToys)
+        // console.log(getAllToys)
         // Render the page with the fetched data
         res.render('pendingToys', {
             allCategories,
@@ -362,7 +362,7 @@ toyControllerRoute.get('/rejectToys', isAdmin, async (req, res) => {
     try {
         // Extracting price, category, page, and limit from the query parameters
         const { price, category, page = 1, limit = 16, VisibilityStatus } = req.query;
-        console.log(VisibilityStatus)
+        // console.log(VisibilityStatus)
         // Initialize the filter object
         const filter = {};
 
@@ -386,7 +386,7 @@ toyControllerRoute.get('/rejectToys', isAdmin, async (req, res) => {
             .skip((page - 1) * limit) // Skip the results based on the page number
             .limit(Number(limit));   // Limit the number of results per page
 
-        console.log(getAllToys)
+        // console.log(getAllToys)
         // Render the page with the fetched data
         res.render('rejectToys', {
             allCategories,
