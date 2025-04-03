@@ -4,167 +4,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<style>
-    /* General Styling */
-    body {
-        font-family: 'Comfortaa', sans-serif;
-        background: #f8f9fa;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-        padding: 20px;
-    }
+    <title>Register</title>
+    <link rel="stylesheet" href="/css/adminsidebar.css">
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Comfortaa', sans-serif;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
-    .register {
-        background: white;
-        padding: 30px;
-        border-radius: 16px;
-        width: 100%;
-        max-width: 400px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        text-align: center;
-    }
-
-    /* Role Selection */
-    .role-selection {
-        display: flex;
-        justify-content: space-between;
-        margin: 15px 0;
-    }
-
-    .role {
-        flex: 1;
-        margin: 5px;
-        padding: 15px;
-        border: 2px solid #ccc;
-        border-radius: 8px;
-        text-align: center;
-        cursor: pointer;
-        transition: 0.3s;
-        user-select: none;
-    }
-
-    .role:hover,
-    .selected {
-        border-color: #007bff;
-        background: rgba(0, 123, 255, 0.1);
-    }
-
-    .role img {
-        width: 40px;
-    }
-
-    .role span {
-        display: block;
-        font-size: 12px;
-        color: #007bff;
-    }
-
-    /* Input Fields */
-    .input-details {
-        text-align: left;
-        margin: 10px 0 5px;
-        font-size: 14px;
-    }
-
-    input,
-    textarea {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 14px;
-    }
-
-    textarea {
-        resize: vertical;
-        min-height: 60px;
-    }
-
-    /* Register Button */
-    .register-btn {
-        width: 100%;
-        padding: 12px;
-        background: green;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-        margin-top: 10px;
-        transition: 0.3s;
-    }
-
-    .register-btn:hover {
-        background: darkgreen;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 480px) {
-        .register {
+            margin: 0;
             padding: 20px;
         }
 
+        .container {
+            width: 600px;
+            margin: auto;
+            max-width: 900px;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        /* Role Selection */
         .role-selection {
-            flex-direction: column;
-            gap: 10px;
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
         }
 
         .role {
-            width: 100%;
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            user-select: none;
         }
-    }
-</style>
+
+        .role:hover,
+        .selected {
+            border-color: #007bff;
+            background: rgba(0, 123, 255, 0.1);
+        }
+
+        .role img {
+            width: 50px;
+        }
+
+        .role span {
+            display: block;
+            font-size: 14px;
+            color: #007bff;
+        }
+
+        /* Input Fields */
+        .input-details {
+            text-align: left;
+            margin: 10px 0 5px;
+            font-size: 14px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Register Button */
+        .register-btn {
+            width: 100%;
+            padding: 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .register-btn:hover {
+            background: #218838;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+                padding: 20px;
+            }
+
+            .role-selection {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
 
 <body>
-    <form action="/adduser" method="POST" enctype="multipart/form-data">
-        <div class="role-selection">
-            <div class="role" data-role="Supplier">
-                <img src="/images/Group.png" alt="Supplier">
-                <strong>Supplier</strong>
-                <span>Store Owner</span>
+    <div style="display: flex; flex-wrap: wrap;  width: 100%;">
+        <%- include('common/adminsidebar.ejs') %>
+            <div class="container">
+
+                <div class="form-container">
+                    <h2>Register</h2>
+                    <form action="/adduser" method="POST" enctype="multipart/form-data">
+                        <div class="role-selection">
+                            <div class="role" data-role="Supplier">
+                                <img src="/images/Group.png" alt="Supplier">
+                                <strong>Supplier</strong>
+                                <span>Store Owner</span>
+                            </div>
+                            <div class="role" data-role="Customer">
+                                <img src="/images/Vector (1).png" alt="Customer">
+                                <strong>Customer</strong>
+                                <span>Buyer</span>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="selectedRole" name="role" value="">
+
+                        <div class="input-details">
+                            <label for="name">Full Name</label>
+                        </div>
+                        <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+
+                        <div class="input-details">
+                            <label for="phone">Phone</label>
+                        </div>
+                        <input type="tel" id="phone" name="phone" placeholder="Enter your phone" pattern="[0-9]{10,15}"
+                            required>
+
+                        <div class="input-details">
+                            <label for="email">Email Address</label>
+                        </div>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+                        <div class="input-details">
+                            <label for="password">Password</label>
+                        </div>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required
+                            minlength="6">
+
+                        <div class="input-details">
+                            <label for="address">Address</label>
+                        </div>
+                        <textarea id="address" name="address" placeholder="Enter your address" required></textarea>
+
+                        <button type="submit" class="register-btn">Register</button>
+                    </form>
+                </div>
             </div>
-            <div class="role" data-role="Customer">
-                <img src="/images/Vector (1).png" alt="Customer">
-                <strong>Customer</strong>
-                <span>Buyer</span>
-            </div>
-        </div>
-
-        <input type="hidden" id="selectedRole" name="role" value="">
-
-        <div class="input-details">
-            <label for="name">Full Name</label>
-        </div>
-        <input type="text" id="name" name="name" placeholder="Enter your full name" required>
-
-        <div class="input-details">
-            <label for="phone">Phone</label>
-        </div>
-        <input type="tel" id="phone" name="phone" placeholder="Enter your phone" pattern="[0-9]{10,15}" required>
-
-        <div class="input-details">
-            <label for="email">Email Address</label>
-        </div>
-        <input type="email" id="email" name="email" placeholder="Enter your email" required>
-
-        <div class="input-details">
-            <label for="password">Password</label>
-        </div>
-        <input type="password" id="password" name="password" placeholder="Enter your password" required minlength="6">
-
-        <div class="input-details">
-            <label for="address">Address</label>
-        </div>
-        <textarea id="address" name="address" placeholder="Enter your address" required></textarea>
-
-        <button type="submit" class="register-btn">Register</button>
-    </form>
+    </div>
 </body>
 
 </html>
@@ -186,23 +206,6 @@
         if (!selectedRoleInput.value) {
             alert("Please select a role before registering.");
             event.preventDefault();
-        }
-    });
-
-    // Real-time Validation Feedback
-    document.getElementById("phone").addEventListener("input", function () {
-        if (!this.value.match(/^\d{10,15}$/)) {
-            this.setCustomValidity("Please enter a valid phone number (10-15 digits).");
-        } else {
-            this.setCustomValidity("");
-        }
-    });
-
-    document.getElementById("password").addEventListener("input", function () {
-        if (this.value.length < 6) {
-            this.setCustomValidity("Password must be at least 6 characters.");
-        } else {
-            this.setCustomValidity("");
         }
     });
 </script>

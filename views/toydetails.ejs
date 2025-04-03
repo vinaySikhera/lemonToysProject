@@ -422,9 +422,9 @@
 
                     <div class="cart">
                         <div class="bton">
-                            <div><button class="sec">&plus;</button></div>
+                            <!-- <div><button class="sec">&plus;</button></div> -->
                             <div><input type="number" class="input-box" value="1"></div>
-                            <div><button class="sect">&minus;</button></div>
+                            <!-- <div><button class="sect">&minus;</button></div> -->
                         </div>
                         <div>
                             <button
@@ -467,28 +467,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="review">
-                <div class="des">
-                    <div class="rev">
-                        <div style="font-weight: bold;">Description</div>
-                    </div>
-
-                    <div class="rev">
-                        <div style="font-weight: bold;">Reviews (14)</div>
-                    </div>
-                </div>
-
-                <div>g elit. Nobis officiis, blanditiis ad ut repellendus non reiciendis accusamus? Quod accusantium
-                    fuga nulla alias! Facere nihil non autem magni quaerat, explicabo assumenda!</div>
-                <br>
-                <div>
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptates sequi laudantium amet odit
-                    excepturi? Rem iusto saepe cum totam fuga pariatur alias deleniti odit sequi hic porro, doloremque
-                    natus molestias?
-                </div>
-            </div>
-
             <br>
 
             <div class="product">
@@ -501,20 +479,20 @@
                             <div>
                                 <div class="container">
                                     <img width="100%" height="100%" src="<%= toy.ProductImageURL %>"
-                                        alt="<%= toy.ProductName %>"> <!-- Correct field name -->
+                                        alt="<%= toy.ProductName %>">
                                     <button class="imageDiv">Sale</button>
                                 </div>
                             </div>
                             <div>
                                 <h3 class="h3">
-                                    <%= toy.ProductName %> <!-- Correct field name -->
+                                    <%= toy.ProductName %>
                                 </h3>
                                 <div class="h">
                                     <h2 style="color:green">₹<%= toy.Price %>
-                                    </h2> <!-- Correct field name -->
+                                    </h2>
                                     <p class="p">
                                     <h3>₹<%= toy.Price + 40 %>
-                                    </h3> <!-- Assuming you store original price -->
+                                    </h3>
                                     </p>
                                 </div>
                                 <a href="/toydetails/<%= toy._id %>">View Details</a> <!-- Use _id instead of id -->
@@ -529,7 +507,7 @@
 </body>
 
 </html>
-<script>
+<!-- <script>
     document.addEventListener("DOMContentLoaded", function () {
         const addToCartBtn = document.querySelector(".addToCardBtn");
         const inputBox = document.querySelector(".input-box");
@@ -562,4 +540,46 @@
         });
     });
 
+</script> -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const addToCartBtn = document.querySelector(".addToCardBtn");
+        const inputBox = document.querySelector(".input-box");
+
+        addToCartBtn.addEventListener("click", function () {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+            // Get product details with corrected property names
+            const product = {
+                id: "<%= singleToy._id %>",
+                name: "<%= singleToy.ProductName %>",
+                price: <%= singleToy.Price %>,  // Ensure this is a number
+                imageUrl: "<%= singleToy.ProductImageURL %>",
+                quantity: parseInt(inputBox.value) > 0 ? parseInt(inputBox.value) : 1,
+                qrCodeUrl: "/<%= singleToy.qrCodeUrl %>"
+                // qrCodeUrl: productBox.querySelector('.qrcode').src
+            };
+
+            // let product = {
+            //     id: productBox.querySelector('a').getAttribute('href').split('/').pop(), // Extract ID from URL
+            //     name: productBox.querySelector('h3').textContent.trim(),
+            //     price: productBox.querySelector('.h h2').textContent.replace('₹', '').trim(),
+            //     imageUrl: productBox.querySelector('img').src,
+            //     qrCodeUrl: productBox.querySelector('.qrcode').src
+            // };
+
+            // Check if product already exists in the cart
+            const existingProduct = cart.find(item => item.id === product.id);
+            if (existingProduct) {
+                existingProduct.quantity += product.quantity; // Increase quantity
+            } else {
+                cart.push(product); // Add new product
+            }
+
+            // Save updated cart to localStorage
+            localStorage.setItem("cart", JSON.stringify(cart));
+
+            alert(`${product.name} added to cart successfully!`);
+        });
+    });
 </script>

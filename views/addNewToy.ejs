@@ -8,7 +8,24 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            /* max-width: 600px; */
+            width: 770px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
         }
 
         .form-group {
@@ -17,134 +34,188 @@
 
         .form-label {
             font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
         }
 
         .form-input {
             width: 100%;
-            padding: 8px;
-            margin-top: 5px;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            font-size: 16px;
         }
 
         .submit-btn {
-            background-color: #28a745;
+            background-color: #007bff;
             color: white;
-            padding: 10px 15px;
+            padding: 12px;
+            width: 100%;
             border: none;
             cursor: pointer;
             border-radius: 5px;
+            font-size: 16px;
+            transition: background 0.3s ease;
         }
 
         .submit-btn:hover {
-            background-color: #218838;
+            background-color: #0056b3;
+        }
+
+        #image-preview {
+            display: none;
+            max-width: 100%;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        .new-toy {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .container {
+                width: 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 100%;
+                margin-top: 50px;
+                padding: 15px;
+                margin-left: 2px;
+            }
+
+            .form-input {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            .submit-btn {
+                font-size: 14px;
+                padding: 10px;
+            }
+
         }
     </style>
 </head>
 
 <body>
 
-    <h2>Add New Toy Product</h2>
+    <div class="new-toy">
 
-    <form id="add-toy-form" action="/addnewtoys" method="post" enctype="multipart/form-data">
+        <%- include('common/adminsidebar.ejs') %>
 
-        <!-- Toy Image Upload -->
-        <div class="form-group">
-            <label for="single_image" class="form-label">Toy Image:</label>
-            <input type="file" name="single_image" id="single_image" class="form-input" required>
-        </div>
+            <div class="container">
+                <h2>Add New Toy Product</h2>
+                <form id="add-toy-form" action="/toys/addtoys" method="post" enctype="multipart/form-data">
 
-        <!-- Toy Name -->
-        <div class="form-group">
-            <label for="name" class="form-label">Toy Name:</label>
-            <input type="text" name="name" id="name" class="form-input" placeholder="Enter Toy Name" required>
-        </div>
+                    <!-- Toy Image Upload -->
+                    <div class="form-group">
+                        <label for="single_image" class="form-label">Toy Image:</label>
+                        <input type="file" name="single_image" id="single_image" class="form-input" required>
+                    </div>
 
-        <!-- Category -->
-        <div class="form-group">
-            <label for="category" class="form-label">Category:</label>
-            <input type="text" name="category" id="category" class="form-input" placeholder="Category">
-        </div>
+                    <!-- Toy Name -->
+                    <div class="form-group">
+                        <label for="name" class="form-label">Toy Name:</label>
+                        <input type="text" name="name" id="name" class="form-input" placeholder="Enter Toy Name"
+                            required>
+                    </div>
 
-        <!-- Minimum Order Quantity -->
-        <div class="form-group">
-            <label for="minimum_order_quantity" class="form-label">Minimum Order Quantity:</label>
-            <input type="number" name="minimum_order_quantity" id="minimum_order_quantity" class="form-input"
-                placeholder="Enter Minimum Order Quantity">
-        </div>
+                    <!-- Category -->
+                    <div class="form-group">
+                        <label for="category" class="form-label">Category:</label>
+                        <input type="text" name="category" id="category" class="form-input" placeholder="Category">
+                    </div>
 
-        <!-- Price -->
-        <div class="form-group">
-            <label for="price" class="form-label">Price:</label>
-            <input type="number" name="price" id="price" class="form-input" placeholder="Enter Price" required>
-        </div>
+                    <!-- Minimum Order Quantity -->
+                    <div class="form-group">
+                        <label for="minimum_order_quantity" class="form-label">Minimum Order Quantity:</label>
+                        <input type="number" name="minimum_order_quantity" id="minimum_order_quantity"
+                            class="form-input" placeholder="Enter Minimum Order Quantity">
+                    </div>
 
-        <!-- Price Type -->
-        <div class="form-group">
-            <label for="price_type" class="form-label">Price Type:</label>
-            <select name="price_type" id="price_type" class="form-input">
-                <option value="pcs">pcs</option>
-                <option value="Dozen">Dozen</option>
-            </select>
-        </div>
+                    <!-- Price -->
+                    <div class="form-group">
+                        <label for="price" class="form-label">Price:</label>
+                        <input type="number" name="price" id="price" class="form-input" placeholder="Enter Price"
+                            required>
+                    </div>
 
-        <!-- Visibility Status -->
-        <div class="form-group">
-            <label for="visibility_status" class="form-label">Visibility Status:</label>
-            <select name="visibility_status" id="visibility_status" class="form-input">
-                <option value="Approved">Approved</option>
-                <option value="Pending">Pending</option>
-                <option value="Rejected">Rejected</option>
-            </select>
-        </div>
+                    <!-- Price Type -->
+                    <div class="form-group">
+                        <label for="price_type" class="form-label">Price Type:</label>
+                        <select name="price_type" id="price_type" class="form-input">
+                            <option value="pcs">pcs</option>
+                            <option value="Dozen">Dozen</option>
+                        </select>
+                    </div>
 
-        <!-- Product Owner -->
-        <div class="form-group">
-            <label for="product_owner" class="form-label">Product Owner:</label>
-            <input type="text" name="product_owner" id="product_owner" class="form-input"
-                placeholder="Enter Product Owner Name">
-        </div>
+                    <!-- Visibility Status -->
+                    <% if (role==="Admin" ) { %>
+                        <div class="form-group" id="visibilityGroup">
+                            <label for="visibility_status" class="form-label">Visibility Status:</label>
+                            <select name="visibility_status" id="visibility_status" class="form-input">
+                                <option value="Pending">Pending</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                        <% } %>
 
-        <!-- A User Amount -->
-        <div class="form-group">
-            <label for="a_user_amount" class="form-label">A User Amount:</label>
-            <input type="number" name="a_user_amount" id="a_user_amount" class="form-input"
-                placeholder="Enter A User Amount">
-        </div>
+                            <!-- Product Owner -->
+                            <div class="form-group">
+                                <label for="product_owner" class="form-label">Product Owner:</label>
+                                <input type="text" name="product_owner" id="product_owner" class="form-input"
+                                    placeholder="Enter Product Owner Name">
+                            </div>
 
-        <!-- B User Amount -->
-        <div class="form-group">
-            <label for="b_user_amount" class="form-label">B User Amount:</label>
-            <input type="number" name="b_user_amount" id="b_user_amount" class="form-input"
-                placeholder="Enter B User Amount">
-        </div>
+                            <!-- A User Amount -->
+                            <div class="form-group">
+                                <label for="a_user_amount" class="form-label">A User Amount:</label>
+                                <input type="number" name="a_user_amount" id="a_user_amount" class="form-input"
+                                    placeholder="Enter A User Amount">
+                            </div>
 
-        <!-- C User Amount -->
-        <div class="form-group">
-            <label for="c_user_amount" class="form-label">C User Amount:</label>
-            <input type="number" name="c_user_amount" id="c_user_amount" class="form-input"
-                placeholder="Enter C User Amount">
-        </div>
+                            <!-- B User Amount -->
+                            <div class="form-group">
+                                <label for="b_user_amount" class="form-label">B User Amount:</label>
+                                <input type="number" name="b_user_amount" id="b_user_amount" class="form-input"
+                                    placeholder="Enter B User Amount">
+                            </div>
 
-        <!-- D User Amount -->
-        <div class="form-group">
-            <label for="d_user_amount" class="form-label">D User Amount:</label>
-            <input type="number" name="d_user_amount" id="d_user_amount" class="form-input"
-                placeholder="Enter D User Amount">
-        </div>
+                            <!-- C User Amount -->
+                            <div class="form-group">
+                                <label for="c_user_amount" class="form-label">C User Amount:</label>
+                                <input type="number" name="c_user_amount" id="c_user_amount" class="form-input"
+                                    placeholder="Enter C User Amount">
+                            </div>
 
-        <!-- Product Description -->
-        <div class="form-group">
-            <label for="product_description" class="form-label">Product Description:</label>
-            <textarea name="product_description" id="product_description" class="form-input"
-                placeholder="Enter Product Description"></textarea>
-        </div>
+                            <!-- D User Amount -->
+                            <div class="form-group">
+                                <label for="d_user_amount" class="form-label">D User Amount:</label>
+                                <input type="number" name="d_user_amount" id="d_user_amount" class="form-input"
+                                    placeholder="Enter D User Amount">
+                            </div>
 
-        <!-- Submit Button -->
-        <button type="submit" id="submit-button" class="submit-btn">Add Toy</button>
+                            <!-- Product Description -->
+                            <div class="form-group">
+                                <label for="product_description" class="form-label">Product Description:</label>
+                                <textarea name="product_description" id="product_description" class="form-input"
+                                    placeholder="Enter Product Description"></textarea>
+                            </div>
 
-    </form>
+                            <!-- Submit Button -->
+                            <button type="submit" id="submit-button" class="submit-btn">Add Toy</button>
 
+                </form>
+
+            </div>
+    </div>
 </body>
 
 </html>

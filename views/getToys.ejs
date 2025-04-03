@@ -81,34 +81,35 @@
 
 <body>
     <%- include('common/navbar.ejs') %>
-    <h1>get all toys here</h1>
-    <div>
-        <h1>filter by price</h1>
-        <input type="range" name="range" id="range" min="10" max="1000">
-    </div>
-    <div class="productsBoxContainer">
-        <% getAllToys?.forEach(product=> { %>
-            <div class="card">
-                <span class="sale-badge">SALE</span>
-                <div class="icons">
-                    <span>&#x2661;</span>
-                    <span>&#128722;</span>
+        <h1>get all toys here</h1>
+        <div>
+            <h1>filter by price</h1>
+            <input type="range" name="range" id="range" min="10" max="1000">
+        </div>
+        <div class="productsBoxContainer">
+            <% getAllToys?.forEach(product=> { %>
+                <div class="card">
+                    <span class="sale-badge">SALE</span>
+                    <div class="icons">
+                        <span>&#x2661;</span>
+                        <span>&#128722;</span>
+                    </div>
+                    <div class="image-container">
+                        <% if (product.imageUrl) { %>
+                            <img src="<%=HOST%>:/<%= product.imageUrl %>" alt="<%= product.name %>">
+                            <% } else { %>
+                                <img src="https://via.placeholder.com/200" alt="No Image Available">
+                                <% } %>
+                    </div>
+                    <h3 class="title">
+                        <%= product.name %>
+                    </h3>
+                    <span class="price">₹<%= product.price %></span>
+                    <span class="old-price">₹<%= product.price + 40 %></span>
                 </div>
-                <div class="image-container">
-                    <% if (product.imageUrl) { %>
-                        <img src="http://localhost:3003/<%= product.imageUrl %>" alt="<%= product.name %>">
-                        <% } else { %>
-                            <img src="https://via.placeholder.com/200" alt="No Image Available">
-                            <% } %>
-                </div>
-                <h3 class="title">
-                    <%= product.name %>
-                </h3>
-                <span class="price">₹<%= product.price %></span>
-                <span class="old-price">₹<%= product.price + 40 %></span>
-            </div>
-            <% }); %>
-    </div>
+                <% }); %>
+        </div>
 
 </body>
+
 </html>

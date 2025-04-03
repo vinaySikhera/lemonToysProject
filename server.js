@@ -9,26 +9,39 @@ const cookieParser = require('cookie-parser');
 const AddToySchema = require('./models/toyAddProductScheema')
 const bcrypt = require('bcrypt');
 const upload = require('./middleware/fileUpload');
+const isAdmin = require('./middleware/isAdmin');
+const isLoginOrNot = require('./middleware/isLoginOrNot');
+const isAdminOrSupplier = require('./middleware/isAdminOrSupplier');
 const { findByIdAndUpdate } = require("./models/toyAddProductScheema");
 const { ObjectId } = require('mongodb'); // Import ObjectId from MongoDB driver
 const mongoose = require('mongoose')
+require('dotenv').config()
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
+// app.use(process.config.env)
 
 app.use(cookieParser()); // Added cookie-parser middleware before accessing cookies
 
 const staticPath = path.join(__dirname, "public");
 app.use(express.static(staticPath));
+app.use((req, res, next) => {
+    res.locals.HOST = process.env.HOST;
+    // console.log(res.locals.HOST)
+    next();
+});
 app.set('view engine', "ejs");
 
 const PORT = 3003;
 
 app.use('/toys', toyControlerRoute);
 
+
+
 // Routes
 app.get('/contact', (req, res) => {
+
     res.render('contact');
 });
 
@@ -70,7 +83,7 @@ app.get('/cart', async (req, res) => {
 
 
 // REGISTER ROUTE
-app.get('/register', (req, res) => {
+app.get('/register', isLoginOrNot, (req, res) => {
     res.render('register');
 });
 
@@ -109,7 +122,7 @@ app.post('/register', async (req, res) => {
 
 // add user start here----------------------------------------------------------------------------
 
-app.get('/adduser', (req, res) => {
+app.get('/adduser', isAdmin, (req, res) => {
     res.render('addUser');
 });
 
@@ -151,7 +164,7 @@ app.post('/adduser', upload.single('profilePic'), async (req, res) => {
     }
 });
 
-app.patch('/updateuser/:id', async (req, res) => {
+app.patch('/updateuser/:id', isAdmin, async (req, res) => {
     try {
         const { id } = req.params;
         console.log(id)
@@ -163,7 +176,7 @@ app.patch('/updateuser/:id', async (req, res) => {
     }
 })
 
-app.delete('/deleteuser/:id', async (req, res) => {
+app.delete('/deleteuser/:id', isAdmin, async (req, res) => {
     try {
         const { id } = req.params
         await AddUsersScheema.findByIdAndDelete(id);
@@ -174,7 +187,34 @@ app.delete('/deleteuser/:id', async (req, res) => {
 })
 
 
-app.get('/allusers', async (req, res) => {
+
+app.post('/updateVisibilityStatus', isAdmin, async (req, res) => {
+    try {
+        const { toyId, status } = req.body; // Get toy ID and status from request body
+
+        if (!toyId || !status) {
+            return res.status(400).json({ error: "Toy ID and status are required" });
+        }
+
+        // Find toy by ID and update visibility status
+        const updatedToy = await AddToySchema.findByIdAndUpdate(
+            toyId,
+            { $set: { VisibilityStatus: status } },
+            { new: true } // Return updated document
+        );
+
+        if (!updatedToy) {
+            return res.status(404).json({ error: "Toy not found" });
+        }
+
+        res.json({ message: "Toy status updated successfully", updatedToy });
+    } catch (error) {
+        console.error("Error updating status:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+app.get('/allusers', isAdmin, async (req, res) => {
     try {
         const { role } = req.query; // Get role from query parameters
         let query = {};
@@ -194,10 +234,10 @@ app.get('/allusers', async (req, res) => {
 });
 
 
-app.get('/viewUser/:id', async (req, res) => {
+app.get('/viewUser/:id', isAdmin, async (req, res) => {
     try {
         const { id } = req.params;
-        const viewUser = await AddUsersScheema.findById(id);
+        const viewUser = await userModel.findById(id);
         if (!viewUser) {
             return res.status(404).json({ message: "viewUser not found in your database" })
         }
@@ -207,6 +247,7 @@ app.get('/viewUser/:id', async (req, res) => {
         res.status(404).json({ message: "viewUser not found here", error })
     }
 });
+
 app.get('/supplier-count', async (req, res) => {
     try {
         const supplierCount = await userModel.countDocuments({ role: "Supplier" });
@@ -226,7 +267,8 @@ app.get('/supplier-count', async (req, res) => {
 app.get('/editUser/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const editUser = await AddUsersScheema.findById(id);
+        console.log('i m getting id from queries', id)
+        const editUser = await userModel.findById(id);
         if (!editUser) {
             return res.status(404).json({ message: "editUser not found in your database" })
         }
@@ -275,7 +317,7 @@ app.get('/alltoys', (req, res) => {
 
 
 // LOGIN ROUTE
-app.get('/login', (req, res) => {
+app.get('/login', isLoginOrNot, (req, res) => {
     res.render('login');
 });
 
@@ -295,12 +337,6 @@ app.post('/login', async (req, res) => {
             console.log("Invalid credentials");
             return res.status(400).json({ message: "Invalid credentials" });
         }
-
-        // if (findUser.role.toLowerCase() !== role.toLowerCase()) {
-        //     console.log("Invalid role:", findUser.role, role);
-        //     return res.status(400).json({ message: "Invalid role" });
-        // }
-
         res.cookie('email', email, { httpOnly: true });
         res.cookie('role', findUser.role, { httpOnly: true });
         console.log("Redirecting to /cart...");
@@ -321,12 +357,7 @@ app.get('/toydetails/:id', async (req, res) => {
         const toyId = req.params.id;
         // console.log(new ObjectId(toyId))
         const singleToy = await AddToySchema.findById(toyId);
-        // const singleToy = await AddToySchema.findOne({ ProductName:"009 GUN"});
-        // const singleToy = await AddToySchema.findOne({ _id:new ObjectId('67e538a9bf7ce9253fcd471c')});
-        // const singleToy = await AddToySchema.findOne({_id:toyId});
 
-        // console.log(singleToy)
-        // If the toy is not found, return a 404 response
         if (!singleToy) {
             return res.status(404).json({ message: 'Toy not found' });
         }
@@ -349,9 +380,26 @@ app.get('/toydetails/:id', async (req, res) => {
 app.get('/faq', (req, res) => {
     res.render('faq')
 })
-app.get('/dashboard', (req, res) => {
-    res.render('dashboard')
+app.get('/dashboard', isAdminOrSupplier, (req, res) => {
+    // console.log(req.cookies); // Logs all cookies
+    const userRole = req.cookies.role; // Example: Get specific cookie value
+    res.render('dashboard', { userRole }); // Pass it to EJS or use as needed
+});
+app.get('/role', (req, res) => {
+    // console.log(req.cookies); // Logs all cookies
+    const userRole = req.cookies; // Example: Get specific cookie value
+    res.json({ role: userRole }); // Pass it to EJS or use as needed
+});
+
+app.get('/sidebar', async (req, res) => {
+    try {
+        const role = req.cookies.role
+        res.json({ "role": role });
+    } catch (error) {
+        console.log(error)
+    }
 })
+
 
 app.get('/changePassword', (req, res) => {
     res.render('changePassword'); // Create change-password.ejs
@@ -385,13 +433,29 @@ app.post('/changePassword', async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
-app.post('/logout', (req, res) => {
-    res.clearCookie('email');
-    res.clearCookie('role');
 
+// app.post('/logout', (req, res) => {
+//     res.clearCookie('email');
+//     res.clearCookie('role');
+//     res.redirect('/login');
+//     res.json({ message: "logout successfully" });
+// });
 
-    res.redirect('/login');
+app.post("/logout", (req, res) => {
+    try {
+        res.clearCookie("role");
+        res.clearCookie("email");
+
+        // Ensure response is sent only once
+        return res.json({ message: "Logged out successfully" });
+    } catch (error) {
+        console.error("Logout Error:", error);
+        if (!res.headersSent) {  // Prevent duplicate headers issue
+            return res.status(500).json({ message: "Internal Server Error" });
+        }
+    }
 });
+
 
 
 

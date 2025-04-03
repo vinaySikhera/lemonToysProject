@@ -2,19 +2,24 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
 
-<div class="up-header">
-    <div class="ltext">
-        <p><i class="fas fa-truck"></i> Free free shipping with over $150 </p>
-    </div>
-    <div class="losi">
-        <a href="/login">Login</a>
-        <a href="/register">Sign-up</a>
+<div>
+    <div class="up-header">
+        <div class="ltext">
+            <p><i class="fas fa-truck"></i> Free free shipping with over $150 </p>
+        </div>
+        <div class="losi">
+            <a class="link" href="/login" style="display: none;">Login</a>
+            <a class="link" href="/register" style="display: none;">Sign-up</a>
+            <a href="/dashboard">Dashboard</a>
+            <button class="btn" id="logoutBtn" style="display: none;">logout</button>
+        </div>
+
     </div>
 </div>
 <div class="header">
     <a href="/toys">
         <div class="logo">
-            <img  src="/images/abcDice.jpg" alt="Logo" />
+            <img src="/images/abcDice.jpg" alt="Logo" />
         </div>
     </a>
 
@@ -45,10 +50,45 @@
 </div>
 
 <script>
+
+    async function getCookie() {
+        const role = await fetch('/role')
+        const data = await role.json()
+        console.log(data)
+        if (data.role.email != undefined && data.role.role != undefined) {
+            document.querySelector(".btn").style.display = "block";
+        } else {
+            document.querySelectorAll(".link").forEach(item => {
+                item.style.display = "block";
+            });
+        }
+    }
+    getCookie()
     const hamburger = document.getElementById("hamburger");
     const navbar = document.getElementById("navbar");
 
     hamburger.addEventListener("click", () => {
         navbar.classList.toggle("active");
     });
+
+    async function logout() {
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (!logoutBtn) {
+            return
+        }
+        logoutBtn.addEventListener("click", async () => {
+            try {
+                const response = await fetch('/logout', { method: 'POST' });
+                const data = await response.json();
+
+                alert(data.message);
+                // window.location.href = "/login"; // Redirect to login after logout
+                location.reload();
+            } catch (error) {
+                console.error("Logout Error:", error);
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", logout);
 </script>

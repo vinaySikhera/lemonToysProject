@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/adminsidebar.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .product {
+            display: none;
+        }
+    </style>
+</head>
+<style>
+
+</style>
+
+<body>
+
+    <div class="sidebar">
+        <h2>LEMON TOY</h2>
+        <ul>
+            <a href="/dashboard">
+                <li class="active">Dashboard</li>
+            </a>
+            <li class="dropdown users" style="display: none;">
+                Manage All Users
+                <ul class="dropdown-menu">
+                    <a href="/adduser">
+                        <li>Add User</li>
+                    </a>
+                    <li><a href="/allusers">Manage User</a></li>
+                </ul>
+            </li>
+            <li class="dropdown ">
+                Manage All product
+                <ul class="dropdown-menu">
+                    <li> <a href="<%= HOST %>/toys/addtoys">Add New Toys</a></li>
+                    <li class="product"><a href="<%= HOST %>/toys/adminToys">manage all toys</a></li>
+                    <li class="product"><a href="<%= HOST %>/toys/approveToys?VisibilityStatus=Approved">Approved
+                            Products</a></li>
+                    <li class="product"><a href="<%= HOST %>/toys/pendingToys?VisibilityStatus=Pending">Pending
+                            Products</a>
+                    </li>
+                    <li class="product"><a href="<%= HOST %>/toys/rejectToys?VisibilityStatus=Rejected">Rejected
+                            Products</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                Manage All Orders
+                <ul class="dropdown-menu">
+                    <li><a href="#">Open Orders</a></li>
+                    <li><a href="#">Close Orders</a></li>
+                    <li><a href="#">Total Orders</a></li>
+                </ul>
+            <li><a style="text-decoration: none; color: black;" href="/changePassword">Change Password</a></li>
+            <li>
+                <button onclick="confirmLogout()"
+                    style="background: none; border: none; width: 100%; padding: 10px; cursor: pointer;">Logout</button>
+            </li>
+        </ul>
+    </div>
+
+    <div id="logoutModal"
+        style="display: none; position: fixed; top: 10px; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000;">
+        <div
+            style="background: white; margin: 100px auto; padding: 20px; text-align: center; width: 300px; border-radius: 8px;">
+            <h3>Are you sure you want to logout?</h3>
+            <button onclick="logout()"
+                style="margin-right: 10px; margin-top: 17px; padding: 10px 20px; background-color: #ff4d4d; color: white; border: none; cursor: pointer;">Logout</button>
+            <button onclick="cancelLogout()"
+                style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">Cancel</button>
+        </div>
+    </div>
+</body>
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", async function () {
+        async function getRole() {
+            try {
+                const response = await fetch("/sidebar");
+                if (!response.ok) {
+                    throw new Error("Failed to fetch role");
+                }
+                const data = await response.json();
+                return data.role;
+            } catch (error) {
+                console.error("Error fetching role:", error);
+                return null; // Return null if there's an error
+            }
+        }
+
+        const role = await getRole();
+        console.log("User Role:", role);
+
+        if (role && role.toLowerCase() === "admin") {
+            document.querySelector(".users").style.display = "block";
+            document.querySelectorAll(".product").forEach(item => {
+                item.style.display = "block";
+            });
+        }
+    });
+
+
+    function confirmLogout() {
+        document.getElementById("logoutModal").style.display = "block";
+    }
+    function cancelLogout() {
+        document.getElementById("logoutModal").style.display = "none";
+    }
+    function logout() {
+        window.location.href = "/login";
+    }
+</script>
+
+</html>

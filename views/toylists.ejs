@@ -338,24 +338,6 @@
                         <% }); %>
                 </div>
  
-                <!-- <div class="pagination">
-                    <% if (currentPage> 1) { %>
-                        <a
-                            href="/toys/alltoys?page=<%= currentPage - 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">&laquo;</a>
-                        <% } %>
- 
-                            <% for (let i=1; i <=totalPages; i++) { %>
-                                <a href="/toys/alltoys?page=<%= i %>&price=<%= price || '' %>&category=<%= category || '' %>"
-                                    class="<%= currentPage === i ? 'active' : '' %>">
-                                    <%= i %>
-                                </a>
-                                <% } %>
- 
-                                    <% if (currentPage < totalPages) { %>
-                                        <a
-                                            href="/toys/alltoys?page=<%= currentPage + 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">&raquo;</a>
-                                        <% } %>
-                </div> -->
                 <div class="pagination">
                     <% if (currentPage > 1) { %>
                         <a class="page-link" href="/toys/alltoys?page=<%= currentPage - 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">

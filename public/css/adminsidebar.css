@@ -1,0 +1,98 @@
+ .sidebar {
+     width: 250px;
+     background: #fff;
+     padding: 20px;
+     height: auto;
+     /* Automatically adjusts height */
+     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+     overflow-y: auto;
+     /* Allow scrolling if necessary */
+ }
+
+ .sidebar h2 {
+     text-align: center;
+     font-size: 22px;
+     margin-bottom: 20px;
+     color: #333;
+ }
+
+ .sidebar ul {
+     list-style: none;
+     padding: 0;
+     margin: 0;
+ }
+
+ .sidebar ul li {
+     padding: 15px;
+     margin: 10px 0;
+     background: #f8f8f8;
+     cursor: pointer;
+     text-align: center;
+     font-size: 16px;
+     border-radius: 5px;
+     transition: 0.3s ease;
+ }
+
+ .sidebar ul li:hover {
+     background: #ddd;
+ }
+
+ .sidebar ul .active {
+     background: blue;
+     color: white;
+ }
+
+ /* Dropdown styles */
+ .sidebar ul .dropdown {
+     position: relative;
+ }
+
+ .sidebar ul .dropdown-menu {
+     display: none;
+     list-style: none;
+     padding: 0;
+     margin: 0;
+     background: #f8f8f8;
+     position: absolute;
+     left: 0;
+     width: 100%;
+     top: 100%;
+     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+     z-index: 1;
+ }
+
+ .sidebar ul .dropdown-menu li {
+     padding: 10px;
+     text-align: left;
+ }
+
+ .sidebar ul .dropdown-menu li a {
+     color: black;
+     text-decoration: none;
+ }
+
+ /* Show the dropdown menu when hovering over the dropdown item */
+ .sidebar ul .dropdown:hover .dropdown-menu {
+     display: block;
+ }
+
+ /* Expand space when hovering on dropdown */
+ .sidebar ul .dropdown:hover {
+     background: #ddd;
+ }
+
+ .sidebar ul .dropdown:hover .dropdown-menu {
+     display: block;
+ }
+
+ .sidebar ul .dropdown:hover+li {
+     margin-top: 140px;
+     /* Adjust this padding for the next item to make space */
+ }
+
+ @media (max-width: 768px) {
+     .sidebar {
+         width: 100%;
+         height: auto;
+     }
+ }

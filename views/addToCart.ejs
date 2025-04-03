@@ -365,7 +365,7 @@
             row.innerHTML = `
         <td><img src="${product.imageUrl}" alt="${product.name}" width="50"></td>
         <td>${product.name}</td>
-        <td>$${product.price}</td>
+        <td>₹${product.price}</td>
         <td>
             <div class="quantity">
                 <button class="minus" onclick="updateQuantity('${product.id}', -1)">&minus;</button>
@@ -373,7 +373,7 @@
                 <button class="plus" onclick="updateQuantity('${product.id}', 1)">&plus;</button>
             </div>
         </td>
-        <td class="subtotal">$${subtotal}</td>
+        <td class="subtotal">₹${subtotal}</td>
         <td><img src="${product.qrCodeUrl}" alt="QR Code for ${product.name}" width="50"></td>
         <td><button class="remove-btn" onclick="removeFromCart('${product.id}')">&times;</button></td>
     `;
@@ -381,8 +381,8 @@
             cartContainer.appendChild(row);
         });
 
-        document.getElementById("subtotal-amount").textContent = `$${subtotalAmount.toFixed(2)}`;
-        document.getElementById("total-amount").textContent = `$${(subtotalAmount + 20).toFixed(2)}`; // Assuming $20 shipping
+        document.getElementById("subtotal-amount").textContent = `₹${subtotalAmount.toFixed(2)}`;
+        document.getElementById("total-amount").textContent = `₹${(subtotalAmount + 20).toFixed(2)}`; // Assuming $20 shipping
     }
 
     function updateQuantity(productId, change) {
@@ -432,9 +432,9 @@
             let product = cart[i];
 
             doc.text(`${i + 1}. ${product.name}`, 20, yPosition);
-            doc.text(`Price: $${product.price}`, 20, yPosition + 10);
+            doc.text(`Price: ₹${product.price}`, 20, yPosition + 10);
             doc.text(`Quantity: ${product.quantity}`, 20, yPosition + 20);
-            doc.text(`Subtotal: $${(product.price * product.quantity).toFixed(2)}`, 20, yPosition + 30);
+            doc.text(`Subtotal: ₹${(product.price * product.quantity).toFixed(2)}`, 20, yPosition + 30);
 
             // Convert images to Base64 and add them to the PDF
             let productImage = await getBase64Image(product.imageUrl);
@@ -452,7 +452,7 @@
         }
 
         let totalAmount = cart.reduce((sum, product) => sum + product.price * product.quantity, 0) + 20;
-        doc.text(`Total: $${totalAmount.toFixed(2)}`, 20, yPosition + 10);
+        doc.text(`Total: ₹${totalAmount.toFixed(2)}`, 20, yPosition + 10);
 
         doc.save("cart-summary.pdf");
     }

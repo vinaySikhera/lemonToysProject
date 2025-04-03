@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Toy Dashboard</title>
+    <title>Pending toys</title>
     <!-- <link rel="stylesheet" href="/styles.css"> -->
     <style>
         /* General Styling */
@@ -13,16 +13,14 @@
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+
         }
 
         /* Container */
         .container {
-            width: 80%;
+            width: 700px;
             background: white;
+            margin: auto;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
@@ -89,89 +87,193 @@
 
         /* Pagination */
         .pagination {
-            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            padding: 20px;
         }
 
-        .pagination a {
-            display: inline-block;
-            padding: 8px 12px;
-            margin: 0 5px;
-            background: #007BFF;
-            color: white;
+        .page-link {
+            color: black;
             text-decoration: none;
-            border-radius: 5px;
-            transition: background 0.3s ease;
+            font-size: 16px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            transition: background 0.3s ease-in-out;
         }
 
-        .pagination a:hover {
-            background: #0056b3;
+        .page-link:hover {
+            background-color: #e0e0e0;
         }
 
-        .pagination .active {
-            background: #0056b3;
+        .active {
+            background-color: #0066ff;
+            color: white;
             font-weight: bold;
+            border: none;
+            padding: 12px 18px;
+        }
+
+        .ellipsis {
+            padding: 10px;
+            font-size: 16px;
+            color: #777;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h2>Pending toys</h2>
+    <div style="display: flex; flex-wrap: wrap;">
+        <%- include('common/adminsidebar.ejs') %>
+            <div class="container">
+                <h2>Pending toys</h2>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Image</th>
-                    <th>Product Name</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% getAllToys.forEach(toy=> { %>
-                    <tr>
-                        <td>
-                            <img src="<%= toy.ProductImageURL %>" width="80" height="80" alt="<%= toy.ProductName %>">
-                        </td>
-                        <td>
-                            <%= toy.ProductName %>
-                        </td>
-                        <td>
-                            <%= toy.Category %>
-                        </td>
-                        <td>₹<%= toy.Price %>
-                        </td>
-                        <td>
-                            <a href="/toys/viewToys/<%= toy._id %>" class="btn">View</a>
-                            <a href="/toys/editToy/<%= toy._id %>" class="btn edit">Edit</a>
-                        </td>
-                    </tr>
-                    <% }) %>
-            </tbody>
-        </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% getAllToys.forEach(toy=> { %>
+                            <tr>
+                                <td>
+                                    <img src="<%= toy.ProductImageURL %>" width="80" height="80"
+                                        alt="<%= toy.ProductName %>">
+                                </td>
+                                <td>
+                                    <%= toy.ProductName %>
+                                </td>
+                                <td>
+                                    <%= toy.Category %>
+                                </td>
+                                <td>₹<%= toy.Price %>
+                                </td>
+                                <td>
+                                    <a href="/toys/viewToys/<%= toy._id %>" class="btn">View</a>
+                                    <a href="/toys/editToy/<%= toy._id %>" class="btn edit">Edit</a>
+                                    <button onclick="showModal('Approved', '<%= toy._id %>')">Accept</button>
+                                    <button onclick="showModal('Rejected', '<%= toy._id %>')">Reject</button>
 
-        <!-- Pagination -->
-        <div class="pagination">
-            <% if (currentPage> 1) { %>
-                <a href="/adminToys?page=<%= currentPage - 1 %>&price=<%= price %>&category=<%= category %>">&laquo;
-                    Prev</a>
-                <% } %>
-
-                    <% for (let i=1; i <=totalPages; i++) { %>
-                        <a href="/adminToys?page=<%= i %>&price=<%= price %>&category=<%= category %>"
-                            class="<%= currentPage === i ? 'active' : '' %>">
-                            <%= i %>
+                                </td>
+                                
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+                <div id="confirmationModal"
+                    style="display: none; position: fixed; top: 10px; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000;">
+                    <div
+                        style="background: white; margin: 100px auto; padding: 20px; text-align: center; width: 300px; border-radius: 8px;">
+                        <h3 id="confirmationText"></h3>
+                        <button id="confirmButton"
+                            style="margin-right: 10px; margin-top: 17px; padding: 10px 20px; background-color: #ff4d4d; color: white; border: none; cursor: pointer;">
+                            Confirm
+                        </button>
+                        <button onclick="closeModal()"
+                            style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+                <!-- Pagination -->
+                <div class="pagination">
+                    <% if (currentPage> 1) { %>
+                        <a class="page-link"
+                            href="/toys/pendingToys?page=<%= currentPage - 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">
+                            &#x276E;
                         </a>
                         <% } %>
 
-                            <% if (currentPage < totalPages) { %>
-                                <a
-                                    href="/adminToys?page=<%= currentPage + 1 %>&price=<%= price %>&category=<%= category %>">Next
-                                    &raquo;</a>
-                                <% } %>
-        </div>
+                            <% if (currentPage> 3) { %>
+                                <a class="page-link"
+                                    href="/toys/pendingToys?page=1&price=<%= price || '' %>&category=<%= category || '' %>">1</a>
+                                <% if (currentPage> 4) { %>
+                                    <span class="ellipsis">...</span>
+                                    <% } %>
+                                        <% } %>
+
+                                            <% for (let i=Math.max(1, currentPage - 2); i <=Math.min(totalPages,
+                                                currentPage + 2); i++) { %>
+                                                <a href="/toys/pendingToys?page=<%= i %>&price=<%= price || '' %>&category=<%= category || '' %>"
+                                                    class="page-link <%= currentPage === i ? 'active' : '' %>">
+                                                    <%= i %>
+                                                </a>
+                                                <% } %>
+
+                                                    <% if (currentPage < totalPages - 2) { %>
+                                                        <% if (currentPage < totalPages - 3) { %>
+                                                            <span class="ellipsis">...</span>
+                                                            <% } %>
+                                                                <a class="page-link"
+                                                                    href="/toys/pendingToys?page=<%= totalPages %>&price=<%= price || '' %>&category=<%= category || '' %>">
+                                                                    <%= totalPages %>
+                                                                </a>
+                                                                <% } %>
+
+                                                                    <% if (currentPage < totalPages) { %>
+                                                                        <a class="page-link"
+                                                                            href="/toys/pendingToys?page=<%= currentPage + 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">
+                                                                            &#x276F;
+                                                                        </a>
+                                                                        <% } %>
+                </div>
+
+            </div>
     </div>
 </body>
 
 </html>
+<script>
+
+async function updateVisibilityStatus(toyId, status) {
+    try {
+        const response = await fetch('/updateVisibilityStatus', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ toyId, status }) // Send toy ID and new status
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(result.message); // Show success message
+            location.reload(); // Reload page to reflect changes
+        } else {
+            alert(result.error); // Show error message
+        }
+    } catch (error) {
+        console.error("Error updating visibility status:", error);
+        alert("Failed to update status. Please try again.");
+    }
+}
+async function showModal(status, toyId) {
+    const modal = document.getElementById('confirmationModal');
+    const confirmationText = document.getElementById('confirmationText');
+    const confirmButton = document.getElementById('confirmButton');
+
+    confirmationText.innerText = `Are you sure you want to mark this toy as ${status}?`;
+    confirmButton.style.backgroundColor = status === 'Approved' ? "#28a745" : "#ff4d4d";
+    
+    confirmButton.onclick = async function () {
+        await updateVisibilityStatus(toyId, status);
+        closeModal();
+    };
+
+    modal.style.display = 'block';
+}
+
+
+    function closeModal() {
+        document.getElementById('confirmationModal').style.display = 'none';
+    }
+</script>

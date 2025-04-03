@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Toy Dashboard</title>
+    <title>reject toys</title>
     <!-- <link rel="stylesheet" href="/styles.css"> -->
     <style>
         /* General Styling */
@@ -13,15 +13,12 @@
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
         }
 
         /* Container */
         .container {
-            width: 80%;
+            width: 700px;
+            margin: auto;
             background: white;
             padding: 20px;
             border-radius: 8px;
@@ -89,88 +86,127 @@
 
         /* Pagination */
         .pagination {
-            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            padding: 20px;
         }
 
-        .pagination a {
-            display: inline-block;
-            padding: 8px 12px;
-            margin: 0 5px;
-            background: #007BFF;
-            color: white;
+        .page-link {
+            color: black;
             text-decoration: none;
-            border-radius: 5px;
-            transition: background 0.3s ease;
+            font-size: 16px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            transition: background 0.3s ease-in-out;
         }
 
-        .pagination a:hover {
-            background: #0056b3;
+        .page-link:hover {
+            background-color: #e0e0e0;
         }
 
-        .pagination .active {
-            background: #0056b3;
+        .active {
+            background-color: #0066ff;
+            color: white;
             font-weight: bold;
+            border: none;
+            padding: 12px 18px;
+        }
+
+        .ellipsis {
+            padding: 10px;
+            font-size: 16px;
+            color: #777;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h2>Rejected toys</h2>
+    <div style="display: flex; flex-wrap: wrap;">
+        <%- include('common/adminsidebar.ejs') %>
+            <div class="container">
+                <h2>Rejected toys</h2>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Image</th>
-                    <th>Product Name</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% getAllToys.forEach(toy=> { %>
-                    <tr>
-                        <td>
-                            <img src="<%= toy.ProductImageURL %>" width="80" height="80" alt="<%= toy.ProductName %>">
-                        </td>
-                        <td>
-                            <%= toy.ProductName %>
-                        </td>
-                        <td>
-                            <%= toy.Category %>
-                        </td>
-                        <td>₹<%= toy.Price %>
-                        </td>
-                        <td>
-                            <a href="/toys/viewToys/<%= toy._id %>" class="btn">View</a>
-                            <a href="/toys/editToy/<%= toy._id %>" class="btn edit">Edit</a>
-                        </td>
-                    </tr>
-                    <% }) %>
-            </tbody>
-        </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% getAllToys.forEach(toy=> { %>
+                            <tr>
+                                <td>
+                                    <img src="<%= toy.ProductImageURL %>" width="80" height="80"
+                                        alt="<%= toy.ProductName %>">
+                                </td>
+                                <td>
+                                    <%= toy.ProductName %>
+                                </td>
+                                <td>
+                                    <%= toy.Category %>
+                                </td>
+                                <td>₹<%= toy.Price %>
+                                </td>
+                                <td>
+                                    <a href="/toys/viewToys/<%= toy._id %>" class="btn">View</a>
+                                    <a href="/toys/editToy/<%= toy._id %>" class="btn edit">Edit</a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
 
-        <!-- Pagination -->
-        <div class="pagination">
-            <% if (currentPage> 1) { %>
-                <a href="/adminToys?page=<%= currentPage - 1 %>&price=<%= price %>&category=<%= category %>">&laquo;
-                    Prev</a>
-                <% } %>
-
-                    <% for (let i=1; i <=totalPages; i++) { %>
-                        <a href="/adminToys?page=<%= i %>&price=<%= price %>&category=<%= category %>"
-                            class="<%= currentPage === i ? 'active' : '' %>">
-                            <%= i %>
+                <!-- Pagination -->
+                <div class="pagination">
+                    <% if (currentPage> 1) { %>
+                        <a class="page-link"
+                            href="/toys/rejectToys?page=<%= currentPage - 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">
+                            &#x276E;
                         </a>
                         <% } %>
 
-                            <% if (currentPage < totalPages) { %>
-                                <a
-                                    href="/adminToys?page=<%= currentPage + 1 %>&price=<%= price %>&category=<%= category %>">Next
-                                    &raquo;</a>
-                                <% } %>
-        </div>
+                            <% if (currentPage> 3) { %>
+                                <a class="page-link"
+                                    href="/toys/rejectToys?page=1&price=<%= price || '' %>&category=<%= category || '' %>">1</a>
+                                <% if (currentPage> 4) { %>
+                                    <span class="ellipsis">...</span>
+                                    <% } %>
+                                        <% } %>
+
+                                            <% for (let i=Math.max(1, currentPage - 2); i <=Math.min(totalPages,
+                                                currentPage + 2); i++) { %>
+                                                <a href="/toys/rejectToys?page=<%= i %>&price=<%= price || '' %>&category=<%= category || '' %>"
+                                                    class="page-link <%= currentPage === i ? 'active' : '' %>">
+                                                    <%= i %>
+                                                </a>
+                                                <% } %>
+
+                                                    <% if (currentPage < totalPages - 2) { %>
+                                                        <% if (currentPage < totalPages - 3) { %>
+                                                            <span class="ellipsis">...</span>
+                                                            <% } %>
+                                                                <a class="page-link"
+                                                                    href="/toys/rejectToys?page=<%= totalPages %>&price=<%= price || '' %>&category=<%= category || '' %>">
+                                                                    <%= totalPages %>
+                                                                </a>
+                                                                <% } %>
+
+                                                                    <% if (currentPage < totalPages) { %>
+                                                                        <a class="page-link"
+                                                                            href="/toys/rejectToys?page=<%= currentPage + 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">
+                                                                            &#x276F;
+                                                                        </a>
+                                                                        <% } %>
+                </div>
+            </div>
     </div>
 </body>
 
