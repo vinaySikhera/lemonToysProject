@@ -54,7 +54,7 @@
     async function getCookie() {
         const role = await fetch('/role')
         const data = await role.json()
-        // console.log(data)
+        console.log(data)
         if (data.role.email != undefined && data.role.role != undefined) {
             document.querySelector(".btn").style.display = "block";
         } else {
