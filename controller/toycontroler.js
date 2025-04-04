@@ -3,6 +3,8 @@ const AddToyScheema = require('../models/toyAddProductScheema');
 const upload = require("../middleware/fileUpload");
 const QRCode = require('qrcode');
 const cloudinary = require('cloudinary')
+const isAdmin = require('../middleware/isAdmin');
+const isAdminOrSupplier = require('../middleware/isAdminOrSupplier');
 const toyControllerRoute = express.Router();
 
 cloudinary.config({
@@ -14,6 +16,7 @@ cloudinary.config({
 // Middleware for validating toy input
 const validateToyInput = (req, res, next) => {
     const { name, category, price, minimum_order_quantity } = req.body;
+    // console.log(name, category, price, minimum_order_quantity)
     if (!name || !category || !price || !minimum_order_quantity) {
         return res.status(400).json({ message: "All fields are required!" });
     }
@@ -21,13 +24,9 @@ const validateToyInput = (req, res, next) => {
 };
 
 // Home Page
-toyControllerRoute.get('/', (req, res) => {
-    res.render('index');
-});
-
-toyControllerRoute.get('/alltoys', async (req, res) => {
+toyControllerRoute.get('/', async (req, res) => {
     try {
-        const { price, category, page = 1, limit = 16 } = req.query;
+        const { price, category, page = 1, limit = 9 } = req.query;
         const filter = {};
         if (price) filter.Price = { $lte: Number(price) };
         if (category) filter.Category = category;
@@ -39,8 +38,8 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
             .skip((page - 1) * limit)
             .limit(Number(limit));
 
-        console.log(getAllToys)
-        res.render('toylists', {
+        // console.log(getAllToys)
+        res.render('index', {
             allCategories,
             getAllToys,
             currentPage: Number(page),
@@ -53,11 +52,40 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
         console.error("Error fetching toys:", error);
         res.status(500).send("Internal Server Error");
     }
+    // res.render('index');
+});
+
+toyControllerRoute.get('/alltoys', async (req, res) => {
+    try {
+        const { price, category} = req.query;
+        const filter = {};
+        if (price) filter.Price = { $lte: Number(price) };
+        if (category) filter.Category = category;
+        const allCategories = await AddToyScheema.distinct("Category");
+        const totalToys = await AddToyScheema.countDocuments(filter);
+        
+        const getAllToys = await AddToyScheema.find(filter)
+            .sort({ Price: price ? 1 : -1, _id: -1 })
+
+        // console.log(getAllToys)
+        res.render('toylists', {
+            allCategories,
+            getAllToys,
+            totalToys,
+            price: price || '',
+            category: category || ''
+        });
+    } catch (error) {
+        console.error("Error fetching toys:", error);
+        res.status(500).send("Internal Server Error");
+    }
 });
 
 // Add new toy
-toyControllerRoute.get('/addtoys', (req, res) => {
-    res.render('addToys');
+toyControllerRoute.get('/addtoys', isAdminOrSupplier, (req, res) => {
+    const role = req.cookies.role
+    // console.log(role);
+    res.render('addNewToy', { role });
 });
 
 const uploadFile = async (url, name) => {
@@ -73,14 +101,15 @@ const uploadFile = async (url, name) => {
     console.log(uploadResult.url)
     return uploadResult.url
 }
+
 toyControllerRoute.post('/addtoys', upload.single('single_image'), validateToyInput, async (req, res) => {
     try {
         const { name, category, minimum_order_quantity, price, price_type, visibility_status, product_owner, a_user_amount, b_user_amount, c_user_amount, d_user_amount, product_description } = req.body;
-
+        // console.log("00000000000000000000000000000000", visibility_status)
         const getImage = req.file ? req.file.path : null;
         const toyUrl = `http://localhost:3003/toydetails/${encodeURIComponent(name)}`;
         const qrCode = await QRCode.toDataURL(toyUrl);
-        console.log(getImage)
+        // console.log(getImage)
         uploadImage = await uploadFile(getImage, name)
         const addToy = new AddToyScheema({
             ProductName: name,
@@ -106,7 +135,7 @@ toyControllerRoute.post('/addtoys', upload.single('single_image'), validateToyIn
                 console.error('Error adding toy:', error);
             });
 
-        res.redirect('/toys/alltoys');
+        res.redirect('/toys/adminToys');
         // res.status(202).json({ message: "New data consoled" });
     } catch (error) {
         console.error("New data not added", error);
@@ -147,14 +176,12 @@ toyControllerRoute.delete('/delete/:id', async (req, res) => {
     }
 });
 
-toyControllerRoute.get('/adminToys', async (req, res) => {
+toyControllerRoute.get('/adminToys', isAdmin, async (req, res) => {
     try {
         // Extracting price, category, page, and limit from the query parameters
         const { price, category, page = 1, limit = 9 } = req.query;
 
-        // Initialize the filter object
         const filter = {};
-
         // Apply filter for price and category if provided
         if (price) filter.Price = { $lte: Number(price) };
         if (category) filter.Category = category;
@@ -174,7 +201,7 @@ toyControllerRoute.get('/adminToys', async (req, res) => {
             .skip((page - 1) * limit) // Skip the results based on the page number
             .limit(Number(limit));   // Limit the number of results per page
 
-        console.log(getAllToys)
+        // console.log(getAllToys)
         // Render the page with the fetched data
         res.render('toyAdiminDashboard', {
             allCategories,
@@ -191,7 +218,7 @@ toyControllerRoute.get('/adminToys', async (req, res) => {
     }
 });
 
-toyControllerRoute.get('/editToy/:id', async (req, res) => {
+toyControllerRoute.get('/editToy/:id', isAdminOrSupplier, async (req, res) => {
     try {
         const toy = await AddToyScheema.findById(req.params.id);
         if (!toy) return res.status(404).send("Toy not found");
@@ -203,7 +230,7 @@ toyControllerRoute.get('/editToy/:id', async (req, res) => {
     }
 });
 
-toyControllerRoute.post('/updateToy/:id', async (req, res) => {
+toyControllerRoute.post('/updateToy/:id', isAdminOrSupplier, async (req, res) => {
     try {
         const { ProductName, Category, Price, ProductImageURL } = req.body;
         await AddToyScheema.findByIdAndUpdate(req.params.id, {
@@ -220,7 +247,7 @@ toyControllerRoute.post('/updateToy/:id', async (req, res) => {
     }
 });
 
-toyControllerRoute.get('/viewToys/:id', async (req, res) => {
+toyControllerRoute.get('/viewToys/:id', isAdminOrSupplier, async (req, res) => {
     try {
         const { id } = req.params;
         const toys = await AddToyScheema.findById(id);
@@ -238,10 +265,11 @@ toyControllerRoute.get('/viewToys/:id', async (req, res) => {
 
 
 
-toyControllerRoute.get('/approveToys', async (req, res) => {
+toyControllerRoute.get('/approveToys', isAdmin, async (req, res) => {
     try {
         // Extracting price, category, page, and limit from the query parameters
-        const { price, category, page = 1, limit = 9 } = req.query;
+        const { price, category, page = 1, limit = 9, VisibilityStatus } = req.query;
+        // console.log(VisibilityStatus)
 
         // Initialize the filter object
         const filter = {};
@@ -249,6 +277,7 @@ toyControllerRoute.get('/approveToys', async (req, res) => {
         // Apply filter for price and category if provided
         if (price) filter.Price = { $lte: Number(price) };
         if (category) filter.Category = category;
+        if (VisibilityStatus) filter.VisibilityStatus = VisibilityStatus;
 
         // Fetch distinct categories for the filter options
         const allCategories = await AddToyScheema.distinct("Category");
@@ -265,7 +294,7 @@ toyControllerRoute.get('/approveToys', async (req, res) => {
             .skip((page - 1) * limit) // Skip the results based on the page number
             .limit(Number(limit));   // Limit the number of results per page
 
-        console.log(getAllToys)
+        // console.log(getAllToys)
         // Render the page with the fetched data
         res.render('approveToys', {
             allCategories,
@@ -282,10 +311,10 @@ toyControllerRoute.get('/approveToys', async (req, res) => {
     }
 });
 
-toyControllerRoute.get('/pendingToys', async (req, res) => {
+toyControllerRoute.get('/pendingToys', isAdmin, async (req, res) => {
     try {
         // Extracting price, category, page, and limit from the query parameters
-        const { price, category, page = 1, limit = 9 } = req.query;
+        const { price, category, page = 1, limit = 9, VisibilityStatus } = req.query;
 
         // Initialize the filter object
         const filter = {};
@@ -293,6 +322,7 @@ toyControllerRoute.get('/pendingToys', async (req, res) => {
         // Apply filter for price and category if provided
         if (price) filter.Price = { $lte: Number(price) };
         if (category) filter.Category = category;
+        if (VisibilityStatus) filter.VisibilityStatus = VisibilityStatus;
 
         // Fetch distinct categories for the filter options
         const allCategories = await AddToyScheema.distinct("Category");
@@ -309,7 +339,7 @@ toyControllerRoute.get('/pendingToys', async (req, res) => {
             .skip((page - 1) * limit) // Skip the results based on the page number
             .limit(Number(limit));   // Limit the number of results per page
 
-        console.log(getAllToys)
+        // console.log(getAllToys)
         // Render the page with the fetched data
         res.render('pendingToys', {
             allCategories,
@@ -325,19 +355,20 @@ toyControllerRoute.get('/pendingToys', async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 });
-toyControllerRoute.get('/rejectToys', async (req, res) => {
+toyControllerRoute.get('/rejectToys', isAdmin, async (req, res) => {
     try {
         // Extracting price, category, page, and limit from the query parameters
-        const { price, category, page = 1, limit = 16 } = req.query;
-
+        const { price, category, page = 1, limit = 16, VisibilityStatus } = req.query;
+        // console.log(VisibilityStatus)
         // Initialize the filter object
         const filter = {};
 
         // Apply filter for price and category if provided
         if (price) filter.Price = { $lte: Number(price) };
         if (category) filter.Category = category;
+        if (VisibilityStatus) filter.VisibilityStatus = VisibilityStatus;
 
-        // Fetch distinct categories for the filter options
+        // Fetch distinct categories for the filter optio
         const allCategories = await AddToyScheema.distinct("Category");
 
         // Count the total number of toys matching the filter
@@ -352,7 +383,7 @@ toyControllerRoute.get('/rejectToys', async (req, res) => {
             .skip((page - 1) * limit) // Skip the results based on the page number
             .limit(Number(limit));   // Limit the number of results per page
 
-        console.log(getAllToys)
+        // console.log(getAllToys)
         // Render the page with the fetched data
         res.render('rejectToys', {
             allCategories,
@@ -368,4 +399,6 @@ toyControllerRoute.get('/rejectToys', async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 });
+
+
 module.exports = toyControllerRoute;
