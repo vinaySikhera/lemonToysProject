@@ -39,10 +39,10 @@
 
 .ltext {
     /* border: 1px solid black; */
-    width: 20%;
+    width: 100px;
     height: 60%;
     margin-left: 100px;
-    margin-top: 5px;
+    margin-top: 7px;
 }
 
 .ltext p {
@@ -60,9 +60,12 @@
     display: flex;
     justify-content: space-around;
 }
-.losi a{
+
+.losi a {
     text-decoration: none;
     color: white;
+    margin-top: 8px;
+    font-size: 13px;
 }
 
 .losi p {
@@ -70,8 +73,16 @@
     margin-top: 5px;
 }
 
+.logo {
+    border: 1px solid black;
+    height: 80px;
+    width: 80px;
+}
+
 .logo img {
-    height: 50px;
+    width: 100%;
+    height: 100%;
+    margin-top: 0;
     /* border: 1px solid black; */
 }
 
@@ -222,7 +233,7 @@ nav {
         font-weight: 500;
     }
 
-    .active {
+    .activee {
         display: flex;
         animation-name: slide-in;
         animation-duration: 0.8s;
@@ -242,26 +253,45 @@ nav {
 }
 
 @media (max-width: 768px) {
+
+    .logo {
+        height: 40px;
+        width: 40px;
+    }
+
     .up-header {
-        /* border: 1px solid black; */
+        /* border: 1px solid red; */
         width: 100%;
         height: 40px;
-        /* background-image: url(/images/headersection.jpg) */
+
         background-size: cover;
         display: flex;
+        justify-content: space-between;
+
 
     }
 
     .ltext {
         /* border: 1px solid black; */
-        margin-left: 10px;
-        width: 50%;
+        margin-left: 5px;
+        width: 25%;
+    }
+
+    .ltext p {
+        font-size: 15px;
     }
 
     .losi {
         /* border: 1px solid black; */
-        margin-right: 15px;
-        width: 30%;
+        width: 50%;
+        gap: 35px;
+        margin-right: 50px;
+    }
+
+    .losi a {
+        font-size: 13px;
+        margin-top: 5px;
+
     }
 
     .losi p {

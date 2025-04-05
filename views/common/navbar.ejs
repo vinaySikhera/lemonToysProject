@@ -5,21 +5,22 @@
 <div>
     <div class="up-header">
         <div class="ltext">
-            <p><i class="fas fa-truck"></i> Free free shipping with over $150 </p>
+            <p>Lemon toys </p>
         </div>
         <div class="losi">
             <a class="link" href="/login" style="display: none;">Login</a>
             <a class="link" href="/register" style="display: none;">Sign-up</a>
-            <a href="/dashboard">Dashboard</a>
-            <button class="btn" id="logoutBtn" style="display: none;">logout</button>
+            <a href="/dashboard" style="display: none;" class="dashboard-link">Dashboard</a>
+            <button class="btn" id="logoutBtn"
+                style="display: none; background-color: transparent; color: white; border: none;">Logout</button>
         </div>
-
     </div>
 </div>
+
 <div class="header">
     <a href="/">
         <div class="logo">
-            <img src="/images/abcDice.jpg" alt="Logo" />
+            <img src="/images/lemontoyslogo.jpeg" alt="Logo" />
         </div>
     </a>
 
@@ -32,8 +33,7 @@
         <ul class="navbar" id="navbar">
             <li><a href="/">Home</a></li>
             <li><a href="/alltoys/">Shop</a></li>
-            <!-- <li><a href="/blog">Pages</a></li> -->
-            <li><a href="/faq">Faq</a></li>
+            <li><a href="/faq">F.A.Q.</a></li>
             <li><a href="/contact">Contact</a></li>
 
             <div class="bticons">
@@ -50,40 +50,51 @@
 </div>
 
 <script>
-
     async function getCookie() {
-        const role = await fetch('/role')
-        const data = await role.json()
-        console.log(data)
-        if (data.role.email != undefined && data.role.role != undefined) {
-            document.querySelector(".btn").style.display = "block";
-        } else {
-            document.querySelectorAll(".link").forEach(item => {
-                item.style.display = "block";
-            });
+        try {
+            const role = await fetch('/role');
+            const data = await role.json();
+
+            const isLoggedIn = data.role && data.role.email;
+
+            const dashboardLink = document.querySelector('.dashboard-link');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const loginLinks = document.querySelectorAll(".link");
+
+            if (isLoggedIn) {
+                dashboardLink.style.display = "inline-block";
+                logoutBtn.style.display = "inline-block";
+                loginLinks.forEach(link => link.style.display = "none");
+            } else {
+                dashboardLink.style.display = "none";
+                logoutBtn.style.display = "none";
+                loginLinks.forEach(link => link.style.display = "inline-block");
+            }
+        } catch (error) {
+            console.error("Error fetching role:", error);
         }
     }
-    getCookie()
+
+    getCookie();
+
     const hamburger = document.getElementById("hamburger");
     const navbar = document.getElementById("navbar");
 
     hamburger.addEventListener("click", () => {
-        navbar.classList.toggle("active");
+        navbar.classList.toggle("activee");
     });
 
     async function logout() {
         const logoutBtn = document.getElementById('logoutBtn');
-        if (!logoutBtn) {
-            return
-        }
+        if (!logoutBtn) return;
+
         logoutBtn.addEventListener("click", async () => {
             try {
                 const response = await fetch('/logout', { method: 'POST' });
                 const data = await response.json();
 
                 alert(data.message);
-                // window.location.href = "/login"; // Redirect to login after logout
-                location.reload();
+                location.reload(); // Or redirect to login if needed
             } catch (error) {
                 console.error("Logout Error:", error);
             }
