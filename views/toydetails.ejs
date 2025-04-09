@@ -9,9 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <link rel="stylesheet" href="/css/navbar.css">
-
-
-
     <style>
         .main {
             margin: 0px;
@@ -66,7 +63,6 @@
             border-radius: 15px;
             width: 450px;
             justify-content: space-between;
-
         }
 
         .icon {
@@ -75,8 +71,6 @@
             justify-content: left;
             align-items: center;
             gap: 40px;
-
-
         }
 
         .cart {
@@ -85,7 +79,6 @@
             justify-content: space-between;
             text-align: center;
             align-items: center;
-
         }
 
         .price {
@@ -93,7 +86,7 @@
             display: flex;
             text-align: center;
             justify-content: space-between;
-            gap: 12px
+            gap: 12px;
         }
 
         .safe {
@@ -116,10 +109,9 @@
         }
 
         .bton {
-
             display: flex;
             /* justify-content: center;
-    align-items: center; */
+       align-items: center; */
         }
 
         .img {
@@ -141,7 +133,6 @@
         }
 
         .rev {
-
             padding: 10px;
             margin: 24px;
             width: 180px;
@@ -167,7 +158,6 @@
         }
 
         .sec {
-
             background-color: white;
             color: blue;
             padding: 9px;
@@ -256,8 +246,6 @@
 
         .img2 {
             width: 100%;
-
-
         }
 
         .product {
@@ -269,8 +257,6 @@
             text-align: center;
             justify-content: center;
             align-items: center;
-
-
         }
 
         .footerimage {
@@ -278,7 +264,6 @@
             margin-top: 20px;
             gap: 30px;
             display: flex;
-
         }
 
         .space {
@@ -288,34 +273,16 @@
             display: flex;
         }
 
-        /* .share{
-    display: flex;
-    justify-content: space-between;
-    text-align: center;
- } */
-        */
-        /* .btn{
-    padding:9px;
-    border-radius: 4px;
-    color:whitesmoke; 
-    border:1px solid whitesmoke;
-    background: #0F83B2;
- } */
-        /* style="border-radius: 4px; color:whitesmoke;  background: #0F83B2; padding:9px; " */
-
-
         .related {
             margin: 20px;
             text-align: center;
-
         }
 
         .container {
             border: 1px solid whitesmoke;
             position: relative;
-            width: 100%;
+            width: 240px;
             height: 240px;
-            width: 240PX;
         }
 
         .imageDiv {
@@ -327,41 +294,23 @@
             justify-content: left;
             background: red;
             color: whitesmoke;
-            border: none white;
+            border: none;
             border-radius: 22px;
             padding: 4px;
-            /* width: 70px; */
             font-weight: 600;
             height: 30px;
             width: 65px;
         }
 
         .icons {
-            /* display: flex; */
             top: 4px;
             left: 198px;
             position: absolute;
             background: white;
-
         }
 
         .item {
             display: flex;
-        }
-
-        .p {
-            text-decoration: line-through;
-        }
-
-        .h {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .star {
-            color: orangered;
-            text-align: left;
         }
 
         .h3 {
@@ -370,7 +319,44 @@
 
         .socialicon {
             margin: 6px;
+        }
 
+        /* Media Query for Responsiveness */
+        @media (max-width: 768px) {
+            .upper {
+                width: 100%;
+                flex-direction: column;
+                padding: 0 10px;
+            }
+
+            .leftbar,
+            .rightbar {
+                width: 100%;
+                margin: 10px auto;
+                padding: 20px;
+            }
+
+            .upperimage {
+                width: 100%;
+                height: auto;
+            }
+
+            .review,
+            .product {
+                width: 100%;
+                padding: 10px;
+            }
+
+            .footerimage {
+                width: 100%;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .container {
+                width: 200px;
+                height: 200px;
+            }
         }
     </style>
 </head>
@@ -401,9 +387,9 @@
                         <!-- Display QR Code -->
                         <h3>Scan QR Code for Product Details:</h3>
                         <!-- <img src="<%= singleToy.qrCodeUrl %>" alt="QR Code for <%= singleToy.ProductName %>"> -->
-                        <img src="<%= singleToy.qrCodeUrl ? singleToy.qrCodeUrl : 'data:image/png;base64,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' %>" 
-                        alt="QR Code for <%= singleToy.ProductName %>">
-                                       </div>
+                        <img src="<%= singleToy.qrCodeUrl ? singleToy.qrCodeUrl : 'data:image/png;base64,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' %>"
+                            alt="QR Code for <%= singleToy.ProductName %>">
+                    </div>
 
                     <div class="icon">
                         <div>
@@ -507,6 +493,47 @@
 </body>
 
 </html>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const addToCartBtn = document.querySelector(".addToCardBtn");
+        const inputBox = document.querySelector(".input-box");
+
+        addToCartBtn.addEventListener("click", async function () {
+            const quantity = parseInt(inputBox.value) > 0 ? parseInt(inputBox.value) : 1;
+
+            const product = {
+                _id: "<%= singleToy._id %>",
+                ProductName: "<%= singleToy.ProductName %>",
+                Price: <%= singleToy.Price %>,
+                ProductImageURL: "<%= singleToy.ProductImageURL %>",
+                qrCodeUrl: "<%= singleToy.qrCodeUrl %>",
+                quantity: quantity
+            };
+
+            try {
+                const response = await fetch('/add-to-cart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(product)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(`${product.ProductName} added to cart successfully!`);
+                } else {
+                    alert(data.message || "Failed to add item to cart.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error adding to cart.");
+            }
+        });
+    });
+</script>
+
 <!-- <script>
     document.addEventListener("DOMContentLoaded", function () {
         const addToCartBtn = document.querySelector(".addToCardBtn");
@@ -541,7 +568,7 @@
     });
 
 </script> -->
-<script>
+<!-- <script>
     document.addEventListener("DOMContentLoaded", function () {
         const addToCartBtn = document.querySelector(".addToCardBtn");
         const inputBox = document.querySelector(".input-box");
@@ -582,4 +609,4 @@
             alert(`${product.name} added to cart successfully!`);
         });
     });
-</script>
+</script> -->

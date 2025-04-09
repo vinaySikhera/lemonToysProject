@@ -4,12 +4,14 @@ const toyControlerRoute = require('./controller/toycontroler');
 const { ToyScheema } = require('./models/toyProductsScheema')
 const path = require("path");
 const userModel = require('./models/userDetails'); // Fixed spelling issue from "modles" to "models"
+const userCart = require('./models/userModles'); // Fixed spelling issue from "modles" to "models"
 const { AddUsersScheema } = require('./models/addUser')
 const cookieParser = require('cookie-parser');
 const AddToySchema = require('./models/toyAddProductScheema')
 const bcrypt = require('bcrypt');
 const upload = require('./middleware/fileUpload');
 const isAdmin = require('./middleware/isAdmin');
+// const Cart = require('./models/userModles');
 const isLoginOrNot = require('./middleware/isLoginOrNot');
 const isAdminOrSupplier = require('./middleware/isAdminOrSupplier');
 const { findByIdAndUpdate } = require("./models/toyAddProductScheema");
@@ -41,7 +43,6 @@ app.use('/', toyControlerRoute);
 
 // Routes
 app.get('/contact', (req, res) => {
-
     res.render('contact');
 });
 
@@ -49,38 +50,117 @@ app.get('/contact', (req, res) => {
 //     res.render('checkoutpage');
 // });
 
-app.get('/cart', async (req, res) => {
+// app.get('/cart', async (req, res) => {
+//     try {
+//         // Extract only email and role from cookies (Remove password check)
+//         const { email, role } = req.cookies;
+//         // If email or role is missing, redirect to login
+//         if (!email || !role) {
+//             console.log("Missing email or role in cookies. Redirecting to login...");
+//             return res.redirect('/login');
+//         }
+
+//         // Find the user in the database
+//         const user = await userModel.findOne({ email });
+//         if (!user) {
+//             console.log("User not found in database. Redirecting to login...");
+//             return res.redirect('/login');
+//         }
+
+//         // Fix role validation (Case-insensitive check)
+//         if (user.role.toLowerCase() !== role.toLowerCase()) {
+//             console.log(`Role mismatch: Expected ${user.role}, Got ${role}. Redirecting to login...`);
+//             return res.redirect('/login');
+//         }
+
+//         // If all checks pass, render the cart page
+//         let cart = [];
+//         res.render('addToCart', { cart });
+//     } catch (error) {
+//         console.error('Authorization error:', error);
+//         res.status(500).json({ message: "Internal Server Error" });
+//     }
+// });
+// Add this route in your Express server (e.g., routes/cart.js or in app.js)
+
+app.post('/add-to-cart', async (req, res) => {
     try {
-        // Extract only email and role from cookies (Remove password check)
-        const { email, role } = req.cookies;
-        // If email or role is missing, redirect to login
-        if (!email || !role) {
-            console.log("Missing email or role in cookies. Redirecting to login...");
-            return res.redirect('/login');
+        const product = req.body;
+        const email = req.cookies?.email; // optional login check
+        console.log("email", email);
+        console.log(product)
+        const userId = await userModel.findOne({ email: email });
+        console.log("userid is ", userId._id);
+        // Check if the item already exists in cart for the same user
+        const existingItem = await userCart.findOne({ userId: userId._id, productId: product._id });
+        console.log(existingItem);
+        if (existingItem) {
+            existingItem.quantity += 1;
+            await existingItem.save();
+        } else {
+            const cartItem = new userCart({
+                userId: userId._id,
+                productId: product._id,
+                name: product.ProductName,
+                price: product.Price,
+                image: product.ProductImageURL,
+                qrCodeUrl: product.qrCodeUrl || '', // optional fallback
+                quantity: parseInt(product.MinimumOrderQuantity)
+            });
+            // console.log(cartItem)
+            await cartItem.save();
         }
 
-        // Find the user in the database
-        const user = await userModel.findOne({ email });
-        if (!user) {
-            console.log("User not found in database. Redirecting to login...");
-            return res.redirect('/login');
-        }
-
-        // Fix role validation (Case-insensitive check)
-        if (user.role.toLowerCase() !== role.toLowerCase()) {
-            console.log(`Role mismatch: Expected ${user.role}, Got ${role}. Redirecting to login...`);
-            return res.redirect('/login');
-        }
-
-        // If all checks pass, render the cart page
-        let cart = [];
-        res.render('addToCart', { cart });
-    } catch (error) {
-        console.error('Authorization error:', error);
-        res.status(500).json({ message: "Internal Server Error" });
+        res.status(200).json({ message: 'Item added to cart!' });
+    } catch (err) {
+        console.error('Error adding to cart:', err);
+        res.status(500).json({ message: 'Failed to add item to cart' });
     }
 });
 
+
+app.get('/cart', async (req, res) => {
+    const { email } = req.cookies;
+    // console.log("cart page", email);
+
+    if (!email) return res.status(401).render("unauthorized"); // or redirect to login
+
+    try {
+        const userId = await userModel.findOne({ email: email });
+        // console.log("userid is ", userId._id);
+        const user = await userCart.find({
+            userId: userId._id
+        });
+        // console.log("cart page", user);
+        res.render("addToCart", {
+            cart: user || []
+        });
+    } catch (err) {
+        console.error("Error fetching cart:", err);
+        res.status(500).render("error", { message: "Server error" });
+    }
+});
+
+// Assuming you're using Express and MongoDB
+app.delete('/remove-from-cart/:productId', async (req, res) => {
+    try {
+        const productId = req.params.productId;
+        // const userId = req.session.userId; 
+        const userId= await userCart.find()
+        console.log("Removing from cart:", { productId, userId });
+
+        const result = await userCart.deleteOne({ productId, userId });
+
+        if (result.deletedCount > 0) {
+            res.json({ success: true });
+        } else {
+            res.json({ success: false, message: "Item not found in cart" });
+        }
+    } catch (err) {
+        console.error("Delete cart error:", err);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+});
 
 // REGISTER ROUTE
 app.get('/register', isLoginOrNot, (req, res) => {

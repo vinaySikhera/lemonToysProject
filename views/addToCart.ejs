@@ -4,124 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>add to cart</title>
-    <link rel="stylesheet" href="/public/css/navbar.css">
-    <style>
-        /* General Page Styling */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f8f8;
-            margin: 20px;
-            text-align: center;
-        }
-
-        /* Cart Container */
-        .cartContainer {
-            max-width: 600px;
-            background: #fff;
-            padding: 20px;
-            margin: 20px auto;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        /* Cart Heading */
-        .cartContainer h2 {
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        /* Message for Empty Cart */
-        .cartContainer p {
-            font-size: 16px;
-            color: #777;
-        }
-
-        /* Individual Cart Item */
-        .cartItem {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #fff;
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Cart Item Image */
-        .cartItem img {
-            width: 50px;
-            height: 50px;
-            border-radius: 5px;
-        }
-
-        /* Cart Item Name */
-        .cartItem span {
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            flex-grow: 1;
-            text-align: left;
-            padding-left: 10px;
-        }
-
-        /* Buttons (Remove, Buy Now, Clear Cart) */
-        button {
-            padding: 8px 12px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-
-        /* Remove Button */
-        .removeItemBtn {
-            background-color: #ff4d4d;
-            color: white;
-        }
-
-        .removeItemBtn:hover {
-            background-color: #cc0000;
-        }
-
-        /* Buy Now Button */
-        .buyNowBtn {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .buyNowBtn:hover {
-            background-color: #0056b3;
-        }
-
-        /* Clear Cart Button */
-        .clearCartBtn {
-            background-color: #ffa500;
-            color: white;
-            padding: 10px 15px;
-            margin-top: 15px;
-            display: block;
-            width: 100%;
-        }
-
-        .clearCartBtn:hover {
-            background-color: #cc8400;
-        }
-
-        .quantityInput {
-            width: 35px;
-            margin-right: 50px;
-        }
-    </style>
-</head>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="/css/navbar.css">
     <title>cart</title>
     <!-- <link rel="stylesheet" href="styles.css"> -->
     <style>
@@ -302,187 +186,165 @@
                     </tr>
                 </thead>
                 <tbody id="cart-items">
-                    <!-- JavaScript will populate this section -->
+                    <% if (cart.length===0) { %>
+                        <tr>
+                            <td colspan="7" style="text-align: center; font-size: 18px; padding: 20px;">
+                                Your cart is empty.
+                            </td>
+                        </tr>
+                        <% } else { let subtotal=0; cart.forEach(item=> {
+                            const quantity = Number(item.quantity) || 0;
+                            const price = Number(item.price) || 0;
+                            const itemSubtotal = quantity * price;
+                            subtotal += itemSubtotal;
+                            %>
+                            <tr>
+                                <td><img src="<%= item.image %>" alt="<%= item.name %>" width="80" /></td>
+                                <td>
+                                    <%= item.name %>
+                                </td>
+                                <td>₹<%= price.toFixed(2) %>
+                                </td>
+                                <td>
+                                    <%= quantity %>
+                                </td>
+                                <td>₹<%= itemSubtotal.toFixed(2) %>
+                                </td>
+                                <td><img src="<%= item.qrCodeUrl %>" alt="QR Code" width="60" /></td>
+                                <td><button onclick="removeFromCart('<%= item._id %>')">Remove</button></td>
+                            </tr>
+                            <% }); } %>
                 </tbody>
+
             </table>
 
             <div class="btn">
-                <!-- <div>
-                    <input type="text" placeholder="Coupon Code">
-                    <button class="Apply">Apply</button>
-                </div> -->
                 <div>
                     <button class="CS" onclick="window.location.href='/alltoys'">Continue Shopping</button>
-                    <!-- <button class="UC" onclick="updateCart()">Update Cart</button> -->
                 </div>
             </div>
 
-            <div class="Cart-info">
-                <div class="align">
-                    <div class="details"><strong>Cart total</strong>
-                        <p>Subtotal</p>
-                        <p>Total</p>
+            <% if (cart.length> 0) {
+                let subtotal = 0;
+                cart.forEach(item => {
+                const quantity = Number(item.quantity) || 0;
+                const price = Number(item.price) || 0;
+                subtotal += quantity * price;
+                });
+                %>
+                <div class="Cart-info">
+                    <div class="align">
+                        <div class="details">
+                            <strong>Cart total</strong>
+                            <p>Subtotal</p>
+                            <p>Total</p>
+                        </div>
+                        <div class="amount">
+                            <p id="subtotal-amount">₹<%= subtotal.toFixed(2) %>
+                            </p>
+                            <p id="total-amount">₹<%= subtotal.toFixed(2) %>
+                            </p>
+                        </div>
                     </div>
-                    <div class="amount">
-                        <p id="subtotal-amount">$0.00</p>
-                        <p id="total-amount">$0.00</p>
-                    </div>
+                    <button onclick="downloadCartPDF()">Download PDF</button>
                 </div>
-                <!-- <button onclick="checkout()">Proceed to checkout</button> -->
-                <button onclick="downloadCartPDF()">Download PDF</button>
+                <% } %>
 
-            </div>
+
         </div>
         <!-- <br> -->
         <%- include('common/footer.ejs') %>
 </body>
 
 </html>
-
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        loadCart();
-    });
-
-    function loadCart() {
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
-        let cartContainer = document.getElementById("cart-items");
-        let subtotalAmount = 0;
-
-        if (cart.length === 0) {
-            cartContainer.innerHTML = "<tr><td colspan='7'>Your cart is empty.</td></tr>";
-            return;
-        }
-
-        cartContainer.innerHTML = ""; // Clear existing items before repopulating
-
-        cart.forEach(product => {
-            let subtotal = product.price * product.quantity;
-            subtotalAmount += subtotal;
-
-            let row = document.createElement("tr");
-            row.setAttribute("data-id", product.id);
-            row.innerHTML = `
-        <td>
-            <img src="${product.imageUrl}" alt="${product.name}" width="50">
-            
-            </td>
-        <td>${product.name}</td>
-        <td>₹${product.price}</td>
-        <td>
-            <div class="quantity">
-                <button class="minus" onclick="updateQuantity('${product.id}', -1)">&minus;</button>
-                <input type="number" class="input-box" value="${product.quantity}" min="1" readonly>
-                <button class="plus" onclick="updateQuantity('${product.id}', 1)">&plus;</button>
-            </div>
-        </td>
-        <td class="subtotal">₹${subtotal}</td>
-        <td>
-            <img src="${product.qrCodeUrl}" alt="QR Code for ${product.name}" width="50">
-            </td>
-        <td><button class="remove-btn" onclick="removeFromCart('${product.id}')">&times;</button></td>
-    `;
-
-            cartContainer.appendChild(row);
-        });
-
-        document.getElementById("subtotal-amount").textContent = `₹${subtotalAmount.toFixed(2)}`;
-        document.getElementById("total-amount").textContent = `₹${(subtotalAmount + 20).toFixed(2)}`; // Assuming $20 shipping
-    }
-
-    function updateQuantity(productId, change) {
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
-        let product = cart.find(item => item.id === productId);
-
-        if (product) {
-            product.quantity += change;
-            if (product.quantity < 1) {
-                product.quantity = 1;
-            }
-            localStorage.setItem("cart", JSON.stringify(cart));
-            loadCart();
-        }
-    }
+    const globalCartItems = <%- JSON.stringify(cart) %>;
 
     function removeFromCart(productId) {
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
-        cart = cart.filter(item => item.id !== productId);
-        localStorage.setItem("cart", JSON.stringify(cart));
-        loadCart();
+        fetch(`/remove-from-cart/${productId}`, {
+            method: 'DELETE'
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message || "Failed to remove item.");
+                }
+            })
+            .catch(err => {
+                console.error("Remove error:", err);
+                alert("Failed to remove item.");
+            });
     }
 
-    function checkout() {
-        alert("Proceeding to checkout...");
-    }
-
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<script>
     async function downloadCartPDF() {
+        console.log(globalCartItems);
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-        if (cart.length === 0) {
+        if (!globalCartItems || globalCartItems.length === 0) {
             alert("Your cart is empty.");
             return;
         }
 
+        doc.setFontSize(18);
         doc.text("Cart Summary", 20, 20);
-        let yPosition = 30;
+        doc.setFontSize(12);
 
-        for (let i = 0; i < cart.length; i++) {
-            let product = cart[i];
+        let y = 30;
+        let sum=0;
+        for (let i = 0; i < globalCartItems.length; i++) {
+            const item = globalCartItems[i];
+            console.log("download for pdf",item);
+            const subtotal = item.price * item.quantity;
+            sum+=subtotal
+            doc.text(`${i + 1}. ${item.name}`, 20, y);
+            doc.text(`Price: ₹${item.price}`, 20, y + 8);
+            doc.text(`Quantity: ${item.quantity}`, 20, y + 16);
+            doc.text(`Subtotal: ₹${subtotal.toFixed(2)}`, 20, y + 24);
 
-            doc.text(`${i + 1}. ${product.name}`, 20, yPosition);
-            doc.text(`Price: ₹${product.price}`, 20, yPosition + 10);
-            doc.text(`Quantity: ${product.quantity}`, 20, yPosition + 20);
-            doc.text(`Subtotal: ₹${(product.price * product.quantity).toFixed(2)}`, 20, yPosition + 30);
+            try {
+                const productImg = await getBase64Image(item.image);
+                const qrImg = await getBase64Image(item.qrCodeUrl);
 
-            // Convert images to Base64 and add them to the PDF
-            let productImage = await getBase64Image(product.imageUrl);
-            let qrCodeImage = await getBase64Image(product.qrCodeUrl);
-
-            if (productImage) {
-                doc.addImage(productImage, "JPEG", 150, yPosition - 10, 30, 30);
+                if (productImg) doc.addImage(productImg, "JPEG", 150, y - 5, 25, 25);
+                if (qrImg) doc.addImage(qrImg, "JPEG", 180, y - 5, 25, 25);
+            } catch (err) {
+                console.warn("Image load failed:", err);
             }
 
-            if (qrCodeImage) {
-                doc.addImage(qrCodeImage, "JPEG", 180, yPosition - 10, 30, 30);
+            y += 40;
+            if (y > 270) {
+                doc.addPage();
+                y = 20;
             }
-
-            yPosition += 50; // Move down for next product
         }
 
-        let totalAmount = cart.reduce((sum, product) => sum + product.price * product.quantity, 0) + 20;
-        doc.text(`Total: ₹${totalAmount.toFixed(2)}`, 20, yPosition + 10);
+        const total = sum;
+        console.log(total)
+        doc.setFontSize(14);
+        doc.text(`Total: ₹${total.toFixed(2)}`, 20, y + 10);
 
         doc.save("cart-summary.pdf");
     }
 
-    // Function to convert image URL to Base64
     function getBase64Image(url) {
-        return new Promise((resolve, reject) => {
-            let img = new Image();
-            img.crossOrigin = "Anonymous"; // Handle CORS issues
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
             img.src = url;
 
-            img.onload = function () {
-                let canvas = document.createElement("canvas");
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
                 canvas.width = img.width;
                 canvas.height = img.height;
-
-                let ctx = canvas.getContext("2d");
+                const ctx = canvas.getContext("2d");
                 ctx.drawImage(img, 0, 0);
-
                 resolve(canvas.toDataURL("image/jpeg"));
             };
 
-            img.onerror = function () {
-                resolve(null);
-            };
+            img.onerror = () => resolve(null);
         });
     }
 </script>
