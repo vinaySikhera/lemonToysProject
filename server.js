@@ -141,26 +141,23 @@ app.get('/cart', async (req, res) => {
     }
 });
 
-// Assuming you're using Express and MongoDB
-app.delete('/remove-from-cart/:productId', async (req, res) => {
+app.delete('/remove-from-cart/:cartItemId', async (req, res) => {
     try {
-        const productId = req.params.productId;
-        // const userId = req.session.userId; 
-        const userId= await userCart.find()
-        console.log("Removing from cart:", { productId, userId });
+        const { cartItemId } = req.params;
 
-        const result = await userCart.deleteOne({ productId, userId });
+        const result = await userCart.deleteOne({ _id: cartItemId });
 
         if (result.deletedCount > 0) {
-            res.json({ success: true });
-        } else {
-            res.json({ success: false, message: "Item not found in cart" });
+            return res.json({ success: true });
         }
+
+        res.json({ success: false, message: "Item not found in cart" });
     } catch (err) {
         console.error("Delete cart error:", err);
         res.status(500).json({ success: false, message: "Server error" });
     }
 });
+
 
 // REGISTER ROUTE
 app.get('/register', isLoginOrNot, (req, res) => {
@@ -301,6 +298,7 @@ app.get('/allusers', isAdmin, async (req, res) => {
         // console.log(query)
         const allusers = await userModel.find(query);
         // console.log(allusers);
+        console.log(allusers)
 
         res.render('getAllUsers', { allusers, selectedRole: role || "" });
 
@@ -399,10 +397,12 @@ app.get('/login', isLoginOrNot, (req, res) => {
 
 app.post('/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
-        // console.log("Login request received:", email);
+        // const { email, password } = req.body;
+        const { identifier, password } = req.body;
+        console.log("Login request received:", identifier);
 
-        const findUser = await userModel.findOne({ email });
+        const findUser = await userModel.findOne({ $or: [{ email: identifier }, { phone: Number(identifier) }] });
+        console.log("geting password", findUser);
         if (!findUser) {
             // console.log("User not found");
             return res.status(400).json({ message: "User not found" });
@@ -413,7 +413,7 @@ app.post('/login', async (req, res) => {
             // console.log("Invalid credentials");
             return res.status(400).json({ message: "Invalid credentials" });
         }
-        res.cookie('email', email, { httpOnly: true });
+        res.cookie('email', findUser.email, { httpOnly: true });
         res.cookie('role', findUser.role, { httpOnly: true });
         // console.log("Redirecting to /cart...");
 
