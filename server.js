@@ -90,7 +90,7 @@ app.get('/cart', async (req, res) => {
     const { email } = req.cookies;
     // console.log("cart page", email);
 
-    if (!email) return res.status(401).render("unauthorized"); // or redirect to login
+    if (!email) return res.status(401).redirect("/login"); // or redirect to login
 
     try {
         const userId = await userModel.findOne({ email: email });
@@ -145,13 +145,14 @@ app.post('/register', async (req, res) => {
             });
         }
         // Use bcrypt for secure password hashing instead of Cryptr
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        // const saltRounds = 10;
+        // const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         const userDetails = {
             name,
             email,
-            password: hashedPassword,
+            // password: hashedPassword,
+            password,
             role: "Customer",
             address: address,
             phone: mobileNumber
@@ -160,7 +161,7 @@ app.post('/register', async (req, res) => {
         const addNewUser = new userModel(userDetails);
         await addNewUser.save(); // Ensuring user is saved before redirecting
 
-        res.redirect('/login'); // Removed extra res.json() to avoid multiple responses
+        res.redirect('/login');
     } catch (error) {
         console.error('Error registering new user:', error);
         res.status(500).json({ message: "Internal Server Error" });
@@ -188,14 +189,22 @@ app.post('/adduser', async (req, res) => {
             return res.status(400).json({ message: "Password is required" });
         }
 
-        const isUserAlready = await userModel.findOne({ email });
+        const isUserAlready = await userModel.findOne({ $or: [{ email }, { phone }] });
         if (isUserAlready) {
             return res.status(400).json({ message: "User already exists" });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        // const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = new userModel({ phone, address, role, name, email, password: hashedPassword });
+        const newUser = new userModel({
+            phone,
+            address,
+            role,
+            name,
+            email,
+            //    password: hashedPassword
+            password
+        });
         await newUser.save();
 
         res.status(201).json({ message: "New user added successfully" });
@@ -415,8 +424,10 @@ app.post('/login', async (req, res) => {
             return res.status(403).json({ message: "Your account was rejected by admin." });
         }
 
-        const isPasswordValid = await bcrypt.compare(password, findUser.password);
-        if (!isPasswordValid) {
+        // const isPasswordValid = await bcrypt.compare(password, findUser.password);
+        // const isPasswordValid = await 
+
+        if (password !== findUser.password) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
 
