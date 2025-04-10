@@ -376,7 +376,7 @@ app.post('/update-visibility', async (req, res) => {
     const { userId, status, category } = req.body;
 
     try {
-        await UserDetails.findByIdAndUpdate(userId, {
+        await userModel.findByIdAndUpdate(userId, {
             VisibilityStatus: status,
             category: category
         });
