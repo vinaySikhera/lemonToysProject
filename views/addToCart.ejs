@@ -221,7 +221,8 @@
 
             <div class="btn">
                 <div>
-                    <button class="CS" onclick="window.location.href='/alltoys'">Continue Shopping</button>
+                    <button style="cursor: pointer;" class="CS" onclick="window.location.href='/alltoys'">Continue
+                        Shopping</button>
                 </div>
             </div>
 
@@ -247,7 +248,9 @@
                             </p>
                         </div>
                     </div>
-                    <button onclick="downloadCartPDF()">Download PDF</button>
+                    <div id="cart-data" style="display:none;" data-cart='<%= JSON.stringify(cart) %>'></div>
+                    <button style="cursor: pointer;" class="download-btn">Download
+                        PDF</button>
                 </div>
                 <% } %>
 
@@ -289,11 +292,23 @@
     }
 </script>
 
-<script>
-    const globalCartItems = <% - JSON.stringify(cart) %>;
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    async function downloadCartPDF() {
-        console.log(globalCartItems);
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Retrieve cart data from the data-cart attribute of the hidden element
+        const cartElement = document.getElementById('cart-data');
+        const globalCartItems = JSON.parse(cartElement.getAttribute('data-cart'));
+
+        // Attach event listener to the download button
+        document.querySelector('.download-btn').addEventListener('click', () => {
+            console.log("Button clicked!");
+            downloadCartPDF(globalCartItems);  // Pass globalCartItems to the function
+        });
+    });
+
+    async function downloadCartPDF(globalCartItems) {
+        console.log("click downloadCartPDF", globalCartItems);
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
@@ -312,7 +327,7 @@
             const item = globalCartItems[i];
             console.log("download for pdf", item);
             const subtotal = item.price * item.quantity;
-            sum += subtotal
+            sum += subtotal;
             doc.text(`${i + 1}. ${item.name}`, 20, y);
             doc.text(`Price: ₹${item.price}`, 20, y + 8);
             doc.text(`Quantity: ${item.quantity}`, 20, y + 16);
@@ -329,14 +344,13 @@
             }
 
             y += 40;
-            if (y > 270) {
+            if (y > 250) {
                 doc.addPage();
                 y = 20;
             }
         }
 
         const total = sum;
-        console.log(total)
         doc.setFontSize(14);
         doc.text(`Total: ₹${total.toFixed(2)}`, 20, y + 10);
 
@@ -361,4 +375,106 @@
             img.onerror = () => resolve(null);
         });
     }
+
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Define globalCartItems within the DOMContentLoaded event to make it accessible
+        // const globalCartItems = <%= JSON.stringify(cart) %>;
+        const globalCartItems = <%= cart %>;
+
+        // Check if the download button exists
+        const downloadButton = document.querySelector('.download-btn');
+
+        // Bind the click event to the download button
+        if (downloadButton) {
+            downloadButton.addEventListener('click', () => {
+                console.log("Button clicked!");
+                downloadCartPDF(globalCartItems);  // Pass globalCartItems to the function
+            });
+        } else {
+            console.error('Download button not found!');
+        }
+    });
+
+    async function downloadCartPDF(globalCartItems) {
+        console.log("click downloadCartPDF", globalCartItems);
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        if (!globalCartItems || globalCartItems.length === 0) {
+            alert("Your cart is empty.");
+            return;
+        }
+
+        doc.setFontSize(18);
+        doc.text("Cart Summary", 20, 20);
+        doc.setFontSize(12);
+
+        let y = 30;
+        let sum = 0;
+        for (let i = 0; i < globalCartItems.length; i++) {
+            const item = globalCartItems[i];
+            console.log("download for pdf", item);
+            const subtotal = item.price * item.quantity;
+            sum += subtotal;
+            doc.text(`${i + 1}. ${item.name}`, 20, y);
+            doc.text(`Price: ₹${item.price}`, 20, y + 8);
+            doc.text(`Quantity: ${item.quantity}`, 20, y + 16);
+            doc.text(`Subtotal: ₹${subtotal.toFixed(2)}`, 20, y + 24);
+
+            try {
+                const productImg = await getBase64Image(item.image);
+                const qrImg = await getBase64Image(item.qrCodeUrl);
+
+                if (productImg) doc.addImage(productImg, "JPEG", 150, y - 5, 25, 25);
+                if (qrImg) doc.addImage(qrImg, "JPEG", 180, y - 5, 25, 25);
+            } catch (err) {
+                console.warn("Image load failed:", err);
+            }
+
+            y += 40;
+            if (y > 250) {
+                doc.addPage();
+                y = 20;
+            }
+        }
+
+        const total = sum;
+        doc.setFontSize(14);
+        doc.text(`Total: ₹${total.toFixed(2)}`, 20, y + 10);
+
+        doc.save("cart-summary.pdf");
+    }
+
+    function getBase64Image(url) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.src = url;
+
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+                resolve(canvas.toDataURL("image/jpeg"));
+            };
+
+            img.onerror = () => resolve(null);
+        });
+    }
+</script> -->
