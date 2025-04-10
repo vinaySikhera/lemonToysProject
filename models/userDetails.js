@@ -27,9 +27,21 @@ const userScheema = mongoose.Schema({
     },
     address: {
         type: String,
-        require: true,
+        require: false,
         trim: true
-    }
+    },
+    category: {
+        type: String,
+        required: false,
+        trim: true,
+        enum: ["A", "B", "C", "D"],
+        default: "D"
+    },
+    VisibilityStatus: {
+        type: String,
+        enum: ["Approved", "Pending", "Rejected"],
+        default: "Pending"
+    },
 })
 
 const UserDetails = mongoose.model('userdetails', userScheema);

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Approve Users</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <%- include('common/adminsidebar.ejs') %>
+        <div class="container mt-5">
+            <h2 class="text-center mb-4">Approve or Reject Users</h2>
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (users.length> 0) { %>
+                        <% users.forEach(user=> { %>
+                            <tr>
+                                <td>
+                                    <%= user.name %>
+                                </td>
+                                <td>
+                                    <%= user.email %>
+                                </td>
+                                <td>
+                                    <%= user.phone %>
+                                </td>
+                                <td>
+                                    <%= user.role %>
+                                </td>
+                                <td>
+                                    <select class="form-select d-inline w-auto me-2" id="category-<%= user._id %>">
+                                        <option value="A" <%=user.category==='A' ? 'selected' : '' %>>A</option>
+                                        <option value="B" <%=user.category==='B' ? 'selected' : '' %>>B</option>
+                                        <option value="C" <%=user.category==='C' ? 'selected' : '' %>>C</option>
+                                        <option value="D" <%=user.category==='D' ? 'selected' : '' %>>D</option>
+                                    </select>
+                                    <button class="btn btn-success"
+                                        onclick="updateStatus('<%= user._id %>', 'Approved')">Approve</button>
+                                    <button class="btn btn-danger"
+                                        onclick="updateStatus('<%= user._id %>', 'Rejected')">Reject</button>
+                                </td>
+                            </tr>
+                            <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="5" class="text-center text-danger">No pending users.</td>
+                                    </tr>
+                                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <script>
+            async function updateStatus(userId, status) {
+                const category = document.getElementById(`category-${userId}`).value;
+
+                const response = await fetch('/update-visibility', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userId, status, category })
+                });
+
+                const result = await response.json();
+                alert(result.message);
+                location.reload();
+            }
+        </script>
+</body>
+
+</html>

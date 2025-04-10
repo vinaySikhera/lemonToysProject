@@ -57,6 +57,10 @@ toyControllerRoute.get('/', async (req, res) => {
 
 toyControllerRoute.get('/alltoys', async (req, res) => {
     try {
+        const { email } = req.cookies;
+        if (!email) {
+            return res.status(401).redirect('/login');
+        }
         const { price, category, page = 1, limit = 16 } = req.query;
         const filter = {};
         if (price) filter.Price = { $lte: Number(price) };

@@ -50,39 +50,6 @@ app.get('/contact', (req, res) => {
 //     res.render('checkoutpage');
 // });
 
-// app.get('/cart', async (req, res) => {
-//     try {
-//         // Extract only email and role from cookies (Remove password check)
-//         const { email, role } = req.cookies;
-//         // If email or role is missing, redirect to login
-//         if (!email || !role) {
-//             console.log("Missing email or role in cookies. Redirecting to login...");
-//             return res.redirect('/login');
-//         }
-
-//         // Find the user in the database
-//         const user = await userModel.findOne({ email });
-//         if (!user) {
-//             console.log("User not found in database. Redirecting to login...");
-//             return res.redirect('/login');
-//         }
-
-//         // Fix role validation (Case-insensitive check)
-//         if (user.role.toLowerCase() !== role.toLowerCase()) {
-//             console.log(`Role mismatch: Expected ${user.role}, Got ${role}. Redirecting to login...`);
-//             return res.redirect('/login');
-//         }
-
-//         // If all checks pass, render the cart page
-//         let cart = [];
-//         res.render('addToCart', { cart });
-//     } catch (error) {
-//         console.error('Authorization error:', error);
-//         res.status(500).json({ message: "Internal Server Error" });
-//     }
-// });
-// Add this route in your Express server (e.g., routes/cart.js or in app.js)
-
 app.post('/add-to-cart', async (req, res) => {
     try {
         const product = req.body;
@@ -169,11 +136,14 @@ app.post('/register', async (req, res) => {
         const { name, email, password, address, mobileNumber } = req.body;
 
         // Check if the user already exists
-        const isUserAlready = await userModel.findOne({ email });
+        const isUserAlready = await userModel.findOne({ $or: [{ email }, { phone: mobileNumber }] });
         if (isUserAlready) {
-            return res.status(400).json({ message: "User already exists" });
+            return res.status(400).json({
+                message: existingUser.email === email
+                    ? "Email already registered"
+                    : "Phone number already registered"
+            });
         }
-
         // Use bcrypt for secure password hashing instead of Cryptr
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -308,6 +278,7 @@ app.get('/allusers', isAdmin, async (req, res) => {
 });
 
 
+
 app.get('/viewUser/:id', isAdmin, async (req, res) => {
     try {
         const { id } = req.params;
@@ -381,6 +352,33 @@ app.post('/updateUser/:id', async (req, res) => {
     }
 });
 
+app.get('/approveUser', isAdmin, async (req, res) => {
+    try {
+        const pendingUsers = await userModel.find({ VisibilityStatus: 'Pending' });
+        console.log(pendingUsers)
+        res.render('approveUser', { users: pendingUsers });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+app.post('/update-visibility', async (req, res) => {
+    const { userId, status, category } = req.body;
+
+    try {
+        await UserDetails.findByIdAndUpdate(userId, {
+            VisibilityStatus: status,
+            category: category
+        });
+
+        res.json({ message: `User status updated to ${status} and category to ${category}` });
+    } catch (err) {
+        console.error('Update failed:', err);
+        res.status(500).json({ error: 'Failed to update user' });
+    }
+});
+
 // add user end functionally here--------------------------------------------------------------------------------------------//////
 
 // show all user for dash board-----------------------------
@@ -397,34 +395,77 @@ app.get('/login', isLoginOrNot, (req, res) => {
 
 app.post('/login', async (req, res) => {
     try {
-        // const { email, password } = req.body;
         const { identifier, password } = req.body;
         console.log("Login request received:", identifier);
 
-        const findUser = await userModel.findOne({ $or: [{ email: identifier }, { phone: Number(identifier) }] });
-        console.log("geting password", findUser);
+        const findUser = await userModel.findOne({
+            $or: [{ email: identifier }, { phone: Number(identifier) }]
+        });
+
         if (!findUser) {
-            // console.log("User not found");
             return res.status(400).json({ message: "User not found" });
+        }
+
+        // ✅ Check VisibilityStatus
+        if (findUser.VisibilityStatus === 'Pending') {
+            return res.status(403).json({ message: "Your account is pending approval by admin." });
+        }
+
+        if (findUser.VisibilityStatus === 'Rejected') {
+            return res.status(403).json({ message: "Your account was rejected by admin." });
         }
 
         const isPasswordValid = await bcrypt.compare(password, findUser.password);
         if (!isPasswordValid) {
-            // console.log("Invalid credentials");
             return res.status(400).json({ message: "Invalid credentials" });
         }
+
+        // ✅ Set cookies
         res.cookie('email', findUser.email, { httpOnly: true });
         res.cookie('role', findUser.role, { httpOnly: true });
-        // console.log("Redirecting to /cart...");
 
         return res.redirect('/cart');
-        // return res.json({ message: "Login successful", redirect: "/cart" });
 
     } catch (error) {
         console.error('Login failed:', error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
+
+
+
+
+
+// app.post('/login', async (req, res) => {
+//     try {
+//         // const { email, password } = req.body;
+//         const { identifier, password } = req.body;
+//         console.log("Login request received:", identifier);
+
+//         const findUser = await userModel.findOne({ $or: [{ email: identifier }, { phone: Number(identifier) }] });
+//         console.log("geting password", findUser);
+//         if (!findUser) {
+//             // console.log("User not found");
+//             return res.status(400).json({ message: "User not found" });
+//         }
+
+//         const isPasswordValid = await bcrypt.compare(password, findUser.password);
+//         if (!isPasswordValid) {
+//             // console.log("Invalid credentials");
+//             return res.status(400).json({ message: "Invalid credentials" });
+//         }
+//         res.cookie('email', findUser.email, { httpOnly: true });
+//         res.cookie('role', findUser.role, { httpOnly: true });
+//         // console.log("Redirecting to /cart...");
+
+//         return res.redirect('/cart');
+//         // return res.json({ message: "Login successful", redirect: "/cart" });
+
+//     } catch (error) {
+//         console.error('Login failed:', error);
+//         res.status(500).json({ message: "Internal Server Error" });
+//     }
+// });
 
 
 app.get('/toydetails/:id', async (req, res) => {
@@ -510,12 +551,6 @@ app.post('/changePassword', async (req, res) => {
     }
 });
 
-// app.post('/logout', (req, res) => {
-//     res.clearCookie('email');
-//     res.clearCookie('role');
-//     res.redirect('/login');
-//     res.json({ message: "logout successfully" });
-// });
 
 app.post("/logout", (req, res) => {
     try {
