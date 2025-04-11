@@ -119,7 +119,9 @@
                 <p>Please login to continue</p>
             </div>
 
-            <form action="/login" method="POST">
+
+
+            <form id="login-form">
                 <div class="input-details">
                     <label for="email">Email or Phone</label>
                 </div>
@@ -129,10 +131,6 @@
                     <label for="password">Password</label>
                 </div>
                 <input type="password" id="password" name="password" placeholder="Enter your password" required>
-
-                <!-- <div class="account" style="text-align: right;">
-                    <a href="#">Forgot password?</a>
-                </div> -->
 
                 <button type="submit" class="login-btn">Login</button>
             </form>
@@ -146,3 +144,31 @@
 </body>
 
 </html>
+<script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const identifier = document.querySelector('[name="identifier"]').value;
+        const password = document.querySelector('[name="password"]').value;
+
+        try {
+            const response = await fetch('/login', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ identifier, password }) // corrected 'password'
+            });
+
+            const data = await response.json(); // fixed 'json()'
+
+            if (response.status === 200) {
+                window.location.href = "/cart";
+            } else {
+                alert(data.message || "Login failed");
+            }
+
+        } catch (error) {
+            console.error("Login error:", error); // fixed 'err'
+            alert("Something went wrong.");
+        }
+    });
+
+</script>

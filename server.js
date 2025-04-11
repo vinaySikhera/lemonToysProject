@@ -388,6 +388,18 @@ app.post('/update-visibility', async (req, res) => {
     }
 });
 
+app.post('/update-cart', async (req, res) => {
+    const { id, quantity } = req.body;
+    try {
+        await userCart.findByIdAndUpdate(id, {
+            quantity: quantity
+        }, { new: true })
+        res.json({ message: `cart quantity updated ${quantity}` })
+    } catch (error) {
+        console.log('update failed in cart', error);
+        res.status(500).json({ error: "failed to cart quantity" })
+    }
+})
 // add user end functionally here--------------------------------------------------------------------------------------------//////
 
 // show all user for dash board-----------------------------
@@ -407,15 +419,17 @@ app.post('/login', async (req, res) => {
         const { identifier, password } = req.body;
         console.log("Login request received:", identifier);
 
-        const findUser = await userModel.findOne({
-            $or: [{ email: identifier }, { phone: Number(identifier) }]
-        });
+        const isPhone = !isNaN(identifier); // check if numeric
+        const findUser = await userModel.findOne(
+            isPhone
+                ? { phone: Number(identifier) }
+                : { email: identifier }
+        );
 
         if (!findUser) {
             return res.status(400).json({ message: "User not found" });
         }
 
-        // ✅ Check VisibilityStatus
         if (findUser.VisibilityStatus === 'Pending') {
             return res.status(403).json({ message: "Your account is pending approval by admin." });
         }
@@ -424,18 +438,14 @@ app.post('/login', async (req, res) => {
             return res.status(403).json({ message: "Your account was rejected by admin." });
         }
 
-        // const isPasswordValid = await bcrypt.compare(password, findUser.password);
-        // const isPasswordValid = await 
-
         if (password !== findUser.password) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
 
-        // ✅ Set cookies
         res.cookie('email', findUser.email, { httpOnly: true });
         res.cookie('role', findUser.role, { httpOnly: true });
 
-        return res.redirect('/cart');
+        return res.status(200).json({ message: "Login successful" }); // ✅ for frontend handling
 
     } catch (error) {
         console.error('Login failed:', error);
@@ -443,37 +453,6 @@ app.post('/login', async (req, res) => {
     }
 });
 
-
-// app.post('/login', async (req, res) => {
-//     try {
-//         // const { email, password } = req.body;
-//         const { identifier, password } = req.body;
-//         console.log("Login request received:", identifier);
-
-//         const findUser = await userModel.findOne({ $or: [{ email: identifier }, { phone: Number(identifier) }] });
-//         console.log("geting password", findUser);
-//         if (!findUser) {
-//             // console.log("User not found");
-//             return res.status(400).json({ message: "User not found" });
-//         }
-
-//         const isPasswordValid = await bcrypt.compare(password, findUser.password);
-//         if (!isPasswordValid) {
-//             // console.log("Invalid credentials");
-//             return res.status(400).json({ message: "Invalid credentials" });
-//         }
-//         res.cookie('email', findUser.email, { httpOnly: true });
-//         res.cookie('role', findUser.role, { httpOnly: true });
-//         // console.log("Redirecting to /cart...");
-
-//         return res.redirect('/cart');
-//         // return res.json({ message: "Login successful", redirect: "/cart" });
-
-//     } catch (error) {
-//         console.error('Login failed:', error);
-//         res.status(500).json({ message: "Internal Server Error" });
-//     }
-// });
 
 
 app.get('/toydetails/:id', async (req, res) => {

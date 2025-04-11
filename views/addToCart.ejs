@@ -210,7 +210,7 @@
                                     <span id="quantity-<%= item._id %>">
                                         <%= quantity %>
                                     </span>
-                                    <button class="increase-btn">+</button>
+                                    <button class="increase-btn" data-id="<%=item._id%>">+</button>
                                 </td>
                                 <td>₹<%= itemSubtotal.toFixed(2) %>
                                 </td>
@@ -256,9 +256,11 @@
                     <button style="cursor: pointer;" class="download-btn">Download
                         PDF</button>
                 </div>
+                <button style="cursor: pointer;" class="download-btn">Download
+                    PDF</button>
+                <button style="cursor: pointer;" class="download-btn">Download
+                    PDF</button>
                 <% } %>
-
-
         </div>
         <!-- <br> -->
         <%- include('common/footer.ejs') %>
@@ -380,6 +382,57 @@
         });
     }
 
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // const cartItems =<% -JSON.stringify(cart) %>
+
+        //    increase btn functionally start here
+        document.querySelectorAll('.increase-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const quantitySpan = document.getElementById(`quantity-${id}`)
+                // console.log(quantitySpan)
+                let currentQty = parseInt(quantitySpan.innerText);
+                // console.log(currentQty)
+                currentQty += currentQty;
+                location.reload();
+                quantitySpan.innerText = currentQty;
+                updateCartQuantity(id, currentQty);
+            })
+        })
+
+        // decrement btn functionality start here
+        document.querySelectorAll('.decrease-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const quantitySpan = document.getElementById(`quantity-${id}`);
+                let currentQty = parseInt(quantitySpan.innerText);
+                if (currentQty > 1) {
+                    currentQty--;
+                    location.reload();
+                }
+                quantitySpan.innerText = currentQty;
+                updateCartQuantity(id, currentQty);
+            })
+        })
+    })
+
+    function updateCartQuantity(id, quantity) {
+        fetch('/update-cart', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ id, quantity })
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log("Cart updated:", data);
+
+            })
+            .catch(err => console.error("Error updating cart:", err));
+    }
 </script>
 
 
