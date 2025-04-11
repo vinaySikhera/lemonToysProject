@@ -206,7 +206,11 @@
                                 <td>₹<%= price.toFixed(2) %>
                                 </td>
                                 <td>
-                                    <%= quantity %>
+                                    <button class="decrease-btn" data-id="<%=item._id%>">-</button>
+                                    <span id="quantity-<%= item._id %>">
+                                        <%= quantity %>
+                                    </span>
+                                    <button class="increase-btn">+</button>
                                 </td>
                                 <td>₹<%= itemSubtotal.toFixed(2) %>
                                 </td>

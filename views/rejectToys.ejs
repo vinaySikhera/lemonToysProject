@@ -26,6 +26,17 @@
             text-align: center;
         }
 
+        .container {
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;/
+            }
+        }
+
         /* Heading */
         h2 {
             color: #333;

@@ -122,6 +122,17 @@
             font-size: 16px;
             color: #777;
         }
+
+        .container {
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;/
+            }
+        }
     </style>
 </head>
 

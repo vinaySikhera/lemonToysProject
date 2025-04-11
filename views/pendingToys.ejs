@@ -122,6 +122,17 @@
             font-size: 16px;
             color: #777;
         }
+
+        .container {
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;/
+            }
+        }
     </style>
 </head>
 
@@ -163,7 +174,7 @@
                                     <button onclick="showModal('Rejected', '<%= toy._id %>')">Reject</button>
 
                                 </td>
-                                
+
                             </tr>
                             <% }) %>
                     </tbody>
@@ -233,45 +244,45 @@
 </html>
 <script>
 
-async function updateVisibilityStatus(toyId, status) {
-    try {
-        const response = await fetch('/updateVisibilityStatus', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ toyId, status }) // Send toy ID and new status
-        });
+    async function updateVisibilityStatus(toyId, status) {
+        try {
+            const response = await fetch('/updateVisibilityStatus', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ toyId, status }) // Send toy ID and new status
+            });
 
-        const result = await response.json();
+            const result = await response.json();
 
-        if (response.ok) {
-            alert(result.message); // Show success message
-            location.reload(); // Reload page to reflect changes
-        } else {
-            alert(result.error); // Show error message
+            if (response.ok) {
+                alert(result.message); // Show success message
+                location.reload(); // Reload page to reflect changes
+            } else {
+                alert(result.error); // Show error message
+            }
+        } catch (error) {
+            console.error("Error updating visibility status:", error);
+            alert("Failed to update status. Please try again.");
         }
-    } catch (error) {
-        console.error("Error updating visibility status:", error);
-        alert("Failed to update status. Please try again.");
     }
-}
 
-async function showModal(status, toyId) {
-    const modal = document.getElementById('confirmationModal');
-    const confirmationText = document.getElementById('confirmationText');
-    const confirmButton = document.getElementById('confirmButton');
+    async function showModal(status, toyId) {
+        const modal = document.getElementById('confirmationModal');
+        const confirmationText = document.getElementById('confirmationText');
+        const confirmButton = document.getElementById('confirmButton');
 
-    confirmationText.innerText = `Are you sure you want to mark this toy as ${status}?`;
-    confirmButton.style.backgroundColor = status === 'Approved' ? "#28a745" : "#ff4d4d";
-    
-    confirmButton.onclick = async function () {
-        await updateVisibilityStatus(toyId, status);
-        closeModal();
-    };
+        confirmationText.innerText = `Are you sure you want to mark this toy as ${status}?`;
+        confirmButton.style.backgroundColor = status === 'Approved' ? "#28a745" : "#ff4d4d";
 
-    modal.style.display = 'block';
-}
+        confirmButton.onclick = async function () {
+            await updateVisibilityStatus(toyId, status);
+            closeModal();
+        };
+
+        modal.style.display = 'block';
+    }
 
 
     function closeModal() {
