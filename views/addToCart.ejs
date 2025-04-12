@@ -15,6 +15,7 @@
             background: #fff;
             padding: 20px;
             font-family: cursive;
+            overflow: hidden;
         }
 
         table {
@@ -166,6 +167,45 @@
             justify-content: space-between;
             align-items: center;
         }
+
+        .decrease-btn,
+        .increase-btn {
+            padding: 7px 16px;
+            font-size: 19px;
+            outline: none;
+            border: none;
+            border-radius: 7px;
+            background-color: #efdada;
+        }
+
+        .removeFromCart {
+            padding: 7px;
+            border: none;
+            border-radius: 4px;
+            color: #585a52;
+        }
+
+        .download-btn {
+            font-family: cursive;
+            background-color: rgb(255, 225, 0);
+            border: none;
+            border-radius: 8px;
+            width: 300px;
+            height: 40px;
+            margin-right: 10px;
+            margin-left: 10px;
+        }
+
+        .adminBtn {
+            border: 2px solid #eee;
+        }
+
+        @media(max-width:768px) {
+            .cart-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
     </style>
 </head>
 
@@ -256,10 +296,13 @@
                     <button style="cursor: pointer;" class="download-btn">Download
                         PDF</button>
                 </div>
-                <button style="cursor: pointer;" class="download-btn">Download
-                    PDF</button>
-                <button style="cursor: pointer;" class="download-btn">Download
-                    PDF</button>
+                <div class="adminBtn">
+                    <p>these two btn only for admin </p>
+                    <button style="cursor: pointer;" class="download-btn">Text 1</button>
+                    <br>
+                    <br>
+                    <button style="cursor: pointer;" class="download-btn">Text 2</button>
+                </div>
                 <% } %>
         </div>
         <!-- <br> -->
