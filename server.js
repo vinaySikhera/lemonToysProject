@@ -339,7 +339,7 @@ app.post('/updateUser/:id', async (req, res) => {
         const { id } = req.params;
         const { name, phone, email, address, about, role } = req.body;
 
-        const updateUser = await AddUsersScheema.findByIdAndUpdate(id, {
+        const updateUser = await userModel.findByIdAndUpdate(id, {
             name,
             phone,
             email,
