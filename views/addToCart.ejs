@@ -187,12 +187,14 @@
             color: #585a52;
         }
 
-        .download-btn {
+        .download-btn,
+        .download-btn-one,
+        .download-btn-two {
             font-family: cursive;
             background-color: rgb(255, 225, 0);
             border: none;
             border-radius: 8px;
-            width: 300px;
+            width: 400px;
             height: 40px;
             margin-right: 10px;
             margin-left: 10px;
@@ -201,6 +203,43 @@
         .adminBtn {
             border: 2px solid #eee;
         }
+
+        .adminBtn {
+            margin-top: 2rem;
+            padding: 1rem;
+            border: 2px dashed #ff9800;
+            background-color: #fff3e0;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .adminBtn p {
+            font-size: 1rem;
+            color: #e65100;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .adminBtn button {
+            margin: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            background-color: #ff9800;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .adminBtn button:hover {
+            background-color: #fb8c00;
+            transform: scale(1.05);
+        }
+
 
         @media(max-width:768px) {
             .cart-container {
@@ -248,28 +287,23 @@
                                 <td>₹<%= price.toFixed(2) %>
                                 </td>
                                 <td>
-                                    <button class="decrease-btn" data-id="<%=item._id%>">-</button>
+                                    <button class="decrease-btn" data-id="<%= item._id %>">-</button>
                                     <span id="quantity-<%= item._id %>">
                                         <%= quantity %>
                                     </span>
-                                    <button class="increase-btn" data-id="<%=item._id%>">+</button>
+                                    <button class="increase-btn" data-id="<%= item._id %>">+</button>
                                 </td>
                                 <td>₹<%= itemSubtotal.toFixed(2) %>
                                 </td>
                                 <td><img src="<%= item.qrCodeUrl %>" alt="QR Code" width="60" /></td>
-                                <!-- <td><button class="remove-btn" data-id="<%= item._id %>">Remove</button></td> -->
                                 <td><button class="removeFromCart" data-id="<%= item._id %>">Remove</button></td>
                             </tr>
                             <% }); } %>
                 </tbody>
-
             </table>
 
             <div class="btn">
-                <div>
-                    <button style="cursor: pointer;" class="CS" onclick="window.location.href='/alltoys'">Continue
-                        Shopping</button>
-                </div>
+                <button class="CS" onclick="window.location.href='/alltoys'">Continue Shopping</button>
             </div>
 
             <% if (cart.length> 0) {
@@ -295,159 +329,61 @@
                         </div>
                     </div>
                     <div id="cart-data" style="display:none;" data-cart='<%= JSON.stringify(cart) %>'></div>
-                    <button style="cursor: pointer;" class="download-btn">Download
-                        PDF</button>
+                    <button class="download-btn">Download PDF</button>
                 </div>
-                <div class="adminBtn">
-                    <p>these two btn only for admin </p>
-                    <button style="cursor: pointer;" class="download-btn">Text 1</button>
-                    <br>
-                    <br>
-                    <button style="cursor: pointer;" class="download-btn">Text 2</button>
-                </div>
-                <% } %>
+
+                <% if (user && user==='Admin' ) { %>
+                    <div class="adminBtn">
+                        <p>these two btn only for admin</p>
+                        <button class="download-btn-one">Photo_QR_Name</button>
+                        <button class="download-btn-two">Name_Minimum_Order_Quantity_Price_Photo</button>
+                    </div>
+                    <% } %>
+                        <% } %>
         </div>
-        <!-- <br> -->
         <%- include('common/footer.ejs') %>
+
+            <script src="/js/cart-page.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 
 </html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const removeButtons = document.querySelectorAll(".removeFromCart");
-
-        removeButtons.forEach(button => {
-            button.addEventListener("click", () => {
-                const productId = button.getAttribute("data-id");
-                removeFromCart(productId);
-            });
-        });
-    });
-
-    function removeFromCart(productId) {
-        fetch(`/remove-from-cart/${productId}`, {
-            method: 'DELETE'
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert(data.message || "Failed to remove item.");
-                }
-            })
-            .catch(err => {
-                console.error("Remove error:", err);
-                alert("Failed to remove item.");
-            });
-    }
-</script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Retrieve cart data from the data-cart attribute of the hidden element
         const cartElement = document.getElementById('cart-data');
         const globalCartItems = JSON.parse(cartElement.getAttribute('data-cart'));
 
-        // Attach event listener to the download button
-        document.querySelector('.download-btn').addEventListener('click', () => {
-            console.log("Button clicked!");
-            downloadCartPDF(globalCartItems);  // Pass globalCartItems to the function
+        // Remove from cart
+        document.querySelectorAll(".removeFromCart").forEach(button => {
+            button.addEventListener("click", () => {
+                const productId = button.getAttribute("data-id");
+                fetch(`/remove-from-cart/${productId}`, {
+                    method: 'DELETE'
+                }).then(res => res.json())
+                    .then(data => {
+                        if (data.success) location.reload();
+                        else alert(data.message || "Failed to remove item.");
+                    }).catch(err => {
+                        console.error("Remove error:", err);
+                        alert("Failed to remove item.");
+                    });
+            });
         });
-    });
 
-    async function downloadCartPDF(globalCartItems) {
-        console.log("click downloadCartPDF", globalCartItems);
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-
-        if (!globalCartItems || globalCartItems.length === 0) {
-            alert("Your cart is empty.");
-            return;
-        }
-
-        doc.setFontSize(18);
-        doc.text("Cart Summary", 20, 20);
-        doc.setFontSize(12);
-
-        let y = 30;
-        let sum = 0;
-        for (let i = 0; i < globalCartItems.length; i++) {
-            const item = globalCartItems[i];
-            console.log("download for pdf", item);
-            const subtotal = item.price * item.quantity;
-            sum += subtotal;
-            doc.text(`${i + 1}. ${item.name}`, 20, y);
-            doc.text(`Price: ₹${item.price}`, 20, y + 8);
-            doc.text(`Quantity: ${item.quantity}`, 20, y + 16);
-            doc.text(`Subtotal: ₹${subtotal.toFixed(2)}`, 20, y + 24);
-
-            try {
-                const productImg = await getBase64Image(item.image);
-                const qrImg = await getBase64Image(item.qrCodeUrl);
-
-                if (productImg) doc.addImage(productImg, "JPEG", 150, y - 5, 25, 25);
-                if (qrImg) doc.addImage(qrImg, "JPEG", 180, y - 5, 25, 25);
-            } catch (err) {
-                console.warn("Image load failed:", err);
-            }
-
-            y += 40;
-            if (y > 250) {
-                doc.addPage();
-                y = 20;
-            }
-        }
-
-        const total = sum;
-        doc.setFontSize(14);
-        doc.text(`Total: ₹${total.toFixed(2)}`, 20, y + 10);
-
-        doc.save("cart-summary.pdf");
-    }
-
-    function getBase64Image(url) {
-        return new Promise((resolve) => {
-            const img = new Image();
-            img.crossOrigin = "Anonymous";
-            img.src = url;
-
-            img.onload = () => {
-                const canvas = document.createElement("canvas");
-                canvas.width = img.width;
-                canvas.height = img.height;
-                const ctx = canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0);
-                resolve(canvas.toDataURL("image/jpeg"));
-            };
-
-            img.onerror = () => resolve(null);
-        });
-    }
-
-
-
-    document.addEventListener('DOMContentLoaded', () => {
-        // const cartItems =<% -JSON.stringify(cart) %>
-
-        //    increase btn functionally start here
+        // Increase quantity
         document.querySelectorAll('.increase-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = btn.getAttribute('data-id');
-                const quantitySpan = document.getElementById(`quantity-${id}`)
-                // console.log(quantitySpan)
+                const quantitySpan = document.getElementById(`quantity-${id}`);
                 let currentQty = parseInt(quantitySpan.innerText);
-                // console.log(currentQty)
-                currentQty += currentQty;
-                location.reload();
-                quantitySpan.innerText = currentQty;
+                currentQty++;
                 updateCartQuantity(id, currentQty);
-            })
-        })
+                location.reload();
+            });
+        });
 
-        // decrement btn functionality start here
+        // Decrease quantity
         document.querySelectorAll('.decrease-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = btn.getAttribute('data-id');
@@ -455,68 +391,33 @@
                 let currentQty = parseInt(quantitySpan.innerText);
                 if (currentQty > 1) {
                     currentQty--;
+                    updateCartQuantity(id, currentQty);
                     location.reload();
                 }
-                quantitySpan.innerText = currentQty;
-                updateCartQuantity(id, currentQty);
-            })
-        })
-    })
-
-    function updateCartQuantity(id, quantity) {
-        fetch('/update-cart', {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ id, quantity })
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.log("Cart updated:", data);
-
-            })
-            .catch(err => console.error("Error updating cart:", err));
-    }
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Define globalCartItems within the DOMContentLoaded event to make it accessible
-        // const globalCartItems = <%= JSON.stringify(cart) %>;
-        const globalCartItems = <%= cart %>;
-
-        // Check if the download button exists
-        const downloadButton = document.querySelector('.download-btn');
-
-        // Bind the click event to the download button
-        if (downloadButton) {
-            downloadButton.addEventListener('click', () => {
-                console.log("Button clicked!");
-                downloadCartPDF(globalCartItems);  // Pass globalCartItems to the function
             });
-        } else {
-            console.error('Download button not found!');
+        });
+
+        function updateCartQuantity(id, quantity) {
+            fetch('/update-cart', {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id, quantity })
+            }).then(res => res.json())
+                .then(data => console.log("Cart updated:", data))
+                .catch(err => console.error("Error updating cart:", err));
         }
+
+        // PDF Button Handlers
+        document.querySelector('.download-btn')?.addEventListener('click', () => generatePDF(globalCartItems, 'full'));
+        document.querySelector('.download-btn-one')?.addEventListener('click', () => generatePDF(globalCartItems, 'Photo_QR_Name'));
+        document.querySelector('.download-btn-two')?.addEventListener('click', () => generatePDF(globalCartItems, 'Name_Minimum_Order_Quantity_Price_Photo'));
     });
 
-    async function downloadCartPDF(globalCartItems) {
-        console.log("click downloadCartPDF", globalCartItems);
+    async function generatePDF(cartItems, mode = 'full') {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
-        if (!globalCartItems || globalCartItems.length === 0) {
+        if (!cartItems || cartItems.length === 0) {
             alert("Your cart is empty.");
             return;
         }
@@ -526,47 +427,88 @@
         doc.setFontSize(12);
 
         let y = 30;
-        let sum = 0;
-        for (let i = 0; i < globalCartItems.length; i++) {
-            const item = globalCartItems[i];
-            console.log("download for pdf", item);
-            const subtotal = item.price * item.quantity;
-            sum += subtotal;
+        let total = 0;
+
+        for (let i = 0; i < cartItems.length; i++) {
+            const item = cartItems[i];
+            const price = Number(item.price) || 0;
+            const quantity = Number(item.quantity) || 1;
+            const subtotal = price * quantity;
+            total += subtotal;
+
             doc.text(`${i + 1}. ${item.name}`, 20, y);
-            doc.text(`Price: ₹${item.price}`, 20, y + 8);
-            doc.text(`Quantity: ${item.quantity}`, 20, y + 16);
-            doc.text(`Subtotal: ₹${subtotal.toFixed(2)}`, 20, y + 24);
+            y += 8;
 
-            try {
-                const productImg = await getBase64Image(item.image);
-                const qrImg = await getBase64Image(item.qrCodeUrl);
-
-                if (productImg) doc.addImage(productImg, "JPEG", 150, y - 5, 25, 25);
-                if (qrImg) doc.addImage(qrImg, "JPEG", 180, y - 5, 25, 25);
-            } catch (err) {
-                console.warn("Image load failed:", err);
+            // ✅ Add product image
+            if (item.image) {
+                try {
+                    const productImg = await getBase64Image(item.image);
+                    if (productImg) doc.addImage(productImg, "JPEG", 20, y, 25, 25);
+                } catch (err) {
+                    console.warn("Image error:", err);
+                }
             }
 
-            y += 40;
+            // 🟢 FULL Mode
+            if (mode === 'full') {
+                doc.text(`Price: ₹${price}`, 50, y + 5);
+                doc.text(`Quantity: ${quantity}`, 50, y + 13);
+                doc.text(`Subtotal: ₹${subtotal.toFixed(2)}`, 50, y + 21);
+
+                try {
+                    const qrImg = await getBase64Image(item.qrCodeUrl);
+                    if (qrImg) doc.addImage(qrImg, "JPEG", 150, y, 25, 25);
+                } catch (err) {
+                    console.warn("QR load error:", err);
+                }
+
+                y += 40;
+            }
+
+            // 🔵 Photo_QR_Name Mode
+            else if (mode === 'Photo_QR_Name') {
+                try {
+                    const qrImg = await getBase64Image(item.qrCodeUrl);
+                    if (qrImg) doc.addImage(qrImg, "JPEG", 150, y, 25, 25);
+                } catch (err) {
+                    console.warn("QR load error:", err);
+                }
+
+                y += 40;
+            }
+
+            // 🟣 Name_Minimum_Order_Quantity_Price_Photo Mode
+            else if (mode === 'Name_Minimum_Order_Quantity_Price_Photo') {
+                doc.text(`Price: ₹${price}`, 50, y + 5);
+                doc.text(`Min Order Qty: ${quantity}`, 50, y + 13);
+
+                y += 40;
+            }
+
             if (y > 250) {
                 doc.addPage();
                 y = 20;
             }
         }
 
-        const total = sum;
-        doc.setFontSize(14);
-        doc.text(`Total: ₹${total.toFixed(2)}`, 20, y + 10);
+        if (mode === 'full') {
+            doc.setFontSize(14);
+            doc.text(`Total: ₹${total.toFixed(2)}`, 20, y + 10);
+        }
 
-        doc.save("cart-summary.pdf");
+        let filename = "cart-summary.pdf";
+        if (mode === 'Photo_QR_Name') filename = "cart-Photo_QR_Name.pdf";
+        if (mode === 'Name_Minimum_Order_Quantity_Price_Photo') filename = "cart-Name_Minimum_Order_Quantity_Price_Photo.pdf";
+
+        doc.save(filename);
     }
+
 
     function getBase64Image(url) {
         return new Promise((resolve) => {
             const img = new Image();
             img.crossOrigin = "Anonymous";
             img.src = url;
-
             img.onload = () => {
                 const canvas = document.createElement("canvas");
                 canvas.width = img.width;
@@ -575,8 +517,7 @@
                 ctx.drawImage(img, 0, 0);
                 resolve(canvas.toDataURL("image/jpeg"));
             };
-
             img.onerror = () => resolve(null);
         });
     }
-</script> -->
+</script>

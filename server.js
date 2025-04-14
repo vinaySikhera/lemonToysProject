@@ -54,13 +54,13 @@ app.post('/add-to-cart', async (req, res) => {
     try {
         const product = req.body;
         const email = req.cookies?.email; // optional login check
-        console.log("email", email);
-        console.log(product)
+        // console.log("email", email);
+        // console.log(product)
         const userId = await userModel.findOne({ email: email });
-        console.log("userid is ", userId._id);
+        // console.log("userid is ", userId._id);
         // Check if the item already exists in cart for the same user
         const existingItem = await userCart.findOne({ userId: userId._id, productId: product._id });
-        console.log(existingItem);
+        // console.log(existingItem);
         if (existingItem) {
             existingItem.quantity += 1;
             await existingItem.save();
@@ -88,19 +88,24 @@ app.post('/add-to-cart', async (req, res) => {
 
 app.get('/cart', async (req, res) => {
     const { email } = req.cookies;
+
     // console.log("cart page", email);
 
     if (!email) return res.status(401).redirect("/login"); // or redirect to login
 
     try {
+        const { role } = req.cookies;
+        // console.log(role)
         const userId = await userModel.findOne({ email: email });
         // console.log("userid is ", userId._id);
         const user = await userCart.find({
             userId: userId._id
         });
         // console.log("cart page", user);
+        // console.log(userId)
         res.render("addToCart", {
-            cart: user || []
+            cart: user || [],
+            user: role
         });
     } catch (err) {
         console.error("Error fetching cart:", err);
@@ -277,7 +282,7 @@ app.get('/allusers', isAdmin, async (req, res) => {
         // console.log(query)
         const allusers = await userModel.find(query);
         // console.log(allusers);
-        console.log(allusers)
+        // console.log(allusers)
 
         res.render('getAllUsers', { allusers, selectedRole: role || "" });
 
@@ -364,7 +369,7 @@ app.post('/updateUser/:id', async (req, res) => {
 app.get('/approveUser', isAdmin, async (req, res) => {
     try {
         const pendingUsers = await userModel.find({ VisibilityStatus: 'Pending' });
-        console.log(pendingUsers)
+        // console.log(pendingUsers)
         res.render('approveUser', { users: pendingUsers });
     } catch (err) {
         console.error(err);
@@ -417,7 +422,7 @@ app.get('/login', isLoginOrNot, (req, res) => {
 app.post('/login', async (req, res) => {
     try {
         const { identifier, password } = req.body;
-        console.log("Login request received:", identifier);
+        // console.log("Login request received:", identifier);
 
         const isPhone = !isNaN(identifier); // check if numeric
         const findUser = await userModel.findOne(
