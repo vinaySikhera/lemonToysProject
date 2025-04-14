@@ -158,7 +158,7 @@ const uploadFile = async (url, name) => {
         .catch((error) => {
             console.log(error);
         });
-    console.log(uploadResult.url)
+    // console.log(uploadResult.url)
     return uploadResult.url
 }
 
@@ -189,13 +189,13 @@ toyControllerRoute.post('/addtoys', upload.single('single_image'), validateToyIn
         });
 
         await addToy.save().then((user) => {
-            console.log('toy added:', user);
+            // console.log('toy added:', user);
         })
             .catch((error) => {
                 console.error('Error adding toy:', error);
             });
 
-        res.redirect('/toys/adminToys');
+        res.redirect('/adminToys');
         // res.status(202).json({ message: "New data consoled" });
     } catch (error) {
         console.error("New data not added", error);
