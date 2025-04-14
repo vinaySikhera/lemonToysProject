@@ -54,7 +54,29 @@ toyControllerRoute.get('/', async (req, res) => {
     }
     // res.render('index');
 });
+toyControllerRoute.get('/search-product', async (req, res) => {
+    const { query } = req.query;
+    console.log("Search Query:", query);
 
+    try {
+        let toys;
+
+        if (query === 'undefined' || !query) {
+            toys = await AddToyScheema.find();
+        } else {
+            toys = await AddToyScheema.find({
+                ProductName: { $regex: query, $options: 'i' } // case-insensitive partial match
+            });
+        }
+
+        console.log("Search Results:", toys);
+        res.json(toys); // send JSON response
+    } catch (error) {
+        console.error("Error fetching toys:", error);
+        res.status(500).json({ error: 'Server error' });
+    }
+
+});
 toyControllerRoute.get('/alltoys', async (req, res) => {
     try {
         const { email, Category } = req.cookies;

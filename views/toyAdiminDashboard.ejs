@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Toy Dashboard</title>
-    <link rel="shortcut icon" href="/images/lemontoyslogo.jpeg" type="image/x-icon">
     <!-- <link rel="stylesheet" href="/styles.css"> -->
     <style>
         /* General Styling */
@@ -86,6 +85,48 @@
             background: #e0a800;
         }
 
+        .whatsapp {
+            /* border: 1px solid black; */
+            height: 50px;
+
+            /* margin-left: 20px; */
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .whatsapp>i {
+            font-size: 35px;
+            margin-top: 7px;
+
+        }
+
+        .whatsapp>input {
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-radius: 15px;
+            border: none;
+            box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+            padding-left: 20px;
+        }
+
+        .search-icon {
+            /* border: 1px solid black; */
+            height: 35px;
+            width: 35px;
+            border-radius: 50%;
+            position: relative;
+            background: #0F83B2;
+            right: 35px;
+        }
+
+        .search-icon>i {
+            font-size: 20px;
+            margin-left: 8px;
+            margin-top: 7px;
+            color: white;
+        }
+
         /* Pagination */
         .pagination {
             display: flex;
@@ -123,26 +164,17 @@
             font-size: 16px;
             color: #777;
         }
-
-        .container {
-            overflow: hidden;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;/
-            }
-        }
     </style>
 </head>
 
 <body>
-    <div style="display: flex; flex-wrap: wrap;">
+    <div style="display: flex; flex-wrap: wrap; border: 5px solid black;">
         <%- include('common/adminsidebar.ejs') %>
             <div class="container">
                 <h2>Admin Toy Dashboard</h2>
-
+                <div class="whatsapp">
+                    <input id="txt" type="search" placeholder="Search">
+                </div>
                 <table>
                     <thead>
                         <tr>
@@ -177,26 +209,7 @@
                     </tbody>
                 </table>
 
-                <!-- Pagination -->
-                <!-- <div class="pagination">
-            <% if (currentPage> 1) { %>
-                <a href="/adminToys?page=<%= currentPage - 1 %>&price=<%= price %>&category=<%= category %>">&laquo;
-                    Prev</a>
-                <% } %>
- 
-                    <% for (let i=1; i <=totalPages; i++) { %>
-                        <a href="/adminToys?page=<%= i %>&price=<%= price %>&category=<%= category %>"
-                            class="<%= currentPage === i ? 'active' : '' %>">
-                            <%= i %>
-                        </a>
-                        <% } %>
- 
-                            <% if (currentPage < totalPages) { %>
-                                <a
-                                    href="/adminToys?page=<%= currentPage + 1 %>&price=<%= price %>&category=<%= category %>">Next
-                                    &raquo;</a>
-                                <% } %>
-        </div> -->
+
 
 
                 <div class="pagination">
@@ -245,5 +258,72 @@
             </div>
     </div>
 </body>
+<script>
+    const searchInput = document.getElementById('txt');
+    const tableBody = document.querySelector('table tbody');
+
+    // Create loading spinner and "no results" message
+    const loading = document.createElement('div');
+    loading.innerText = 'Loading...';
+    loading.style.fontWeight = 'bold';
+    loading.style.marginTop = '1rem';
+    loading.style.display = 'none';
+
+    const noResult = document.createElement('div');
+    noResult.innerText = 'No results found.';
+    noResult.style.fontWeight = 'bold';
+    noResult.style.marginTop = '1rem';
+    noResult.style.display = 'none';
+
+    const container = document.querySelector('.container');
+    container.appendChild(loading);
+    container.appendChild(noResult);
+
+    searchInput.addEventListener('keydown', async (event) => {
+        if (event.key === 'Enter') {
+            const query = searchInput.value.trim();
+
+            loading.style.display = 'block';
+            noResult.style.display = 'none';
+            tableBody.innerHTML = '';
+
+            try {
+                const url = query
+                    ? `/search-product?query=${encodeURIComponent(query)}`
+                    : '/search-product';
+
+                const res = await fetch(url);
+                const toys = await res.json();
+
+                loading.style.display = 'none';
+
+                if (!toys.length) {
+                    noResult.style.display = 'block';
+                    return;
+                }
+
+                toys.forEach(toy => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><img src="${toy.ProductImageURL}" width="80" height="80" alt="${toy.ProductName}"></td>
+                        <td>${toy.ProductName}</td>
+                        <td>${toy.Category}</td>
+                        <td>₹${toy.Price}</td>
+                        <td>
+                            <a href="/viewToys/${toy._id}" class="btn">View</a>
+                            <a href="/editToy/${toy._id}" class="btn edit">Edit</a>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                loading.style.display = 'none';
+                console.error("Search failed:", error);
+            }
+        }
+    });
+</script>
+
 
 </html>

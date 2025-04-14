@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <link rel="shortcut icon" href="/images/lemontoyslogo.jpeg" type="image/x-icon">
     <link rel="stylesheet" href="/css/adminsidebar.css">
     <style>
         /* General Styling */
@@ -84,7 +83,7 @@
 
         input,
         textarea {
-            width: 90%;
+            width: 100%;
             padding: 12px;
             margin-bottom: 10px;
             border: 1px solid #ccc;
@@ -121,7 +120,6 @@
                 flex-direction: column;
                 align-items: center;
                 padding: 20px;
-                width: 90%;
             }
 
             .role-selection {
@@ -139,7 +137,7 @@
 
                 <div class="form-container">
                     <h2>Register</h2>
-                    <form action="/adduser" method="POST">
+                    <form action="/adduser" method="POST" >
                         <div class="role-selection">
                             <div class="role" data-role="Supplier">
                                 <img src="/images/Group.png" alt="Supplier">
@@ -181,7 +179,11 @@
                             <label for="address">Address</label>
                         </div>
                         <textarea id="address" name="address" placeholder="Enter your address" required></textarea>
-
+                        <div class="input-details">
+                            <label for="Category">Category</label>
+                        </div>
+                        <input type="text" id="Category" name="Category" placeholder="Choose Category Between A,B,C,D" required
+                            >
                         <button type="submit" class="register-btn">Register</button>
                     </form>
                 </div>

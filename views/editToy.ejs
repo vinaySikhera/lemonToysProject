@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Toy</title>
     <!-- <link rel="stylesheet" href="/styles.css"> -->
-    <link rel="shortcut icon" href="/images/lemontoyslogo.jpeg" type="image/x-icon">
     <style>
         /* General Styling */
         body {
@@ -95,6 +94,21 @@
 
             <label>Image URL:</label>
             <input type="text" name="ProductImageURL" value="<%= toy.ProductImageURL %>" required>
+
+            <label>Product Description:</label>
+            <input type="text" name="ProductDescription" value="<%= toy.ProductDescription %>" required>
+
+            <label>PriceA:</label>
+            <input type="text" name="PriceA" value="<%= toy.PriceA %>" required>
+
+            <label>PriceB:</label>
+            <input type="text" name="PriceB" value="<%= toy.PriceB %>" required>
+
+            <label>PriceC:</label>
+            <input type="text" name="PriceC" value="<%= toy.PriceC %>" required>
+
+            <label>PriceD:</label>
+            <input type="text" name="PriceD" value="<%= toy.PriceD %>" required>
 
             <button type="submit" class="btn">Update Toy</button>
         </form>

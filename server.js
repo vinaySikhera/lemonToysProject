@@ -187,7 +187,7 @@ app.post('/adduser', async (req, res) => {
             return res.status(400).json({ message: "No data received. Check form submission." });
         }
 
-        const { name, phone, email, password, address, role } = req.body;
+        const { name, phone, email, password, address, role, Category } = req.body;
         // console.log("📌 Extracted Fields:", { name, phone, email, password, address, role });
 
         if (!password) {
@@ -208,7 +208,8 @@ app.post('/adduser', async (req, res) => {
             name,
             email,
             //    password: hashedPassword
-            password
+            password,
+            category: Category.toUpperCase()
         });
         await newUser.save();
 
