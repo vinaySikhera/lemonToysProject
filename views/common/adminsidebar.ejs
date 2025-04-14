@@ -64,14 +64,14 @@
                     <li><a href="#">Total Orders</a></li>
                 </ul>
             <li><a style="text-decoration: none; color: black;" href="/changePassword">Change Password</a></li>
-            <li>
+            <!-- <li>
                 <button onclick="confirmLogout()"
                     style="background: none; border: none; width: 100%; padding: 10px; cursor: pointer;">Logout</button>
-            </li>
+            </li> -->
         </ul>
     </div>
 
-    <div id="logoutModal"
+    <!-- <div id="logoutModal"
         style="display: none; position: fixed; top: 10px; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000;">
         <div
             style="background: white; margin: 100px auto; padding: 20px; text-align: center; width: 300px; border-radius: 8px;">
@@ -81,7 +81,7 @@
             <button onclick="cancelLogout()"
                 style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">Cancel</button>
         </div>
-    </div>
+    </div> -->
 </body>
 
 <script>
@@ -112,15 +112,15 @@
     });
 
 
-    function confirmLogout() {
-        document.getElementById("logoutModal").style.display = "block";
-    }
-    function cancelLogout() {
-        document.getElementById("logoutModal").style.display = "none";
-    }
-    function logout() {
-        window.location.href = "/login";
-    }
+    // function confirmLogout() {
+    //     document.getElementById("logoutModal").style.display = "block";
+    // }
+    // function cancelLogout() {
+    //     document.getElementById("logoutModal").style.display = "none";
+    // }
+    // function logout() {
+    //     window.location.href = "/login";
+    // }
 </script>
 
 </html>

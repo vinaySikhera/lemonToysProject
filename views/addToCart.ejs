@@ -194,7 +194,7 @@
             background-color: rgb(255, 225, 0);
             border: none;
             border-radius: 8px;
-            width: 400px;
+            /* width: 400px; */
             height: 40px;
             margin-right: 10px;
             margin-left: 10px;
@@ -336,7 +336,7 @@
                     <div class="adminBtn">
                         <p>these two btn only for admin</p>
                         <button class="download-btn-one">Photo_QR_Name</button>
-                        <button class="download-btn-two">Name_Minimum_Order_Quantity_Price_Photo</button>
+                        <button class="download-btn-two">Name_Quantity_Price_Photo</button>
                     </div>
                     <% } %>
                         <% } %>
@@ -410,7 +410,7 @@
         // PDF Button Handlers
         document.querySelector('.download-btn')?.addEventListener('click', () => generatePDF(globalCartItems, 'full'));
         document.querySelector('.download-btn-one')?.addEventListener('click', () => generatePDF(globalCartItems, 'Photo_QR_Name'));
-        document.querySelector('.download-btn-two')?.addEventListener('click', () => generatePDF(globalCartItems, 'Name_Minimum_Order_Quantity_Price_Photo'));
+        document.querySelector('.download-btn-two')?.addEventListener('click', () => generatePDF(globalCartItems, 'Name_Quantity_Price_Photo'));
     });
 
     async function generatePDF(cartItems, mode = 'full') {
@@ -477,8 +477,8 @@
                 y += 40;
             }
 
-            // 🟣 Name_Minimum_Order_Quantity_Price_Photo Mode
-            else if (mode === 'Name_Minimum_Order_Quantity_Price_Photo') {
+            // 🟣 Name_Quantity_Price_Photo Mode
+            else if (mode === 'Name_Quantity_Price_Photo') {
                 doc.text(`Price: ₹${price}`, 50, y + 5);
                 doc.text(`Min Order Qty: ${quantity}`, 50, y + 13);
 
@@ -498,7 +498,7 @@
 
         let filename = "cart-summary.pdf";
         if (mode === 'Photo_QR_Name') filename = "cart-Photo_QR_Name.pdf";
-        if (mode === 'Name_Minimum_Order_Quantity_Price_Photo') filename = "cart-Name_Minimum_Order_Quantity_Price_Photo.pdf";
+        if (mode === 'Name_Quantity_Price_Photo') filename = "cart-Name_Quantity_Price_Photo.pdf";
 
         doc.save(filename);
     }
