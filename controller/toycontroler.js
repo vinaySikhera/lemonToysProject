@@ -57,15 +57,27 @@ toyControllerRoute.get('/', async (req, res) => {
 
 toyControllerRoute.get('/alltoys', async (req, res) => {
     try {
-        const { email } = req.cookies;
+        const { email, Category } = req.cookies;
         if (!email) {
             return res.status(401).redirect('/login');
         }
+
         const { price, category, page = 1, limit = 16 } = req.query;
         const filter = {};
+
+        // Price filter
         if (price) filter.Price = { $lte: Number(price) };
-        if (category) filter.Category = category;
+
+        // Category filter (support multiple)
+        if (category) {
+            const categoryArray = category.split(',').map(cat => cat.trim());
+            filter.Category = { $in: categoryArray };
+        }
+
+        // Distinct categories for filter UI
         const allCategories = await AddToyScheema.distinct("Category");
+
+        // Total count & paginated data
         const totalToys = await AddToyScheema.countDocuments(filter);
         const totalPages = Math.ceil(totalToys / limit);
         const getAllToys = await AddToyScheema.find(filter)
@@ -73,7 +85,6 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
             .skip((page - 1) * limit)
             .limit(Number(limit));
 
-        // console.log(getAllToys)
         res.render('toylists', {
             allCategories,
             getAllToys,
@@ -81,13 +92,54 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
             totalPages,
             totalToys,
             price: price || '',
-            category: category || ''
+            category: category || '',
+            Category: Category || ''
         });
+
     } catch (error) {
         console.error("Error fetching toys:", error);
         res.status(500).send("Internal Server Error");
     }
 });
+toyControllerRoute.get('/api/toys', async (req, res) => {
+    try {
+        const { email, Category } = req.cookies;
+        const page = parseInt(req.query.page) || 1;
+        const limit = 8;
+        const skip = (page - 1) * limit;
+
+        const price = req.query.price ? parseFloat(req.query.price) : null;
+        const category = req.query.category;
+
+        const filter = {};
+
+        if (price) filter.Price = { $lte: price };
+        if (category) {
+            const categoryArray = category.split(',').map(cat => cat.trim());
+            filter.Category = { $in: categoryArray };
+        };
+
+        const totalToys = await AddToyScheema.countDocuments(filter);
+        const totalPages = Math.ceil(totalToys / limit);
+
+        const products = await AddToyScheema.find(filter)
+            .sort({ createdAt: -1 }) // Optional: latest first
+            .skip(skip)
+            .limit(limit);
+
+        res.json({
+            products,
+            currentPage: page,
+            totalPages,
+            totalToys,
+            Category: Category || ''
+        });
+    } catch (err) {
+        console.error('API Error fetching toys:', err);
+        res.status(500).json({ message: 'Server error fetching toys' });
+    }
+});
+
 
 // Add new toy
 toyControllerRoute.get('/addtoys', isAdminOrSupplier, (req, res) => {

@@ -444,6 +444,7 @@ app.post('/login', async (req, res) => {
 
         res.cookie('email', findUser.email, { httpOnly: true });
         res.cookie('role', findUser.role, { httpOnly: true });
+        res.cookie('Category', findUser.category, { httpOnly: true });
 
         return res.status(200).json({ message: "Login successful" }); // ✅ for frontend handling
 
