@@ -164,11 +164,17 @@
             font-size: 16px;
             color: #777;
         }
+        @media (max-width: 768px) {
+            .container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;/
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div style="display: flex; flex-wrap: wrap; border: 5px solid black;">
+    <div style="display: flex; flex-wrap: wrap;">
         <%- include('common/adminsidebar.ejs') %>
             <div class="container">
                 <h2>Admin Toy Dashboard</h2>
