@@ -383,6 +383,7 @@
                 <br>
                 <div class="toys" id="productsContainer">
                     <% getAllToys?.forEach(product=> { %>
+                        
                         <div class="ims">
                             <div class="containers">
                                 <div class="image-container">
@@ -418,13 +419,23 @@
                                 </div>
                                 <div class="h">
                                     <div>
-                                      <% if (Category && product['Price' + Category]) { %>
-                                        <h3 style="color:green; margin-bottom: 4px;">₹<%= Math.abs(product['Price' + Category]) %></h3>
-                                      <% } else { %>
-                                        <h3 style="color:red; margin-bottom: 4px;">Price Not Available</h3>
-                                      <% } %>
-                                      <span style="font-size: 14px; color: #333;">Minimum Order Quantity: <%= product.MinimumOrderQuantity %></span>
-                                    </div>
+                                        <% const dynamicKey = 'Price' + Category; %>
+                                        <% const basePrice = product.Price || 0; %>
+                                        <% const dynamicPrice = product[dynamicKey] || 0; %>
+                                        <% const finalPrice = basePrice + dynamicPrice; %>
+                                        <% if (finalPrice) { %>
+                                          <h4 style="color: green; margin-bottom: 4px;">
+                                             ₹<%= Math.abs(finalPrice) %>
+                                          </h4>
+                                        <% } else { %>
+                                          <h4 style="color: red; margin-bottom: 4px;"> Price Not Available</h4>
+                                        <% } %>
+                                      
+                                        <span style="font-size: 14px; color: #333;">
+                                          Minimum Order Quantity: <%= product.MinimumOrderQuantity || 'N/A' %>
+                                        </span>
+                                      </div>
+                                      
                                   </div>
                                   
                                 <a class="viewDetails" href="/toydetails/<%= product._id %>">View Details</a>
@@ -569,10 +580,11 @@ console.log(selectedCategories)
                 </div>
                 <div class="h" style="display: flex; flex-direction: column; gap: 4px;">
     <h3 style="${Category && product['Price' + Category] ? 'color:green;' : 'color:red;'} margin: 0;">
-        ${Category && product['Price' + Category] 
-            ? '₹' + Math.abs(product['Price' + Category]) 
-            : 'Price Not Available'}
-    </h3>
+    ${Category && product['Price' + Category] 
+        ? '₹' + Math.abs(product['Price' + Category] + product.Price) 
+        : 'Price Not Available'}
+</h3>
+
     <span style="font-size: 14px; color: #444;">MOQ: ${product.MinimumOrderQuantity}</span>
 </div>
 

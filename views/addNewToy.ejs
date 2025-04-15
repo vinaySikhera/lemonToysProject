@@ -111,7 +111,7 @@
         <%- include('common/adminsidebar.ejs') %>
 
             <div class="container">
-                <h2>Add New Toy Product</h2>
+                <h2>Add New Toy Product test by vinay</h2>
                 <form id="add-toy-form" action="/addtoys" method="post" enctype="multipart/form-data">
 
                     <!-- Toy Image Upload -->
@@ -169,12 +169,22 @@
                         <% } %>
 
                             <!-- Product Owner -->
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label for="product_owner" class="form-label">Product Owner:</label>
                                 <input type="text" name="product_owner" id="product_owner" class="form-input"
                                     placeholder="Enter Product Owner Name">
+                            </div> -->
+                            <div class="form-group">
+                                <label for="product_owner" class="form-label">Product Owner:</label>
+                                <select name="product_owner" id="product_owner" class="form-input">
+                                    <option value="">-- Select Product Owner --</option>
+                                    <% allOwner.forEach(owner=> { %>
+                                        <option value="<%= owner.name %>">
+                                            <%= owner.name %>
+                                        </option>
+                                        <% }); %>
+                                </select>
                             </div>
-
                             <!-- A User Amount -->
                             <div class="form-group">
                                 <label for="a_user_amount" class="form-label">A User Amount:</label>

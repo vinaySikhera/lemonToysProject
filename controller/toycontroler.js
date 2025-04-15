@@ -5,6 +5,7 @@ const QRCode = require('qrcode');
 const cloudinary = require('cloudinary')
 const isAdmin = require('../middleware/isAdmin');
 const isAdminOrSupplier = require('../middleware/isAdminOrSupplier');
+const userModel = require('../models/userDetails');
 const toyControllerRoute = express.Router();
 
 cloudinary.config({
@@ -164,10 +165,12 @@ toyControllerRoute.get('/api/toys', async (req, res) => {
 
 
 // Add new toy
-toyControllerRoute.get('/addtoys', isAdminOrSupplier, (req, res) => {
+toyControllerRoute.get('/addtoys', isAdminOrSupplier, async (req, res) => {
     const role = req.cookies.role
-    // console.log(role);
-    res.render('addNewToy', { role });
+    const allOwner = await userModel.find({ role: 'Supplier' }, 'name');
+    console.log(allOwner);
+
+    res.render('addNewToy', { role, allOwner });
 });
 
 const uploadFile = async (url, name) => {
