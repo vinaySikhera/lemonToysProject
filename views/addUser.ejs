@@ -137,7 +137,7 @@
 
                 <div class="form-container">
                     <h2>Register</h2>
-                    <form action="/adduser" method="POST" >
+                    <form action="/adduser" method="POST">
                         <div class="role-selection">
                             <div class="role" data-role="Supplier">
                                 <img src="/images/Group.png" alt="Supplier">
@@ -182,8 +182,13 @@
                         <div class="input-details">
                             <label for="Category">Category</label>
                         </div>
-                        <input type="text" id="Category" name="Category" placeholder="Choose Category Between A,B,C,D" required
-                            >
+                        <select id="Category" name="Category" required class="form-input" >
+                            <option value="">-- Select Category --</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
                         <button type="submit" class="register-btn">Register</button>
                     </form>
                 </div>

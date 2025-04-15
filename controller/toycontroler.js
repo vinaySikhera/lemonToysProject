@@ -78,6 +78,52 @@ toyControllerRoute.get('/search-product', async (req, res) => {
     }
 
 });
+toyControllerRoute.get('/search-user', async (req, res) => {
+    const { query } = req.query;
+    console.log("Query:", query);
+
+    try {
+        let users;
+
+        if (!query || !query.trim()) {
+            users = await userModel.find();
+        } else {
+            const regex = new RegExp(query, 'i');
+            const phoneAsNumber = Number(query);
+
+            const orConditions = [
+                { name: regex },
+                { email: regex },
+                { role: regex },
+                { address: regex }
+            ];
+
+            if (!isNaN(phoneAsNumber)) {
+                orConditions.push({ phone: phoneAsNumber }); // ✅ numeric match
+            }
+
+            users = await userModel.find({ $or: orConditions });
+        }
+
+        console.log("Users found:", users.length);
+        res.json(users);
+    } catch (error) {
+        console.error("Search Error:", error);
+        res.status(500).json({ error: 'Search error' });
+    }
+});
+
+
+
+toyControllerRoute.get('/allusers-json', async (req, res) => {
+    try {
+        const users = await userModel.find();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch users' });
+    }
+});
+
 toyControllerRoute.get('/alltoys', async (req, res) => {
     try {
         const { email, Category } = req.cookies;

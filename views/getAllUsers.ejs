@@ -74,6 +74,48 @@
             object-fit: cover;
             border: 1px solid #ddd;
         }
+
+        .whatsapp {
+            /* border: 1px solid black; */
+            height: 50px;
+
+            /* margin-left: 20px; */
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .whatsapp>i {
+            font-size: 35px;
+            margin-top: 7px;
+
+        }
+
+        .whatsapp>input {
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-radius: 15px;
+            border: none;
+            box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+            padding-left: 20px;
+        }
+
+        .search-icon {
+            /* border: 1px solid black; */
+            height: 35px;
+            width: 35px;
+            border-radius: 50%;
+            position: relative;
+            background: #0F83B2;
+            right: 35px;
+        }
+
+        .search-icon>i {
+            font-size: 20px;
+            margin-left: 8px;
+            margin-top: 7px;
+            color: white;
+        }
     </style>
 </head>
 
@@ -93,6 +135,10 @@
                         <option value="Admin" <%=selectedRole==='Admin' ? 'selected' : '' %>>Admin</option>
                     </select>
                 </form>
+
+                <div class="whatsapp" style="margin: 25PX;">
+                    <input id="txt" type="search" placeholder="Search">
+                </div>
 
                 <table class="table table-bordered">
                     <thead class="table-dark">
@@ -149,5 +195,75 @@
             </div>
     </div>
 </body>
+
+<script>
+    const searchInput = document.getElementById('txt');
+    const tableBody = document.querySelector('table tbody');
+
+    const loading = document.createElement('div');
+    loading.innerText = 'Loading...';
+    loading.style.fontWeight = 'bold';
+    loading.style.marginTop = '1rem';
+    loading.style.display = 'none';
+
+    const noResult = document.createElement('div');
+    noResult.innerText = 'No results found.';
+    noResult.style.fontWeight = 'bold';
+    noResult.style.marginTop = '1rem';
+    noResult.style.display = 'none';
+
+    const container = document.querySelector('.container');
+    container.appendChild(loading);
+    container.appendChild(noResult);
+
+    searchInput.addEventListener('keydown', async (event) => {
+        if (event.key === 'Enter') {
+            const query = searchInput.value.trim();
+
+            loading.style.display = 'block';
+            noResult.style.display = 'none';
+            tableBody.innerHTML = '';
+
+            try {
+                const url = query
+                    ? `/search-user?query=${encodeURIComponent(query)}`
+                    : '/allusers-json'; // You should return all users in JSON from this route
+
+                const res = await fetch(url);
+                const users = await res.json();
+
+                loading.style.display = 'none';
+
+                if (!users.length) {
+                    noResult.style.display = 'block';
+                    return;
+                }
+                console.log(users)
+                users.forEach((user, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${user.name}</td>
+                        <td>${user.phone}</td>
+                        <td>${user.email}</td>
+                        <td>${user.address}</td>
+                        <td>${user.role}</td>
+                        <td>${user.password}</td>
+                        <td>
+                            <a href="/editUser/${user._id}" class="edit-btn">✏ Edit</a>
+                            <a href="/viewUser/${user._id}" class="view-btn">👁 View</a>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                loading.style.display = 'none';
+                console.error("Search failed:", error);
+            }
+        }
+    });
+</script>
+
 
 </html>
