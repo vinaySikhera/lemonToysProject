@@ -57,7 +57,7 @@ toyControllerRoute.get('/', async (req, res) => {
 });
 toyControllerRoute.get('/search-product', async (req, res) => {
     const { query } = req.query;
-    console.log("Search Query:", query);
+    // console.log("Search Query:", query);
 
     try {
         let toys;
@@ -70,7 +70,7 @@ toyControllerRoute.get('/search-product', async (req, res) => {
             });
         }
 
-        console.log("Search Results:", toys);
+        // console.log("Search Results:", toys);
         res.json(toys); // send JSON response
     } catch (error) {
         console.error("Error fetching toys:", error);
@@ -80,11 +80,9 @@ toyControllerRoute.get('/search-product', async (req, res) => {
 });
 toyControllerRoute.get('/search-user', async (req, res) => {
     const { query } = req.query;
-    console.log("Query:", query);
-
+    // console.log("Query:", query);
     try {
         let users;
-
         if (!query || !query.trim()) {
             users = await userModel.find();
         } else {
@@ -105,15 +103,13 @@ toyControllerRoute.get('/search-user', async (req, res) => {
             users = await userModel.find({ $or: orConditions });
         }
 
-        console.log("Users found:", users.length);
+        // console.log("Users found:", users.length);
         res.json(users);
     } catch (error) {
         console.error("Search Error:", error);
         res.status(500).json({ error: 'Search error' });
     }
 });
-
-
 
 toyControllerRoute.get('/allusers-json', async (req, res) => {
     try {
@@ -153,7 +149,6 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
             .sort({ Price: price ? 1 : -1, _id: -1 })
             .skip((page - 1) * limit)
             .limit(Number(limit));
-
         res.render('toylists', {
             allCategories,
             getAllToys,
@@ -214,7 +209,7 @@ toyControllerRoute.get('/api/toys', async (req, res) => {
 toyControllerRoute.get('/addtoys', isAdminOrSupplier, async (req, res) => {
     const role = req.cookies.role
     const allOwner = await userModel.find({ role: 'Supplier' }, 'name');
-    console.log(allOwner);
+    // console.log(allOwner);
 
     res.render('addNewToy', { role, allOwner });
 });
@@ -306,34 +301,36 @@ toyControllerRoute.delete('/delete/:id', async (req, res) => {
         res.status(400).json({ message: "Data not deleted" });
     }
 });
-
-toyControllerRoute.get('/adminToys', isAdmin, async (req, res) => {
+toyControllerRoute.get('/adminToys', isAdminOrSupplier, async (req, res) => {
     try {
-        // Extracting price, category, page, and limit from the query parameters
+        const { email } = req.cookies;
         const { price, category, page = 1, limit = 9 } = req.query;
 
+        const user = await userModel.findOne({ email });
+        if (!user) return res.status(401).send("Unauthorized");
+
         const filter = {};
-        // Apply filter for price and category if provided
+
         if (price) filter.Price = { $lte: Number(price) };
         if (category) filter.Category = category;
 
-        // Fetch distinct categories for the filter options
+        // ✅ Filter by supplier's own products
+        if (user.role.trim().toLowerCase() === 'supplier') {
+            filter.ProductOwner = user.name.trim();
+        }
+
+        console.log("Logged in as:", user.name, "| Role:", user.role);
+        console.log("Final filter:", filter);
+
         const allCategories = await AddToyScheema.distinct("Category");
-
-        // Count the total number of toys matching the filter
         const totalToys = await AddToyScheema.countDocuments(filter);
-
-        // Calculate total pages for pagination
         const totalPages = Math.ceil(totalToys / limit);
 
-        // Fetch the filtered and paginated toys
         const getAllToys = await AddToyScheema.find(filter)
-            .sort({ Price: price ? 1 : -1, _id: -1 })  // Sorting by price if it's provided
-            .skip((page - 1) * limit) // Skip the results based on the page number
-            .limit(Number(limit));   // Limit the number of results per page
+            .sort({ Price: price ? 1 : -1, _id: -1 })
+            .skip((page - 1) * limit)
+            .limit(Number(limit));
 
-        // console.log(getAllToys)
-        // Render the page with the fetched data
         res.render('toyAdiminDashboard', {
             allCategories,
             getAllToys,
@@ -341,13 +338,16 @@ toyControllerRoute.get('/adminToys', isAdmin, async (req, res) => {
             totalPages,
             totalToys,
             price: price || '',
-            category: category || ''
+            category: category || '',
+            user
         });
+
     } catch (error) {
         console.error("Error fetching toys:", error);
         res.status(500).send("Internal Server Error");
     }
 });
+
 
 toyControllerRoute.get('/editToy/:id', isAdminOrSupplier, async (req, res) => {
     try {
@@ -392,9 +392,6 @@ toyControllerRoute.get('/viewToys/:id', isAdminOrSupplier, async (req, res) => {
         res.status(404).json({ message: "viewUser not found here", error })
     }
 });
-
-
-
 
 toyControllerRoute.get('/approveToys', isAdmin, async (req, res) => {
     try {

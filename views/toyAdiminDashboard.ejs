@@ -164,6 +164,7 @@
             font-size: 16px;
             color: #777;
         }
+
         @media (max-width: 768px) {
             .container {
                 overflow-x: auto;
@@ -177,88 +178,94 @@
     <div style="display: flex; flex-wrap: wrap;">
         <%- include('common/adminsidebar.ejs') %>
             <div class="container">
-                <h2>Admin Toy Dashboard</h2>
+                <h2> Toy Dashboard</h2>
                 <div class="whatsapp">
                     <input id="txt" type="search" placeholder="Search">
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Image</th>
-                            <th>Product Name</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% getAllToys.forEach(toy=> { %>
-                            <tr>
-                                <td>
-                                    <img src="<%= toy.ProductImageURL %>" width="80" height="80"
-                                        alt="<%= toy.ProductName %>">
-                                </td>
-                                <td>
-                                    <%= toy.ProductName %>
-                                </td>
-                                <td>
-                                    <%= toy.Category %>
-                                </td>
-                                <td>₹<%= toy.Price %>
-                                </td>
-                                <td>
-                                    <a href="/viewToys/<%= toy._id %>" class="btn">View</a>
-                                    <a href="/editToy/<%= toy._id %>" class="btn edit">Edit</a>
-                                </td>
-                            </tr>
-                            <% }) %>
-                    </tbody>
-                </table>
-
-
-
-
-                <div class="pagination">
-                    <% if (currentPage> 1) { %>
-                        <a class="page-link"
-                            href="/adminToys?page=<%= currentPage - 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">
-                            &#x276E;
-                        </a>
+                <% if (getAllToys.length===0) { %>
+                    <div class="no-products-message">
+                        <p style="color: crimson; font-weight: bold; font-size: 18px;">❌ No products found.</p>
+                    </div>
+                    <% } else { %>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Product Name</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% getAllToys.forEach(toy=> { %>
+                                    <tr>
+                                        <td>
+                                            <img src="<%= toy.ProductImageURL %>" width="80" height="80"
+                                                alt="<%= toy.ProductName %>">
+                                        </td>
+                                        <td>
+                                            <%= toy.ProductName %>
+                                        </td>
+                                        <td>
+                                            <%= toy.Category %>
+                                        </td>
+                                        <td>₹<%= toy.Price %>
+                                        </td>
+                                        <td>
+                                            <a href="/viewToys/<%= toy._id %>" class="btn">View</a>
+                                            <a href="/editToy/<%= toy._id %>" class="btn edit">Edit</a>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                            </tbody>
+                        </table>
                         <% } %>
 
-                            <% if (currentPage> 3) { %>
-                                <a class="page-link"
-                                    href="/adminToys?page=1&price=<%= price || '' %>&category=<%= category || '' %>">1</a>
-                                <% if (currentPage> 4) { %>
-                                    <span class="ellipsis">...</span>
+
+
+
+                            <div class="pagination">
+                                <% if (currentPage> 1) { %>
+                                    <a class="page-link"
+                                        href="/adminToys?page=<%= currentPage - 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">
+                                        &#x276E;
+                                    </a>
                                     <% } %>
-                                        <% } %>
 
-                                            <% for (let i=Math.max(1, currentPage - 2); i <=Math.min(totalPages,
-                                                currentPage + 2); i++) { %>
-                                                <a href="/adminToys?page=<%= i %>&price=<%= price || '' %>&category=<%= category || '' %>"
-                                                    class="page-link <%= currentPage === i ? 'active' : '' %>">
-                                                    <%= i %>
-                                                </a>
+                                        <% if (currentPage> 3) { %>
+                                            <a class="page-link"
+                                                href="/adminToys?page=1&price=<%= price || '' %>&category=<%= category || '' %>">1</a>
+                                            <% if (currentPage> 4) { %>
+                                                <span class="ellipsis">...</span>
                                                 <% } %>
+                                                    <% } %>
 
-                                                    <% if (currentPage < totalPages - 2) { %>
-                                                        <% if (currentPage < totalPages - 3) { %>
-                                                            <span class="ellipsis">...</span>
+                                                        <% for (let i=Math.max(1, currentPage - 2); i
+                                                            <=Math.min(totalPages, currentPage + 2); i++) { %>
+                                                            <a href="/adminToys?page=<%= i %>&price=<%= price || '' %>&category=<%= category || '' %>"
+                                                                class="page-link <%= currentPage === i ? 'active' : '' %>">
+                                                                <%= i %>
+                                                            </a>
                                                             <% } %>
-                                                                <a class="page-link"
-                                                                    href="/adminToys?page=<%= totalPages %>&price=<%= price || '' %>&category=<%= category || '' %>">
-                                                                    <%= totalPages %>
-                                                                </a>
-                                                                <% } %>
 
-                                                                    <% if (currentPage < totalPages) { %>
-                                                                        <a class="page-link"
-                                                                            href="/adminToys?page=<%= currentPage + 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">
-                                                                            &#x276F;
-                                                                        </a>
+                                                                <% if (currentPage < totalPages - 2) { %>
+                                                                    <% if (currentPage < totalPages - 3) { %>
+                                                                        <span class="ellipsis">...</span>
                                                                         <% } %>
-                </div>
+                                                                            <a class="page-link"
+                                                                                href="/adminToys?page=<%= totalPages %>&price=<%= price || '' %>&category=<%= category || '' %>">
+                                                                                <%= totalPages %>
+                                                                            </a>
+                                                                            <% } %>
+
+                                                                                <% if (currentPage < totalPages) { %>
+                                                                                    <a class="page-link"
+                                                                                        href="/adminToys?page=<%= currentPage + 1 %>&price=<%= price || '' %>&category=<%= category || '' %>">
+                                                                                        &#x276F;
+                                                                                    </a>
+                                                                                    <% } %>
+                            </div>
 
 
             </div>

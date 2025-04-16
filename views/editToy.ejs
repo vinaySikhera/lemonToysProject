@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Toy</title>
-    <!-- <link rel="stylesheet" href="/styles.css"> -->
     <style>
         /* General Styling */
         body {
+            /* border: 10px solid black; */
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
@@ -16,13 +16,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            /* height: 100vh; */
+            box-sizing: border-box;
         }
 
         /* Container */
         .container {
-            width: 40%;
+            width: 90%;
+            max-width: 600px;
             background: white;
+            margin-top: 50px;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
@@ -76,6 +79,52 @@
         .btn:hover {
             background: #0056b3;
         }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                width: 100%;
+                padding: 15px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            .btn {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+
+            label {
+                font-size: 14px;
+            }
+
+            input {
+                font-size: 14px;
+                padding: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h2 {
+                font-size: 18px;
+            }
+
+            .btn {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            input {
+                font-size: 14px;
+                padding: 8px;
+            }
+        }
     </style>
 </head>
 
@@ -83,31 +132,31 @@
     <div class="container">
         <h2>Edit Toy</h2>
         <form action="/updateToy/<%= toy._id %>" method="POST">
-            <label>Product Name:</label>
+            <label for="ProductName">Product Name:</label>
             <input type="text" name="ProductName" value="<%= toy.ProductName %>" required>
 
-            <label>Category:</label>
+            <label for="Category">Category:</label>
             <input type="text" name="Category" value="<%= toy.Category %>" required>
 
-            <label>Price:</label>
+            <label for="Price">Price:</label>
             <input type="number" name="Price" value="<%= toy.Price %>" required>
 
-            <label>Image URL:</label>
+            <label for="ProductImageURL">Image URL:</label>
             <input type="text" name="ProductImageURL" value="<%= toy.ProductImageURL %>" required>
 
-            <label>Product Description:</label>
+            <label for="ProductDescription">Product Description:</label>
             <input type="text" name="ProductDescription" value="<%= toy.ProductDescription %>" required>
 
-            <label>PriceA:</label>
+            <label for="PriceA">PriceA:</label>
             <input type="text" name="PriceA" value="<%= toy.PriceA %>" required>
 
-            <label>PriceB:</label>
+            <label for="PriceB">PriceB:</label>
             <input type="text" name="PriceB" value="<%= toy.PriceB %>" required>
 
-            <label>PriceC:</label>
+            <label for="PriceC">PriceC:</label>
             <input type="text" name="PriceC" value="<%= toy.PriceC %>" required>
 
-            <label>PriceD:</label>
+            <label for="PriceD">PriceD:</label>
             <input type="text" name="PriceD" value="<%= toy.PriceD %>" required>
 
             <button type="submit" class="btn">Update Toy</button>
