@@ -652,39 +652,86 @@
     
     // Apply button handler
     document.getElementById('btn').addEventListener('click', () => {
-        let min = minSlider.value;
-        let max = maxSlider.value;
-        window.location.href = `/alltoys?min=${min}&max=${max}`;
-    });
-
-    // Category functionality (unchanged)
-    const applyBtn = document.getElementById('applyCategoryFilter');
-    const changeByCategory = document.getElementById('changeByCategory');
-
-applyBtn.addEventListener("click", (e) => {
-  e.preventDefault();
-
-  const selectedCategories = [];
-  const checkboxes = document.querySelectorAll(".category-checkbox");
-
-  checkboxes.forEach(cb => {
-    if (cb.checked) {
-      selectedCategories.push(cb.value);
+    let min = minSlider.value;
+    let max = maxSlider.value;
+    
+    // Check if there's a category parameter in the current URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryParam = urlParams.get('category');
+    
+    // Build the redirect URL
+    let redirectUrl = `/alltoys?min=${min}&max=${max}`;
+    
+    // Add category if it exists
+    if (categoryParam) {
+        redirectUrl += `&category=${categoryParam}`;
     }
-  });
-console.log(selectedCategories)
-  if (selectedCategories.length === 0) {
-    window.location.href = `/alltoys/?category=`;
-    return;
-  }
-
-  const categoryQuery = selectedCategories.join(',');
-  changeByCategory.innerText = selectedCategories.join(', ');
-
-  window.location.href = `/alltoys/?category=${encodeURIComponent(categoryQuery)}`;
+    
+    window.location.href = redirectUrl;
 });
 
+    // Category functionality (unchanged)
+ // Price filter button handler
+document.getElementById('btn').addEventListener('click', () => {
+    let min = minSlider.value;
+    let max = maxSlider.value;
+    
+    // Check if there's a category parameter in the current URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryParam = urlParams.get('category');
+    
+    // Build the redirect URL
+    let redirectUrl = `/alltoys?min=${min}&max=${max}`;
+    
+    // Add category if it exists
+    if (categoryParam) {
+        redirectUrl += `&category=${categoryParam}`;
+    }
+    
+    window.location.href = redirectUrl;
+});
 
+// Category filter button handler (using your existing code with modifications)
+const applyBtn = document.getElementById('applyCategoryFilter');
+const changeByCategory = document.getElementById('changeByCategory');
+
+applyBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const selectedCategories = [];
+    const checkboxes = document.querySelectorAll(".category-checkbox");
+
+    checkboxes.forEach(cb => {
+        if (cb.checked) {
+            selectedCategories.push(cb.value);
+        }
+    });
+    
+    console.log(selectedCategories);
+    
+    // Get current min/max values if they exist
+    const urlParams = new URLSearchParams(window.location.search);
+    const minParam = urlParams.get('min');
+    const maxParam = urlParams.get('max');
+    
+    let redirectUrl = '/alltoys/?';
+    
+    // Category parameters
+    if (selectedCategories.length === 0) {
+        redirectUrl += 'category=';
+    } else {
+        const categoryQuery = selectedCategories.join(',');
+        changeByCategory.innerText = selectedCategories.join(', ');
+        redirectUrl += `category=${encodeURIComponent(categoryQuery)}`;
+    }
+    
+    // Add price parameters if they exist
+    if (minParam && maxParam) {
+        redirectUrl += `&min=${minParam}&max=${maxParam}`;
+    }
+    
+    window.location.href = redirectUrl;
+});
     // Infinite scrolling implementation
     let pageNum = <%- JSON.stringify(currentPage || 1) %>;
     let totalPages = <%- JSON.stringify(totalPages) %>;
