@@ -189,42 +189,47 @@
                                 </div>
                                 <% } %>
                                     <!-- A User Amount -->
-                                    <div class="form-group">
-                                        <label for="a_user_amount" class="form-label">A User Amount:</label>
-                                        <input type="number" name="a_user_amount" id="a_user_amount" class="form-input"
-                                            placeholder="Enter A User Amount">
-                                    </div>
+                                    <% if (role==="Admin" ) { %>
 
-                                    <!-- B User Amount -->
-                                    <div class="form-group">
-                                        <label for="b_user_amount" class="form-label">B User Amount:</label>
-                                        <input type="number" name="b_user_amount" id="b_user_amount" class="form-input"
-                                            placeholder="Enter B User Amount">
-                                    </div>
 
-                                    <!-- C User Amount -->
-                                    <div class="form-group">
-                                        <label for="c_user_amount" class="form-label">C User Amount:</label>
-                                        <input type="number" name="c_user_amount" id="c_user_amount" class="form-input"
-                                            placeholder="Enter C User Amount">
-                                    </div>
+                                        <div class="form-group">
+                                            <label for="a_user_amount" class="form-label">A User Amount:</label>
+                                            <input type="number" name="a_user_amount" id="a_user_amount"
+                                                class="form-input" placeholder="Enter A User Amount">
+                                        </div>
 
-                                    <!-- D User Amount -->
-                                    <div class="form-group">
-                                        <label for="d_user_amount" class="form-label">D User Amount:</label>
-                                        <input type="number" name="d_user_amount" id="d_user_amount" class="form-input"
-                                            placeholder="Enter D User Amount">
-                                    </div>
+                                        <!-- B User Amount -->
+                                        <div class="form-group">
+                                            <label for="b_user_amount" class="form-label">B User Amount:</label>
+                                            <input type="number" name="b_user_amount" id="b_user_amount"
+                                                class="form-input" placeholder="Enter B User Amount">
+                                        </div>
 
-                                    <!-- Product Description -->
-                                    <div class="form-group">
-                                        <label for="product_description" class="form-label">Product Description:</label>
-                                        <textarea name="product_description" id="product_description" class="form-input"
-                                            placeholder="Enter Product Description"></textarea>
-                                    </div>
+                                        <!-- C User Amount -->
+                                        <div class="form-group">
+                                            <label for="c_user_amount" class="form-label">C User Amount:</label>
+                                            <input type="number" name="c_user_amount" id="c_user_amount"
+                                                class="form-input" placeholder="Enter C User Amount">
+                                        </div>
 
-                                    <!-- Submit Button -->
-                                    <button type="submit" id="submit-button" class="submit-btn">Add Toy</button>
+                                        <!-- D User Amount -->
+                                        <div class="form-group">
+                                            <label for="d_user_amount" class="form-label">D User Amount:</label>
+                                            <input type="number" name="d_user_amount" id="d_user_amount"
+                                                class="form-input" placeholder="Enter D User Amount">
+                                        </div>
+                                        <% } %>
+                                            <!-- Product Description -->
+                                            <div class="form-group">
+                                                <label for="product_description" class="form-label">Product
+                                                    Description:</label>
+                                                <textarea name="product_description" id="product_description"
+                                                    class="form-input"
+                                                    placeholder="Enter Product Description"></textarea>
+                                            </div>
+
+                                            <!-- Submit Button -->
+                                            <button type="submit" id="submit-button" class="submit-btn">Add Toy</button>
 
                 </form>
 
