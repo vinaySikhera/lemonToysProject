@@ -407,11 +407,18 @@
 
                 <div class="filter">
                     <h3>Filter by Price</h3>
-                    <input type="range" id="vol" class="int" name="vol" min="1" max="5000">
+                    
+                    <label for="minRange">Min Price</label>
+                    <input type="range" id="minRange" name="minRange" min="1" max="5000" value="1" />
+                    
+                    <label for="maxRange">Max Price</label>
+                    <input type="range" id="maxRange" name="maxRange" min="1" max="5000" value="5000" />
+                    
                     <div class="dollor">
                         <p id="minPrice">RS: 1.00</p>
-                        <p id="selectedPrice">RS: 20.00</p>
+                        <p id="maxPrice">RS: 5000.00</p>
                     </div>
+                    
                     <br>
                     <div class="button">
                         <button id="btn" class="btn">Apply</button>
@@ -524,16 +531,18 @@
                 const url = `/search-product?query=${encodeURIComponent(query)}`;
                 const res = await fetch(url);
                 const toys = await res.json();
-
+                console.log(toys.toys)
+                console.log(toys.Category)
                 loadingIndicator.style.display = 'none';
 
-                if (!toys.length) {
+                if (!toys.toys.length) {
                     productsContainer.innerHTML = '<p>No products found.</p>';
                     return;
                 }
 
-                toys.forEach(product => {
-                    const finalPrice = product.Price || 0;
+                toys.toys.forEach(product => {
+                    console.log("first",product)
+                    const finalPrice = (product.Price || 0) + (product[`Price${toys.Category}`] || 0);
                     const image = product.ProductImageURL || 'https://via.placeholder.com/200';
                     const qrCode = product.qrCodeUrl || 'https://via.placeholder.com/80x80?text=QR';
                     const moq = product.MinimumOrderQuantity || 'N/A';
@@ -606,16 +615,46 @@
 
 
     // Price slider functionality (unchanged)
-    const selectedPrice = document.getElementById("selectedPrice");
-    const priceSlider = document.getElementById("vol");
-
-    priceSlider.addEventListener("input", function () {
-        selectedPrice.textContent = "RS:" + this.value + ".00";
+    const minPrice = document.getElementById("minPrice");
+    const maxPrice = document.getElementById("maxPrice");
+    const minSlider = document.getElementById("minRange");
+    const maxSlider = document.getElementById("maxRange");
+    
+    // Update min price when sliding
+    minSlider.addEventListener("input", function() {
+        let minVal = parseInt(minSlider.value);
+        let maxVal = parseInt(maxSlider.value);
+        
+        // Prevent min from exceeding max
+        if (minVal > maxVal) {
+            maxSlider.value = minVal;
+            maxVal = minVal;
+            maxPrice.textContent = "RS: " + maxVal + ".00";
+        }
+        
+        minPrice.textContent = "RS: " + minVal + ".00";
     });
-
+    
+    // Update max price when sliding
+    maxSlider.addEventListener("input", function() {
+        let minVal = parseInt(minSlider.value);
+        let maxVal = parseInt(maxSlider.value);
+        
+        // Prevent max from being less than min
+        if (maxVal < minVal) {
+            minSlider.value = maxVal;
+            minVal = maxVal;
+            minPrice.textContent = "RS: " + minVal + ".00";
+        }
+        
+        maxPrice.textContent = "RS: " + maxVal + ".00";
+    });
+    
+    // Apply button handler
     document.getElementById('btn').addEventListener('click', () => {
-        let price = priceSlider.value;
-        window.location.href = `/alltoys?price=${price}`;
+        let min = minSlider.value;
+        let max = maxSlider.value;
+        window.location.href = `/alltoys?min=${min}&max=${max}`;
     });
 
     // Category functionality (unchanged)

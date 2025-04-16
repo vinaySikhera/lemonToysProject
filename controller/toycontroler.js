@@ -127,11 +127,17 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
             return res.status(401).redirect('/login');
         }
 
-        const { price, category, page = 1, limit = 16 } = req.query;
+        const { price, category, page = 1, limit = 50, min, max } = req.query;
         const filter = {};
 
-        // Price filter
-        if (price) filter.Price = { $lte: Number(price) };
+        // Handle price filtering
+        if (min && max) {
+            // If both min and max are provided, filter between those values
+            filter.Price = { $gte: Number(min), $lte: Number(max) };
+        } else if (price) {
+            // Backward compatibility with the old price filter
+            filter.Price = { $lte: Number(price) };
+        }
 
         // Category filter (support multiple)
         if (category) {
@@ -146,9 +152,10 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
         const totalToys = await AddToyScheema.countDocuments(filter);
         const totalPages = Math.ceil(totalToys / limit);
         const getAllToys = await AddToyScheema.find(filter)
-            .sort({ Price: price ? 1 : -1, _id: -1 })
+            .sort({ Price: (price || min || max) ? 1 : -1, _id: -1 })
             .skip((page - 1) * limit)
             .limit(Number(limit));
+        console.log(getAllToys)
         res.render('toylists', {
             allCategories,
             getAllToys,
@@ -156,6 +163,8 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
             totalPages,
             totalToys,
             price: price || '',
+            min: min || '',
+            max: max || '',
             category: category || '',
             Category: Category || ''
         });
@@ -165,6 +174,7 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 });
+
 toyControllerRoute.get('/api/toys', async (req, res) => {
     try {
         const { email, Category } = req.cookies;
@@ -301,6 +311,7 @@ toyControllerRoute.delete('/delete/:id', async (req, res) => {
         res.status(400).json({ message: "Data not deleted" });
     }
 });
+
 toyControllerRoute.get('/adminToys', isAdminOrSupplier, async (req, res) => {
     try {
         const { email } = req.cookies;
