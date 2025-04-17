@@ -57,7 +57,10 @@ toyControllerRoute.get('/', async (req, res) => {
 });
 toyControllerRoute.get('/search-product', async (req, res) => {
     const { query } = req.query;
-    // console.log("Search Query:", query);
+    const { email, Category } = req.cookies;
+
+    console.log("Search Query:", query);
+    console.log("Search Query:", Category);
 
     try {
         let toys;
@@ -70,8 +73,8 @@ toyControllerRoute.get('/search-product', async (req, res) => {
             });
         }
 
-        // console.log("Search Results:", toys);
-        res.json(toys); // send JSON response
+        console.log("Search Results:", toys);
+        res.json({toys:toys,Category:Category}); // send JSON response
     } catch (error) {
         console.error("Error fetching toys:", error);
         res.status(500).json({ error: 'Server error' });
