@@ -155,7 +155,7 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
             .sort({ Price: (price || min || max) ? 1 : -1, _id: -1 })
             .skip((page - 1) * limit)
             .limit(Number(limit));
-        console.log(getAllToys)
+        // console.log(getAllToys)
         res.render('toylists', {
             allCategories,
             getAllToys,
@@ -330,8 +330,8 @@ toyControllerRoute.get('/adminToys', isAdminOrSupplier, async (req, res) => {
             filter.ProductOwner = user.name.trim();
         }
 
-        console.log("Logged in as:", user.name, "| Role:", user.role);
-        console.log("Final filter:", filter);
+        // console.log("Logged in as:", user.name, "| Role:", user.role);
+        // console.log("Final filter:", filter);
 
         const allCategories = await AddToyScheema.distinct("Category");
         const totalToys = await AddToyScheema.countDocuments(filter);

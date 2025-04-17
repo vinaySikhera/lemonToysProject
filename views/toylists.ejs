@@ -543,8 +543,8 @@
                 const url = `/search-product?query=${encodeURIComponent(query)}`;
                 const res = await fetch(url);
                 const toys = await res.json();
-                console.log(toys.toys)
-                console.log(toys.Category)
+                // console.log(toys.toys)
+                // console.log(toys.Category)
                 loadingIndicator.style.display = 'none';
 
                 if (!toys.toys.length) {
@@ -597,7 +597,7 @@
     });
     // Add to cart function (unchanged)
     async function addToCart(product) {
-        console.log("Product received in JS:", product);
+        // console.log("Product received in JS:", product);
         try {
             const response = await fetch('/add-to-cart', {
                 method: 'POST',
@@ -719,7 +719,7 @@
             }
         });
 
-        console.log(selectedCategories);
+        // console.log(selectedCategories);
 
         // Get current min/max values if they exist
         const urlParams = new URLSearchParams(window.location.search);
@@ -748,15 +748,15 @@
     let pageNum = <% - JSON.stringify(currentPage || 1) %>;
     let totalPages = <% - JSON.stringify(totalPages) %>;
 
-    console.log('Current Page:', pageNum);
-    console.log('Total Pages:', totalPages);
+    // console.log('Current Page:', pageNum);
+    // console.log('Total Pages:', totalPages);
     let isLoading = false;
     loadingIndicator = document.getElementById('loadingIndicator');
     productsContainer = document.getElementById('productsContainer');
 
     // Function to create product HTML
     function createProductHTML(product, Category) {
-        console.log(Category)
+        // console.log(Category)
         return `
         <div class="ims">
             <div class="containers">
