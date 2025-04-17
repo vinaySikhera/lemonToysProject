@@ -5,7 +5,6 @@ const QRCode = require('qrcode');
 const cloudinary = require('cloudinary')
 const isAdmin = require('../middleware/isAdmin');
 const isAdminOrSupplier = require('../middleware/isAdminOrSupplier');
-const isCustomerOrAdmin = require('../middleware/isCustomerOrAdmin');
 const userModel = require('../models/userDetails');
 const toyControllerRoute = express.Router();
 
@@ -123,13 +122,14 @@ toyControllerRoute.get('/allusers-json', async (req, res) => {
 
 toyControllerRoute.get('/alltoys', async (req, res) => {
     try {
-        const { email, Category, role } = req.cookies;
+        const { email, Category ,role} = req.cookies;
         if (!email) {
             return res.status(401).redirect('/login');
         }
-        if (role === "Supplier") {
+        if (role==="Supplier") {
             return res.status(401).redirect('/');
         }
+       
         const { price, category, page = 1, limit = 50, min, max } = req.query;
         const filter = {};
 
@@ -158,7 +158,7 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
             .sort({ Price: (price || min || max) ? 1 : -1, _id: -1 })
             .skip((page - 1) * limit)
             .limit(Number(limit));
-        // console.log(getAllToys)
+        console.log(getAllToys)
         res.render('toylists', {
             allCategories,
             getAllToys,
@@ -333,8 +333,8 @@ toyControllerRoute.get('/adminToys', isAdminOrSupplier, async (req, res) => {
             filter.ProductOwner = user.name.trim();
         }
 
-        // console.log("Logged in as:", user.name, "| Role:", user.role);
-        // console.log("Final filter:", filter);
+        console.log("Logged in as:", user.name, "| Role:", user.role);
+        console.log("Final filter:", filter);
 
         const allCategories = await AddToyScheema.distinct("Category");
         const totalToys = await AddToyScheema.countDocuments(filter);
@@ -371,16 +371,12 @@ toyControllerRoute.get('/editToy/:id', isAdminOrSupplier, async (req, res) => {
         // res.render('editToy', { toy });
 
         const { email } = req.cookies;
-        const { role } = req.cookies;
-        if (!role) {
-            return res.json({ message: "you can not accest this page" });
-        }
         const user = await userModel.findOne({ email });
 
         const toy = await AddToyScheema.findById(req.params.id);
         if (!toy) return res.status(404).send("Toy not found");
-        // console.log("this is from edit toys", user)
-        res.render('editToy', { toy, user, role }); // ✅ pass user
+
+        res.render('editToy', { toy, user }); // ✅ pass user
     } catch (error) {
         console.error("Error fetching toy details:", error);
         res.status(500).send("Internal Server Error");
