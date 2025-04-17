@@ -368,12 +368,16 @@ toyControllerRoute.get('/editToy/:id', isAdminOrSupplier, async (req, res) => {
         // res.render('editToy', { toy });
 
         const { email } = req.cookies;
+        const { role } = req.cookies;
+        if (!role) {
+            return res.json({ message: "you can not accest this page" });
+        }
         const user = await userModel.findOne({ email });
 
         const toy = await AddToyScheema.findById(req.params.id);
         if (!toy) return res.status(404).send("Toy not found");
-
-        res.render('editToy', { toy, user }); // ✅ pass user
+        // console.log("this is from edit toys", user)
+        res.render('editToy', { toy, user, role }); // ✅ pass user
     } catch (error) {
         console.error("Error fetching toy details:", error);
         res.status(500).send("Internal Server Error");

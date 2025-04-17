@@ -271,7 +271,7 @@
 </head>
 
 <body>
- 
+
     <!-- <div class="sidebar">
         <h2>LEMON TOY</h2>
         <ul>
@@ -360,10 +360,15 @@
 
         <div class="main-content">
             <header>
-                <h1>Dashboard</h1>
-                <div class="user-profile">
-                    <img src="/profile.png" alt="User">
-                </div>
+                <!-- <h1>Dashboard</h1> -->
+                <% if (userRole==="Admin" ) { %>
+                    <h1>Adimin Dashboard</h1>
+                    <% } else{ %>
+                        <h1>Supplier Dashboard</h1>
+                        <% } %>
+                            <div class="user-profile">
+                                <img src="/profile.png" alt="User">
+                            </div>
             </header>
             <!-- 
             <div class="stats " style="display: none;" >

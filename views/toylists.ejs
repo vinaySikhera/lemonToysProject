@@ -299,8 +299,9 @@
     </style>
     <style>
         .category-dropdown-container {
-          position: relative;
+            position: relative;
         }
+
         .whatsapp {
             /* border: 1px solid black; */
             height: 50px;
@@ -342,43 +343,43 @@
             margin-top: 7px;
             color: white;
         }
-      
+
         .category-dropdown-toggle {
-          cursor: pointer;
-          border: 1px solid #ccc;
-          padding: 6px;
-          border-radius: 6px;
-          background-color: #f9f9f9;
-          font-size: 14px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            padding: 6px;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+            font-size: 14px;
         }
-      
+
         .category-dropdown-content {
-          display: none;
-          position: absolute;
-          background-color: white;
-          min-width: 180px;
-          max-height: 250px;
-          overflow-y: auto;
-          box-shadow: rgba(0, 0, 0, 0.16) 0px 2px 6px;
-          padding: 10px;
-          border-radius: 8px;
-          margin-top: 5px;
-          z-index: 999;
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 180px;
+            max-height: 250px;
+            overflow-y: auto;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 2px 6px;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 5px;
+            z-index: 999;
         }
-      
+
         .category-dropdown-container.active .category-dropdown-content {
-          display: block;
+            display: block;
         }
-      
+
         .category-dropdown-content label {
-          font-size: 14px;
+            font-size: 14px;
         }
-      
+
         .category-dropdown-content .btn {
-          margin-top: 10px;
-          width: 100%;
+            margin-top: 10px;
+            width: 100%;
         }
-      </style>
+    </style>
 </head>
 
 <body>
@@ -390,35 +391,35 @@
                     <hr>
                     <div class="category-dropdown-container">
                         <div class="category-dropdown-toggle category-dropdown" id="categoryToggle">
-                          Select Categories
+                            Select Categories
                         </div>
-                    
+
                         <div class="category-dropdown-content" id="categoryList">
-                          <% allCategories.forEach(cat => { %>
-                            <label>
-                              <input type="checkbox" class="category-checkbox" value="<%= cat %>">
-                              <%= cat %>
-                            </label><br>
-                          <% }) %>
-                          <button id="applyCategoryFilter" class="btn">Apply</button>
+                            <% allCategories.forEach(cat=> { %>
+                                <label>
+                                    <input type="checkbox" class="category-checkbox" value="<%= cat %>">
+                                    <%= cat %>
+                                </label><br>
+                                <% }) %>
+                                    <button id="applyCategoryFilter" class="btn">Apply</button>
                         </div>
-                      </div>
+                    </div>
                 </div>
 
                 <div class="filter">
                     <h3>Filter by Price</h3>
-                    
+
                     <label for="minRange">Min Price</label>
                     <input type="range" id="minRange" name="minRange" min="1" max="5000" value="1" />
-                    
+
                     <label for="maxRange">Max Price</label>
                     <input type="range" id="maxRange" name="maxRange" min="1" max="5000" value="5000" />
-                    
+
                     <div class="dollor">
                         <p id="minPrice">RS: 1.00</p>
                         <p id="maxPrice">RS: 5000.00</p>
                     </div>
-                    
+
                     <br>
                     <div class="button">
                         <button id="btn" class="btn">Apply</button>
@@ -434,7 +435,7 @@
                 <br>
                 <div class="toys" id="productsContainer">
                     <% getAllToys?.forEach(product=> { %>
-                        
+
                         <div class="ims">
                             <div class="containers">
                                 <div class="image-container">
@@ -460,9 +461,11 @@
                                     </button>
                                 </div>
                             </div>
-        
+
                             <div>
-                                <h3><%= product.ProductName %></h3>
+                                <h3>
+                                    <%= product.ProductName %>
+                                </h3>
                                 <div class="qr-code">
                                     <img class="qrcode"
                                         src="<%= product.qrCodeUrl ? product.qrCodeUrl : 'data:image/png;base64,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' %>"
@@ -470,41 +473,50 @@
                                 </div>
                                 <div class="h">
                                     <div>
-                                        <% const dynamicKey = 'Price' + Category; %>
-                                        <% const basePrice = product.Price || 0; %>
-                                        <% const dynamicPrice = product[dynamicKey] || 0; %>
-                                        <% const finalPrice = basePrice + dynamicPrice; %>
-                                        <% if (finalPrice) { %>
-                                          <h4 style="color: green; margin-bottom: 4px;">
-                                             ₹<%= Math.abs(finalPrice) %>
-                                          </h4>
-                                        <% } else { %>
-                                          <h4 style="color: red; margin-bottom: 4px;"> Price Not Available</h4>
-                                        <% } %>
-                                      
-                                        <span style="font-size: 14px; color: #333;">
-                                          Minimum Order Quantity: <%= product.MinimumOrderQuantity || 'N/A' %>
-                                        </span>
-                                      </div>
-                                      
-                                  </div>
-                                  
+                                        <% const dynamicKey='Price' + Category; %>
+                                            <% const basePrice=product.Price || 0; %>
+                                                <% const dynamicPrice=product[dynamicKey] || 0; %>
+                                                    <% const finalPrice=basePrice + dynamicPrice; %>
+                                                        <% if (finalPrice) { %>
+                                                            <h4 style="color: green; margin-bottom: 4px;">
+                                                                ₹<%= Math.abs(finalPrice) %>
+                                                            </h4>
+                                                            <% } else { %>
+                                                                <h4 style="color: red; margin-bottom: 4px;"> Price Not
+                                                                    Available</h4>
+                                                                <% } %>
+
+                                                                    <span style="font-size: 14px; color: #333;">
+                                                                        Minimum Order Quantity: <%=
+                                                                            product.MinimumOrderQuantity || 'N/A' %>
+                                                                    </span>
+                                    </div>
+
+                                </div>
+
                                 <a class="viewDetails" href="/toydetails/<%= product._id %>">View Details</a>
                             </div>
                         </div>
-                    <% }); %>
+                        <% }); %>
                 </div>
-        
+
                 <!-- Loading indicator -->
                 <div id="loadingIndicator" style="display: none; text-align: center; padding: 20px;">
-                    <div class="spinner" style="width: 40px; height: 40px; margin: 0 auto; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <div class="spinner"
+                        style="width: 40px; height: 40px; margin: 0 auto; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;">
+                    </div>
                     <p>Loading more products...</p>
                 </div>
-                
+
                 <style>
                     @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
+                        0% {
+                            transform: rotate(0deg);
+                        }
+
+                        100% {
+                            transform: rotate(360deg);
+                        }
                     }
                 </style>
 
@@ -541,7 +553,7 @@
                 }
 
                 toys.toys.forEach(product => {
-                    console.log("first",product)
+                    console.log("first", product)
                     const finalPrice = (product.Price || 0) + (product[`Price${toys.Category}`] || 0);
                     const image = product.ProductImageURL || 'https://via.placeholder.com/200';
                     const qrCode = product.qrCodeUrl || 'https://via.placeholder.com/80x80?text=QR';
@@ -609,8 +621,8 @@
     }
 
     document.getElementById("categoryToggle").addEventListener("click", function (e) {
-    document.querySelector(".category-dropdown-container").classList.toggle("active");
-});
+        document.querySelector(".category-dropdown-container").classList.toggle("active");
+    });
 
 
 
@@ -619,139 +631,139 @@
     const maxPrice = document.getElementById("maxPrice");
     const minSlider = document.getElementById("minRange");
     const maxSlider = document.getElementById("maxRange");
-    
+
     // Update min price when sliding
-    minSlider.addEventListener("input", function() {
+    minSlider.addEventListener("input", function () {
         let minVal = parseInt(minSlider.value);
         let maxVal = parseInt(maxSlider.value);
-        
+
         // Prevent min from exceeding max
         if (minVal > maxVal) {
             maxSlider.value = minVal;
             maxVal = minVal;
             maxPrice.textContent = "RS: " + maxVal + ".00";
         }
-        
+
         minPrice.textContent = "RS: " + minVal + ".00";
     });
-    
+
     // Update max price when sliding
-    maxSlider.addEventListener("input", function() {
+    maxSlider.addEventListener("input", function () {
         let minVal = parseInt(minSlider.value);
         let maxVal = parseInt(maxSlider.value);
-        
+
         // Prevent max from being less than min
         if (maxVal < minVal) {
             minSlider.value = maxVal;
             minVal = maxVal;
             minPrice.textContent = "RS: " + minVal + ".00";
         }
-        
+
         maxPrice.textContent = "RS: " + maxVal + ".00";
     });
-    
+
     // Apply button handler
     document.getElementById('btn').addEventListener('click', () => {
-    let min = minSlider.value;
-    let max = maxSlider.value;
-    
-    // Check if there's a category parameter in the current URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const categoryParam = urlParams.get('category');
-    
-    // Build the redirect URL
-    let redirectUrl = `/alltoys?min=${min}&max=${max}`;
-    
-    // Add category if it exists
-    if (categoryParam) {
-        redirectUrl += `&category=${categoryParam}`;
-    }
-    
-    window.location.href = redirectUrl;
-});
+        let min = minSlider.value;
+        let max = maxSlider.value;
+
+        // Check if there's a category parameter in the current URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get('category');
+
+        // Build the redirect URL
+        let redirectUrl = `/alltoys?min=${min}&max=${max}`;
+
+        // Add category if it exists
+        if (categoryParam) {
+            redirectUrl += `&category=${categoryParam}`;
+        }
+
+        window.location.href = redirectUrl;
+    });
 
     // Category functionality (unchanged)
- // Price filter button handler
-document.getElementById('btn').addEventListener('click', () => {
-    let min = minSlider.value;
-    let max = maxSlider.value;
-    
-    // Check if there's a category parameter in the current URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const categoryParam = urlParams.get('category');
-    
-    // Build the redirect URL
-    let redirectUrl = `/alltoys?min=${min}&max=${max}`;
-    
-    // Add category if it exists
-    if (categoryParam) {
-        redirectUrl += `&category=${categoryParam}`;
-    }
-    
-    window.location.href = redirectUrl;
-});
+    // Price filter button handler
+    document.getElementById('btn').addEventListener('click', () => {
+        let min = minSlider.value;
+        let max = maxSlider.value;
 
-// Category filter button handler (using your existing code with modifications)
-const applyBtn = document.getElementById('applyCategoryFilter');
-const changeByCategory = document.getElementById('changeByCategory');
+        // Check if there's a category parameter in the current URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get('category');
 
-applyBtn.addEventListener("click", (e) => {
-    e.preventDefault();
+        // Build the redirect URL
+        let redirectUrl = `/alltoys?min=${min}&max=${max}`;
 
-    const selectedCategories = [];
-    const checkboxes = document.querySelectorAll(".category-checkbox");
-
-    checkboxes.forEach(cb => {
-        if (cb.checked) {
-            selectedCategories.push(cb.value);
+        // Add category if it exists
+        if (categoryParam) {
+            redirectUrl += `&category=${categoryParam}`;
         }
+
+        window.location.href = redirectUrl;
     });
-    
-    console.log(selectedCategories);
-    
-    // Get current min/max values if they exist
-    const urlParams = new URLSearchParams(window.location.search);
-    const minParam = urlParams.get('min');
-    const maxParam = urlParams.get('max');
-    
-    let redirectUrl = '/alltoys/?';
-    
-    // Category parameters
-    if (selectedCategories.length === 0) {
-        redirectUrl += 'category=';
-    } else {
-        const categoryQuery = selectedCategories.join(',');
-        changeByCategory.innerText = selectedCategories.join(', ');
-        redirectUrl += `category=${encodeURIComponent(categoryQuery)}`;
-    }
-    
-    // Add price parameters if they exist
-    if (minParam && maxParam) {
-        redirectUrl += `&min=${minParam}&max=${maxParam}`;
-    }
-    
-    window.location.href = redirectUrl;
-});
+
+    // Category filter button handler (using your existing code with modifications)
+    const applyBtn = document.getElementById('applyCategoryFilter');
+    const changeByCategory = document.getElementById('changeByCategory');
+
+    applyBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        const selectedCategories = [];
+        const checkboxes = document.querySelectorAll(".category-checkbox");
+
+        checkboxes.forEach(cb => {
+            if (cb.checked) {
+                selectedCategories.push(cb.value);
+            }
+        });
+
+        console.log(selectedCategories);
+
+        // Get current min/max values if they exist
+        const urlParams = new URLSearchParams(window.location.search);
+        const minParam = urlParams.get('min');
+        const maxParam = urlParams.get('max');
+
+        let redirectUrl = '/alltoys/?';
+
+        // Category parameters
+        if (selectedCategories.length === 0) {
+            redirectUrl += 'category=';
+        } else {
+            const categoryQuery = selectedCategories.join(',');
+            changeByCategory.innerText = selectedCategories.join(', ');
+            redirectUrl += `category=${encodeURIComponent(categoryQuery)}`;
+        }
+
+        // Add price parameters if they exist
+        if (minParam && maxParam) {
+            redirectUrl += `&min=${minParam}&max=${maxParam}`;
+        }
+
+        window.location.href = redirectUrl;
+    });
     // Infinite scrolling implementation
-    let pageNum = <%- JSON.stringify(currentPage || 1) %>;
-    let totalPages = <%- JSON.stringify(totalPages) %>;
+    let pageNum = <% - JSON.stringify(currentPage || 1) %>;
+    let totalPages = <% - JSON.stringify(totalPages) %>;
 
     console.log('Current Page:', pageNum);
     console.log('Total Pages:', totalPages);
     let isLoading = false;
-     loadingIndicator = document.getElementById('loadingIndicator');
-     productsContainer = document.getElementById('productsContainer');
+    loadingIndicator = document.getElementById('loadingIndicator');
+    productsContainer = document.getElementById('productsContainer');
 
     // Function to create product HTML
-    function createProductHTML(product,Category) {
+    function createProductHTML(product, Category) {
         console.log(Category)
         return `
         <div class="ims">
             <div class="containers">
                 <div class="image-container">
-                    ${product.ProductImageURL ? 
-                    `<img class="productlistimg" src="${product.ProductImageURL}" alt="${product.ProductName}">` : 
-                    `<img class="productlistimg" src="https://via.placeholder.com/200" alt="No Image Available">`}
+                    ${product.ProductImageURL ?
+                `<img class="productlistimg" src="${product.ProductImageURL}" alt="${product.ProductName}">` :
+                `<img class="productlistimg" src="https://via.placeholder.com/200" alt="No Image Available">`}
                     <button class="imageDiv">Sale</button>
                 </div>
                 <div class="icons">
@@ -776,9 +788,9 @@ applyBtn.addEventListener("click", (e) => {
                 </div>
                 <div class="h" style="display: flex; flex-direction: column; gap: 4px;">
     <h3 style="${Category && product['Price' + Category] ? 'color:green;' : 'color:red;'} margin: 0;">
-    ${Category && product['Price' + Category] 
-        ? '₹' + Math.abs(product['Price' + Category] + product.Price) 
-        : 'Price Not Available'}
+    ${Category && product['Price' + Category]
+                ? '₹' + Math.abs(product['Price' + Category] + product.Price)
+                : 'Price Not Available'}
 </h3>
 
     <span style="font-size: 14px; color: #444;">MOQ: ${product.MinimumOrderQuantity}</span>
@@ -792,43 +804,43 @@ applyBtn.addEventListener("click", (e) => {
 
     // Function to load more products
     async function loadMoreProducts() {
-    if (isLoading || pageNum >= totalPages) return;
-    
-    isLoading = true;
-    loadingIndicator.style.display = 'block';
-    
-    try {
-        // Get current URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const price = urlParams.get('price') || '';
-        const category = urlParams.get('category') || '';
-        
-        // Create URL for fetching next page
-        const nextPage = pageNum + 1;
-        const url = `/api/toys?page=${nextPage}&price=${price}&category=${category}`;
-        
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            throw new Error('Failed to fetch more products');
+        if (isLoading || pageNum >= totalPages) return;
+
+        isLoading = true;
+        loadingIndicator.style.display = 'block';
+
+        try {
+            // Get current URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const price = urlParams.get('price') || '';
+            const category = urlParams.get('category') || '';
+
+            // Create URL for fetching next page
+            const nextPage = pageNum + 1;
+            const url = `/api/toys?page=${nextPage}&price=${price}&category=${category}`;
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch more products');
+            }
+
+            const data = await response.json();
+
+            if (data.products && data.products.length > 0) {
+                data.products.forEach(product => {
+                    const productHTML = createProductHTML(product, data.Category);
+                    productsContainer.insertAdjacentHTML('beforeend', productHTML);
+                });
+                pageNum = nextPage;
+            }
+        } catch (error) {
+            console.error('Error loading more products:', error);
+        } finally {
+            isLoading = false;
+            loadingIndicator.style.display = 'none';
         }
-        
-        const data = await response.json();
-        
-        if (data.products && data.products.length > 0) {
-            data.products.forEach(product => {
-                const productHTML = createProductHTML(product,data.Category);
-                productsContainer.insertAdjacentHTML('beforeend', productHTML);
-            });
-            pageNum = nextPage;
-        }
-    } catch (error) {
-        console.error('Error loading more products:', error);
-    } finally {
-        isLoading = false;
-        loadingIndicator.style.display = 'none';
     }
-}
 
     // Detect when user scrolls near the bottom of the page
     window.addEventListener('scroll', () => {
@@ -837,4 +849,5 @@ applyBtn.addEventListener("click", (e) => {
         }
     });
 </script>
+
 </html>
