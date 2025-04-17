@@ -122,14 +122,14 @@ toyControllerRoute.get('/allusers-json', async (req, res) => {
 
 toyControllerRoute.get('/alltoys', async (req, res) => {
     try {
-        const { email, Category ,role} = req.cookies;
+        const { email, Category, role } = req.cookies;
         if (!email) {
             return res.status(401).redirect('/login');
         }
-        if (role==="Supplier") {
+        if (role === "Supplier") {
             return res.status(401).redirect('/');
         }
-       
+
         const { price, category, page = 1, limit = 50, min, max } = req.query;
         const filter = {};
 
@@ -365,18 +365,14 @@ toyControllerRoute.get('/adminToys', isAdminOrSupplier, async (req, res) => {
 
 toyControllerRoute.get('/editToy/:id', isAdminOrSupplier, async (req, res) => {
     try {
-        // const toy = await AddToyScheema.findById(req.params.id);
-        // if (!toy) return res.status(404).send("Toy not found");
-
-        // res.render('editToy', { toy });
-
         const { email } = req.cookies;
         const user = await userModel.findOne({ email });
+        const allOwner = await userModel.find({ role: 'Supplier' });
 
         const toy = await AddToyScheema.findById(req.params.id);
         if (!toy) return res.status(404).send("Toy not found");
 
-        res.render('editToy', { toy, user }); // ✅ pass user
+        res.render('editToy', { toy, user, allOwner }); // ✅ pass user
     } catch (error) {
         console.error("Error fetching toy details:", error);
         res.status(500).send("Internal Server Error");
@@ -385,20 +381,27 @@ toyControllerRoute.get('/editToy/:id', isAdminOrSupplier, async (req, res) => {
 
 toyControllerRoute.post('/updateToy/:id', isAdminOrSupplier, async (req, res) => {
     try {
-        const { ProductName, Category, Price, ProductImageURL } = req.body;
+        const { ProductName, Category, Price, ProductImageURL, ProductDescription, product_owner, PriceA, PriceB, PriceC, PriceD } = req.body;
+
         await AddToyScheema.findByIdAndUpdate(req.params.id, {
             ProductName,
             Category,
             Price,
-            ProductImageURL
+            ProductImageURL,
+            ProductDescription,
+            ProductOwner: product_owner,
+            PriceA,
+            PriceB,
+            PriceC,
+            PriceD
         });
-
         res.redirect('/adminToys');
     } catch (error) {
         console.error("Error updating toy:", error);
         res.status(500).send("Internal Server Error");
     }
 });
+
 
 toyControllerRoute.get('/viewToys/:id', isAdminOrSupplier, async (req, res) => {
     try {

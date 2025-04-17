@@ -148,21 +148,33 @@
             <input type="text" name="ProductDescription" value="<%= toy.ProductDescription %>" required>
 
             <% if (user && user.role==="Admin" ) { %>
-                <label for="PriceA">PriceA:</label>
-                <input type="text" name="PriceA" value="<%= toy.PriceA %>" required>
-
-                <label for="PriceB">PriceB:</label>
-                <input type="text" name="PriceB" value="<%= toy.PriceB %>" required>
-
-                <label for="PriceC">PriceC:</label>
-                <input type="text" name="PriceC" value="<%= toy.PriceC %>" required>
-
-                <label for="PriceD">PriceD:</label>
-                <input type="text" name="PriceD" value="<%= toy.PriceD %>" required>
+                <label for="product_owner" class="form-label">Product Owner:</label>
+                <select name="product_owner" id="product_owner" class="form-input">
+                    <option value="">-- Select Product Owner --</option>
+                    <% allOwner.forEach(owner=> { %>
+                        <option value="<%= owner.name %>">
+                            <%= owner.name %>
+                        </option>
+                        <% }); %>
+                </select>
                 <% } %>
+                    <br>
+                    <% if (user && user.role==="Admin" ) { %>
+                        <label for="PriceA">PriceA:</label>
+                        <input type="text" name="PriceA" value="<%= toy.PriceA %>" required>
+
+                        <label for="PriceB">PriceB:</label>
+                        <input type="text" name="PriceB" value="<%= toy.PriceB %>" required>
+
+                        <label for="PriceC">PriceC:</label>
+                        <input type="text" name="PriceC" value="<%= toy.PriceC %>" required>
+
+                        <label for="PriceD">PriceD:</label>
+                        <input type="text" name="PriceD" value="<%= toy.PriceD %>" required>
+                        <% } %>
 
 
-                    <button type="submit" class="btn">Update Toy</button>
+                            <button type="submit" class="btn">Update Toy</button>
         </form>
         <br>
         <a href="/adminToys" class="btn">Back to Dashboard</a>
