@@ -5,6 +5,7 @@ const QRCode = require('qrcode');
 const cloudinary = require('cloudinary')
 const isAdmin = require('../middleware/isAdmin');
 const isAdminOrSupplier = require('../middleware/isAdminOrSupplier');
+const isCustomerOrAdmin = require('../middleware/isCustomerOrAdmin');
 const userModel = require('../models/userDetails');
 const toyControllerRoute = express.Router();
 
@@ -122,11 +123,13 @@ toyControllerRoute.get('/allusers-json', async (req, res) => {
 
 toyControllerRoute.get('/alltoys', async (req, res) => {
     try {
-        const { email, Category } = req.cookies;
+        const { email, Category, role } = req.cookies;
         if (!email) {
             return res.status(401).redirect('/login');
         }
-
+        if (role === "Supplier") {
+            return res.status(401).redirect('/');
+        }
         const { price, category, page = 1, limit = 50, min, max } = req.query;
         const filter = {};
 

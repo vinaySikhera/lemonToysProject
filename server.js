@@ -87,12 +87,14 @@ app.post('/add-to-cart', async (req, res) => {
 
 
 app.get('/cart', async (req, res) => {
-    const { email } = req.cookies;
+    const { email, role } = req.cookies;
 
     // console.log("cart page", email);
 
     if (!email) return res.status(401).redirect("/login"); // or redirect to login
-
+    if (role === "Supplier") {
+        return res.status(401).redirect('/');
+    }
     try {
         const { role } = req.cookies;
         // console.log(role)
