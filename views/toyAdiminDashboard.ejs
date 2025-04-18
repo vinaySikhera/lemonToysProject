@@ -310,12 +310,12 @@
 
                 loading.style.display = 'none';
 
-                if (!toys.length) {
+                if (!toys.toys.length) {
                     noResult.style.display = 'block';
                     return;
                 }
 
-                toys.forEach(toy => {
+                toys.toys.forEach(toy => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td><img src="${toy.ProductImageURL}" width="80" height="80" alt="${toy.ProductName}"></td>
