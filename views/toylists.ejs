@@ -452,7 +452,7 @@
                                         _id: "<%= product._id %>",
                                         ProductName: "<%= product.ProductName %>",
                                         Price: "<%= product.Price %>",
-                                        MinimumOrderQuantity: "<%= product.MinimumOrderQuantity %>",
+                                        quantity: "<%= product.MinimumOrderQuantity %>",
                                         ProductImageURL: "<%= product.ProductImageURL %>",
                                         qrCodeUrl: "<%= product.qrCodeUrl %>"
                                     })'>
@@ -759,7 +759,7 @@ applyBtn.addEventListener("click", (e) => {
                         _id: "${product._id}",
                         ProductName: "${product.ProductName}",
                         Price: "${product.Price}",
-                        MinimumOrderQuantity: "${product.MinimumOrderQuantity}",
+                        quantity: "${product.MinimumOrderQuantity}",
                         ProductImageURL: "${product.ProductImageURL}",
                         qrCodeUrl: "${product.qrCodeUrl}"
                     })'>

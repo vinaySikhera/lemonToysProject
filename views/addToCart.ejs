@@ -288,11 +288,12 @@
                                 </td>
                                 <td>
                                     <button class="decrease-btn" data-id="<%= item._id %>">-</button>
-                                    <span id="quantity-<%= item._id %>">
+                                    <span id="quantity-<%= item._id %>" data-minimum="<%= item.minimumOrderQuantity %>">
                                         <%= quantity %>
                                     </span>
                                     <button class="increase-btn" data-id="<%= item._id %>">+</button>
                                 </td>
+
                                 <td>₹<%= itemSubtotal.toFixed(2) %>
                                 </td>
                                 <td><img src="<%= item.qrCodeUrl %>" alt="QR Code" width="60" /></td>
@@ -371,31 +372,42 @@
             });
         });
 
-        // Increase quantity
         document.querySelectorAll('.increase-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = btn.getAttribute('data-id');
                 const quantitySpan = document.getElementById(`quantity-${id}`);
+                const minQty = parseInt(quantitySpan.getAttribute('data-minimum')) || 1;
                 let currentQty = parseInt(quantitySpan.innerText);
-                currentQty++;
+
+                // If currentQty is less than MOQ, set to MOQ
+                if (currentQty < minQty) {
+                    currentQty = minQty;
+                } else {
+                    currentQty *= 2; // Double the quantity
+                }
+
                 updateCartQuantity(id, currentQty);
                 location.reload();
             });
         });
 
-        // Decrease quantity
         document.querySelectorAll('.decrease-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = btn.getAttribute('data-id');
                 const quantitySpan = document.getElementById(`quantity-${id}`);
+                const minQty = parseInt(quantitySpan.getAttribute('data-minimum')) || 1;
                 let currentQty = parseInt(quantitySpan.innerText);
-                if (currentQty > 1) {
-                    currentQty--;
+
+                // Halve the quantity but not below MOQ
+                if (currentQty > minQty) {
+                    currentQty = Math.floor(currentQty / 2);
+                    if (currentQty < minQty) currentQty = minQty;
                     updateCartQuantity(id, currentQty);
                     location.reload();
                 }
             });
         });
+
 
         function updateCartQuantity(id, quantity) {
             fetch('/update-cart', {

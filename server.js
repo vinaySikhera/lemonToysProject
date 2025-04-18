@@ -72,9 +72,9 @@ app.post('/add-to-cart', async (req, res) => {
                 price: product.Price,
                 image: product.ProductImageURL,
                 qrCodeUrl: product.qrCodeUrl || '', // optional fallback
-                quantity: parseInt(product.MinimumOrderQuantity)
+                quantity: parseInt(product.quantity)
             });
-            // console.log(cartItem)
+            console.log(cartItem)
             await cartItem.save();
         }
 
@@ -87,12 +87,12 @@ app.post('/add-to-cart', async (req, res) => {
 
 
 app.get('/cart', async (req, res) => {
-    const { email ,role} = req.cookies;
+    const { email, role } = req.cookies;
 
     // console.log("cart page", email);
 
     if (!email) return res.status(401).redirect("/login"); // or redirect to login
-    if (role==="Supplier") return res.status(401).redirect("/");
+    if (role === "Supplier") return res.status(401).redirect("/");
 
     try {
         const { role } = req.cookies;
@@ -561,9 +561,6 @@ app.post("/logout", (req, res) => {
         }
     }
 });
-
-
-
 
 // Start server only after database connection is successful
 dbConnected()
