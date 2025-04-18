@@ -74,7 +74,7 @@ toyControllerRoute.get('/search-product', async (req, res) => {
         }
 
         console.log("Search Results:", toys);
-        res.json({toys:toys,Category:Category}); // send JSON response
+        res.json({ toys: toys, Category: Category }); // send JSON response
     } catch (error) {
         console.error("Error fetching toys:", error);
         res.status(500).json({ error: 'Server error' });
@@ -304,14 +304,16 @@ toyControllerRoute.patch('/update/:id', upload.single('single_image'), async (re
 });
 
 // Delete toy
-toyControllerRoute.delete('/delete/:id', async (req, res) => {
-    const { id } = req.params;
+toyControllerRoute.get('/deleteToy/:id', async (req, res) => {
     try {
+        const { id } = req.params;
+        console.log("this is id from -", id);
         const toy = await AddToyScheema.findById(id);
+        console.log("found toy for delete purpose", toy)
         if (!toy) return res.status(404).json({ message: "Toy not found" });
 
         await AddToyScheema.findByIdAndDelete(id);
-        res.status(200).json({ message: "Data deleted successfully" });
+        res.status(200).redirect("/adminToys");
     } catch (error) {
         console.error("Delete failed", error);
         res.status(400).json({ message: "Data not deleted" });
