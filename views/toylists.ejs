@@ -460,6 +460,7 @@
                                         <i class="fa fa-shopping-cart"></i>
                                     </button>
                                 </div>
+
                             </div>
 
                             <div>
@@ -508,6 +509,11 @@
                     <p>Loading more products...</p>
                 </div>
 
+                <script>
+                    let pageNum = <% - JSON.stringify(currentPage || 1) %>;
+                    let totalPages = <% - JSON.stringify(totalPages) %>;
+                </script>
+
                 <style>
                     @keyframes spin {
                         0% {
@@ -526,7 +532,7 @@
 
         <%- include('common/footer.ejs') %>
 </body>
-<script>
+<!-- <script>
     const searchInput = document.getElementById('txt');
     let productsContainer = document.getElementById('productsContainer');
     let loadingIndicator = document.getElementById('loadingIndicator');
@@ -545,6 +551,7 @@
                 const toys = await res.json();
                 console.log(toys.toys)
                 console.log(toys.Category)
+                alert("Toys Category: " + toys.Category)
                 loadingIndicator.style.display = 'none';
 
                 if (!toys.toys.length) {
@@ -564,7 +571,7 @@
                             <div class="containers">
                                 <div class="image-container">
                                     <img class="productlistimg" src="${image}" alt="${product.ProductName}">
-                                    <button class="imageDiv">Sale</button>
+                                    // <button class="imageDiv">Sale</button>
                                 </div>
                                 <div class="icons">
                                     <button class="addToCardBtn" onclick='addToCart(${JSON.stringify(product)})'>
@@ -595,30 +602,32 @@
             }
         }
     });
-    // Add to cart function (unchanged)
-    async function addToCart(product) {
-        console.log("Product received in JS:", product);
-        try {
-            const response = await fetch('/add-to-cart', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(product)
-            });
+    // // Add to cart function (unchanged)
+    // async function addToCart(product) {
+    //     console.log("Product received in JS:", product);
+    //     try {
+    //         const response = await fetch('/add-to-cart', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify(product)
+    //         });
 
-            const result = await response.json();
+    //         const result = await response.json();
 
-            if (response.ok) {
-                alert(`${product.ProductName} added to cart!`);
-            } else {
-                alert(result.message);
-            }
-        } catch (error) {
-            console.error("Add to cart failed:", error);
-            alert("Something went wrong!");
-        }
-    }
+    //         if (response.ok) {
+    //             alert(`${product.ProductName} added to cart!`);
+    //         } else {
+    //             alert(result.message);
+    //         }
+    //     } catch (error) {
+    //         console.error("Add to cart failed:", error);
+    //         alert("Something went wrong!");
+    //     }
+    // }
+    // window.addToCart = addToCart;
+
 
     document.getElementById("categoryToggle").addEventListener("click", function (e) {
         document.querySelector(".category-dropdown-container").classList.toggle("active");
@@ -745,9 +754,9 @@
         window.location.href = redirectUrl;
     });
     // Infinite scrolling implementation
-    let pageNum = <% - JSON.stringify(currentPage || 1) %>;
-    let totalPages = <% - JSON.stringify(totalPages) %>;
-
+    let pageNum = <%= JSON.stringify(currentPage || 1) %>;
+    let totalPages = <%= JSON.stringify(totalPages) %>;
+    
     console.log('Current Page:', pageNum);
     console.log('Total Pages:', totalPages);
     let isLoading = false;
@@ -848,6 +857,233 @@
             loadMoreProducts();
         }
     });
-</script>
+</script> -->
 
 </html>
+<!-- <script>
+    async function addToCart(product) {
+        console.log("Product received in JS:", product);
+        try {
+            const response = await fetch('/add-to-cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(product)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert(`${product.ProductName} added to cart!`);
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error("Add to cart failed:", error);
+            alert("Something went wrong!");
+        }
+    }
+
+    // make it global
+    window.addToCart = addToCart;
+</script> -->
+
+<script>
+    const searchInput = document.getElementById('txt');
+    const productsContainer = document.getElementById('productsContainer');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+
+    // --- Search ---
+    searchInput.addEventListener('keydown', async (event) => {
+        if (event.key === 'Enter') {
+            const query = searchInput.value.trim();
+            if (!query) return;
+
+            productsContainer.innerHTML = '';
+            loadingIndicator.style.display = 'block';
+
+            try {
+                const res = await fetch(`/search-product?query=${encodeURIComponent(query)}`);
+                const toys = await res.json();
+                loadingIndicator.style.display = 'none';
+
+                if (!toys.toys.length) {
+                    productsContainer.innerHTML = '<p>No products found.</p>';
+                    return;
+                }
+
+                toys.toys.forEach(product => {
+                    const html = createProductHTML(product, toys.Category);
+                    productsContainer.innerHTML += html;
+                });
+            } catch (error) {
+                loadingIndicator.style.display = 'none';
+                console.error('Search Error:', error);
+                productsContainer.innerHTML = '<p>Something went wrong. Try again later.</p>';
+            }
+        }
+    });
+
+    // --- Category Dropdown ---
+    document.getElementById("categoryToggle").addEventListener("click", () => {
+        document.querySelector(".category-dropdown-container").classList.toggle("active");
+    });
+
+    // --- Price Slider ---
+    const minSlider = document.getElementById('minRange');
+    const maxSlider = document.getElementById('maxRange');
+    const minPrice = document.getElementById('minPrice');
+    const maxPrice = document.getElementById('maxPrice');
+
+    minSlider.addEventListener('input', () => updateSliderDisplay());
+    maxSlider.addEventListener('input', () => updateSliderDisplay());
+
+    function updateSliderDisplay() {
+        let minVal = parseInt(minSlider.value);
+        let maxVal = parseInt(maxSlider.value);
+
+        if (minVal > maxVal) {
+            maxSlider.value = minVal;
+            maxVal = minVal;
+        }
+
+        if (maxVal < minVal) {
+            minSlider.value = maxVal;
+            minVal = maxVal;
+        }
+
+        minPrice.textContent = "Rs: " + minVal + ".00";
+        maxPrice.textContent = "Rs: " + maxVal + ".00";
+    }
+
+    // --- Apply Price Filter ---
+    document.getElementById('btn').addEventListener('click', () => {
+        const min = minSlider.value;
+        const max = maxSlider.value;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get('category');
+
+        let redirectUrl = `/alltoys?min=${min}&max=${max}`;
+        if (categoryParam) {
+            redirectUrl += `&category=${categoryParam}`;
+        }
+        console.log
+        window.location.href = redirectUrl;
+    });
+
+    // --- Apply Category Filter ---
+    document.getElementById('applyCategoryFilter').addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const selectedCategories = [];
+        document.querySelectorAll(".category-checkbox").forEach(cb => {
+            if (cb.checked) selectedCategories.push(cb.value);
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const minParam = urlParams.get('min');
+        const maxParam = urlParams.get('max');
+
+        let redirectUrl = '/alltoys?';
+        if (selectedCategories.length > 0) {
+            redirectUrl += `category=${encodeURIComponent(selectedCategories.join(','))}`;
+            document.getElementById('changeByCategory').innerText = selectedCategories.join(', ');
+        } else {
+            redirectUrl += 'category=';
+        }
+
+        if (minParam && maxParam) {
+            redirectUrl += `&min=${minParam}&max=${maxParam}`;
+        }
+
+        window.location.href = redirectUrl;
+    });
+
+    // --- Create Product HTML ---
+    function createProductHTML(product, Category) {
+        const finalPrice = (product.Price || 0) + (product[`Price${Category}`] || 0);
+        const image = product.ProductImageURL || 'https://via.placeholder.com/200';
+        const qrCode = product.qrCodeUrl || 'https://via.placeholder.com/80x80?text=QR';
+        const moq = product.MinimumOrderQuantity || 'N/A';
+
+        return `
+            <div class="ims">
+                <div class="containers">
+                    <div class="image-container">
+                        <img class="productlistimg" src="${image}" alt="${product.ProductName}">
+                    </div>
+                    <div class="icons">
+                        <button class="addToCardBtn" onclick='addToCart(${JSON.stringify(product)})'>
+                            <i class="fa fa-shopping-cart"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <h3>${product.ProductName}</h3>
+                    <div class="qr-code">
+                        <img class="qrcode" src="${qrCode}" alt="QR Code">
+                    </div>
+                    <div class="h">
+                        <h4 style="color: green;">₹${Math.abs(finalPrice)}</h4>
+                        <span style="font-size: 14px;">MOQ: ${moq}</span>
+                    </div>
+                    <a class="viewDetails" href="/toydetails/${product._id}">View Details</a>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- Infinite Scroll ---
+    let isLoading = false;
+    window.addEventListener('scroll', async () => {
+        if (isLoading) return;
+
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 300) {
+            if (pageNum < totalPages) {
+                isLoading = true;
+                loadingIndicator.style.display = 'block';
+
+                pageNum++;
+                try {
+                    const res = await fetch(`/alltoys?page=${pageNum}`);
+                    const { products, Category } = await res.json();
+
+                    products.forEach(product => {
+                        productsContainer.innerHTML += createProductHTML(product, Category);
+                    });
+
+                } catch (error) {
+                    console.error('Infinite Scroll Error:', error);
+                } finally {
+                    isLoading = false;
+                    loadingIndicator.style.display = 'none';
+                }
+            }
+        }
+    });
+
+    // --- Add to Cart ---
+    async function addToCart(product) {
+        try {
+            const response = await fetch('/add-to-cart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(product)
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert(`${product.ProductName} added to cart!`);
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error("Add to cart failed:", error);
+            alert("Something went wrong!");
+        }
+    }
+    window.addToCart = addToCart;
+
+</script>
