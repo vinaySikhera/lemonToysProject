@@ -332,7 +332,10 @@
                     <div id="cart-data" style="display:none;" data-cart='<%= JSON.stringify(cart) %>'></div>
                     <button class="download-btn">Download PDF</button>
                 </div>
+                <div class="btn">
+                    <button id="confirm-order-btn">Confirm Order</button>
 
+                </div>
                 <% if (user && user==='Admin' ) { %>
                     <div class="adminBtn">
                         <p>these two btn only for admin</p>
@@ -532,4 +535,56 @@
             img.onerror = () => resolve(null);
         });
     }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const confirmOrderBtn = document.getElementById('confirm-order-btn');
+
+        if (!confirmOrderBtn) {
+            console.error("Button with ID 'confirm-order-btn' not found.");
+            return;
+        }
+
+        confirmOrderBtn.addEventListener('click', () => {
+            console.log("Confirm Order button clicked");
+
+            const cartDataElement = document.getElementById('cart-data');
+            if (!cartDataElement) return alert("Cart data not found");
+
+            let cartItems = [];
+            try {
+                cartItems = JSON.parse(cartDataElement.getAttribute('data-cart'));
+                if (!Array.isArray(cartItems) || cartItems.length === 0) {
+                    return alert("Your cart is empty.");
+                }
+            } catch (err) {
+                console.error("Error parsing cart data:", err);
+                return alert("Invalid cart data.");
+            }
+
+            const orderDetails = cartItems.map(item => ({
+                name: item.name,
+                quantity: item.quantity,
+                price: item.price,
+                image: item.image,
+                qrCodeUrl: item.qrCodeUrl
+            }));
+
+            fetch('/confirm-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderDetails })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Order confirmed!');
+                        location.reload();
+                    } else {
+                        alert('Failed to confirm order. Please try again.');
+                    }
+                })
+                .catch(error => console.error('Error confirming order:', error));
+        });
+    });
 </script>

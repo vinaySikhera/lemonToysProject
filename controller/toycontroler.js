@@ -156,6 +156,7 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
 
         // Total count & paginated data
         const totalToys = await AddToyScheema.countDocuments(filter);
+        const alltoys = await AddToyScheema.find()
         const totalPages = Math.ceil(totalToys / limit);
         const getAllToys = await AddToyScheema.find(filter)
             .sort({ Price: (price || min || max) ? 1 : -1, _id: -1 })
@@ -168,6 +169,7 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
             currentPage: Number(page),
             totalPages,
             totalToys,
+            alltoys,
             price: price || '',
             min: min || '',
             max: max || '',

@@ -11,6 +11,7 @@ const AddToySchema = require('./models/toyAddProductScheema')
 const bcrypt = require('bcrypt');
 const upload = require('./middleware/fileUpload');
 const isAdmin = require('./middleware/isAdmin');
+const orderModel = require('./models/orderModel');
 // const Cart = require('./models/userModles');
 const isLoginOrNot = require('./middleware/isLoginOrNot');
 const isAdminOrSupplier = require('./middleware/isAdminOrSupplier');
@@ -49,32 +50,51 @@ app.get('/contact', (req, res) => {
 // app.get('/checkout', (req, res) => {
 //     res.render('checkoutpage');
 // });
-
+// change only add to cart section 01-05-2025 
 app.post('/add-to-cart', async (req, res) => {
     try {
-        const product = req.body;
-        const email = req.cookies?.email; // optional login check
-        // console.log("email", email);
-        // console.log(product)
-        const userId = await userModel.findOne({ email: email });
-        // console.log("userid is ", userId._id);
-        // Check if the item already exists in cart for the same user
-        const existingItem = await userCart.findOne({ userId: userId._id, productId: product._id });
-        // console.log(existingItem);
+        const { _id, quantity } = req.body;
+        const email = req.cookies?.email;
+        const { Category } = req.cookies;
+
+        // Get user
+        const user = await userModel.findOne({ email: email });
+        if (!user) {
+            return res.status(401).json({ message: 'User not found' });
+        }
+
+        // Fetch full product from DB
+        const product = await AddToySchema.findById(_id);
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        // Calculate final price
+        const basePrice = product.Price || 0;
+        const dynamicKey = 'Price' + Category;
+        const dynamicPrice = product[dynamicKey] || 0;
+        const finalPrice = basePrice + dynamicPrice;
+
+        // Check for existing cart item
+        const existingItem = await userCart.findOne({
+            userId: user._id,
+            productId: product._id
+        });
+
         if (existingItem) {
             existingItem.quantity += 1;
             await existingItem.save();
         } else {
             const cartItem = new userCart({
-                userId: userId._id,
+                userId: user._id,
                 productId: product._id,
                 name: product.ProductName,
-                price: product.Price,
+                price: finalPrice, // ✅ Use computed price
                 image: product.ProductImageURL,
-                qrCodeUrl: product.qrCodeUrl || '', // optional fallback
-                quantity: parseInt(product.quantity)
+                qrCodeUrl: product.qrCodeUrl || '',
+                quantity: parseInt(quantity) || 1
             });
-            console.log(cartItem)
+
             await cartItem.save();
         }
 
@@ -82,6 +102,72 @@ app.post('/add-to-cart', async (req, res) => {
     } catch (err) {
         console.error('Error adding to cart:', err);
         res.status(500).json({ message: 'Failed to add item to cart' });
+    }
+});
+
+
+app.post('/confirm-order', async (req, res) => {
+    try {
+        const { orderDetails } = req.body;
+
+        if (!Array.isArray(orderDetails) || orderDetails.length === 0) {
+            return res.status(400).json({ success: false, message: 'No order details provided.' });
+        }
+
+        // Optionally get user info (if logged in)
+        const email = req.cookies?.email;
+        const user = await userModel.findOne({ email });
+        const userId = user ? user._id : null;
+
+        // Save each item in the order collection
+        const savedOrders = await Promise.all(orderDetails.map(async item => {
+            const newOrder = new orderModel({
+                userId: userId || null,
+                name: item.name,
+                price: Number(item.price) || 0,
+                quantity: Number(item.quantity) || 1,
+                image: item.image,
+                qrCodeUrl: item.qrCodeUrl
+            });
+            return await newOrder.save();
+        }));
+
+        res.status(200).json({ success: true, message: 'Order confirmed!', data: savedOrders });
+
+    } catch (err) {
+        console.error('Error in /confirm-order:', err);
+        res.status(500).json({ success: false, message: 'Server error during order confirmation.' });
+    }
+});
+app.get('/placed-orders', async (req, res) => {
+    try {
+        const email = req.cookies?.email;
+        const user = await userModel.findOne({ email });
+
+        let query = {};
+        if (user && user.role !== 'Admin') {
+            query.userId = user._id; // Only show their own orders
+        }
+
+        const orders = await orderModel.find(query).sort({ createdAt: -1 });
+
+        res.render('placedorder', { orders ,user});
+    } catch (err) {
+        console.error('Error fetching orders:', err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+app.patch('/close-order/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updated = await orderModel.findByIdAndUpdate(id, { status: 'Closed' }, { new: true });
+
+        if (!updated) return res.status(404).json({ success: false, message: "Order not found." });
+
+        res.json({ success: true, message: "Order closed." });
+    } catch (err) {
+        console.error("Error closing order:", err);
+        res.status(500).json({ success: false, message: "Internal server error." });
     }
 });
 
@@ -462,31 +548,58 @@ app.post('/login', async (req, res) => {
 });
 
 
-
+// and same price calculation for toy details page
 app.get('/toydetails/:id', async (req, res) => {
     try {
-        // console.log(req.params.id);
+        const { Category } = req.cookies;
         const toyId = req.params.id;
-        // console.log(new ObjectId(toyId))
         const singleToy = await AddToySchema.findById(toyId);
 
         if (!singleToy) {
             return res.status(404).json({ message: 'Toy not found' });
         }
 
-        // Find related toys by category, excluding the current toy
-        const relatedToys = await AddToySchema.find({
-            category: singleToy.category, // Match category
-            _id: { $ne: singleToy._id }   // Exclude current toy
-        }).limit(4); // Limit to 4 related products
+        // Final price calculation
 
-        // Render the toydetails view and pass the toy and related toys data
-        res.render('toydetails', { singleToy, relatedToys });
+        const dynamicKey = 'Price' + Category;
+        console.log("dynamicKey", dynamicKey)
+        const basePrice = singleToy.Price || 0;
+        console.log("basePrice", basePrice)
+        const dynamicPrice = singleToy[dynamicKey] || 0;
+        console.log("dynamicPrice", dynamicPrice)
+        const finalPrice = basePrice + dynamicPrice;
+        console.log("finalPrice", finalPrice)
+
+        // Find related toys
+        const relatedToysRaw = await AddToySchema.find({
+            category: singleToy.category,
+            _id: { $ne: singleToy._id }
+        }).limit(4);
+
+        // Add finalPrice to each toy
+        const relatedToys = relatedToysRaw.map(toy => {
+            const basePrice = toy.Price || 0;
+            const dynamicKey = 'Price' + Category;
+            const dynamicPrice = toy[dynamicKey] || 0;
+            const finalPrice = basePrice + dynamicPrice;
+
+            return {
+                ...toy.toObject(),
+                finalPrice
+            };
+        });
+        // Send all to EJS
+        res.render('toydetails', {
+            singleToy,
+            relatedToys,
+            finalPrice // Pass calculated price
+        });
     } catch (error) {
         console.log('Error fetching toy details:', error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
+
 
 
 app.get('/faq', (req, res) => {

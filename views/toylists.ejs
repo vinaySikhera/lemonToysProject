@@ -433,6 +433,15 @@
                     <input id="txt" type="search" placeholder="Search">
                 </div>
                 <br>
+                <!-- this is showing total products of this webstie day 30-04-2025 time 16.55 -->
+                <div>
+                    <% if (alltoys.length> 0) { %>
+                        <h3>Showing <%= alltoys.length %> Products</h3>
+                        <% } else { %>
+                            <h3>No Products Found</h3>
+                            <% } %>
+                </div>
+                <!-- this is showing total products of this webstie day 30-04-2025 time 16.55 -->
                 <div class="toys" id="productsContainer">
                     <% getAllToys?.forEach(product=> { %>
 
