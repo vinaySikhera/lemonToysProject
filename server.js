@@ -139,7 +139,7 @@ app.post('/confirm-order', async (req, res) => {
         res.status(500).json({ success: false, message: 'Server error during order confirmation.' });
     }
 });
-app.get('/placed-orders', async (req, res) => {
+app.get('/placed-orders', isAdmin, async (req, res) => {
     try {
         const email = req.cookies?.email;
         const user = await userModel.findOne({ email });

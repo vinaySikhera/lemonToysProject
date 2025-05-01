@@ -435,11 +435,7 @@
                 <br>
                 <!-- this is showing total products of this webstie day 30-04-2025 time 16.55 -->
                 <div>
-                    <% if (alltoys.length> 0) { %>
-                        <h3>Showing <%= alltoys.length %> Products</h3>
-                        <% } else { %>
-                            <h3>No Products Found</h3>
-                            <% } %>
+                    <h3>Showing <%= alltoys.length %> Products</h3>
                 </div>
                 <!-- this is showing total products of this webstie day 30-04-2025 time 16.55 -->
                 <div class="toys" id="productsContainer">
@@ -519,8 +515,8 @@
                 </div>
 
                 <script>
-                    let pageNum = <% - JSON.stringify(currentPage || 1) %>;
-                    let totalPages = <% - JSON.stringify(totalPages) %>;
+                    let pageNum = <%= currentPage || 1 %>;
+                    let totalPages = <%= totalPages %>;
                 </script>
 
                 <style>
@@ -1045,7 +1041,9 @@
     }
 
     // --- Infinite Scroll ---
+
     let isLoading = false;
+
     window.addEventListener('scroll', async () => {
         if (isLoading) return;
 
@@ -1054,13 +1052,27 @@
                 isLoading = true;
                 loadingIndicator.style.display = 'block';
 
-                pageNum++;
-                try {
-                    const res = await fetch(`/alltoys?page=${pageNum}`);
-                    const { products, Category } = await res.json();
+                pageNum++; // Increment the page number for the next fetch
 
+                try {
+                    const res = await fetch(`/alltoys?page=${pageNum}`, { // Fixed URL string formatting
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json' // ✅ Tell server to send JSON
+                        }
+                    });
+
+                    // Check if the response is OK
+                    if (!res.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const { products } = await res.json(); // Extract 'products' from the response JSON
+
+                    // Loop through the products and append them to the container
                     products.forEach(product => {
-                        productsContainer.innerHTML += createProductHTML(product, Category);
+                        const productHTML = createProductHTML(product, ''); // You can replace '' with actual category if needed
+                        productsContainer.innerHTML += productHTML; // Append the new HTML
                     });
 
                 } catch (error) {

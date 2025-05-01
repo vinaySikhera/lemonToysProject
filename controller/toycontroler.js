@@ -126,50 +126,54 @@ toyControllerRoute.get('/allusers-json', async (req, res) => {
 toyControllerRoute.get('/alltoys', async (req, res) => {
     try {
         const { email, Category, role } = req.cookies;
-        if (!email) {
-            return res.status(401).redirect('/login');
-        }
-        if (role === "Supplier") {
-            return res.status(401).redirect('/');
-        }
+
+        if (!email) return res.status(401).redirect('/login');
+        if (role === "Supplier") return res.status(401).redirect('/');
 
         const { price, category, page = 1, limit = 50, min, max } = req.query;
         const filter = {};
 
-        // Handle price filtering
+        // Step 2: Filtering
         if (min && max) {
-            // If both min and max are provided, filter between those values
             filter.Price = { $gte: Number(min), $lte: Number(max) };
         } else if (price) {
-            // Backward compatibility with the old price filter
             filter.Price = { $lte: Number(price) };
         }
 
-        // Category filter (support multiple)
         if (category) {
             const categoryArray = category.split(',').map(cat => cat.trim());
             filter.Category = { $in: categoryArray };
         }
 
-        // Distinct categories for filter UI
+        // Step 3: Distinct categories
         const allCategories = await AddToyScheema.distinct("Category");
-
-        // Total count & paginated data
+        //  step 3: Get all toys 
+        const alltoys = await AddToyScheema.find();
+        console.log(alltoys.length)
+        // Step 4: Pagination
         const totalToys = await AddToyScheema.countDocuments(filter);
-        const alltoys = await AddToyScheema.find()
         const totalPages = Math.ceil(totalToys / limit);
         const getAllToys = await AddToyScheema.find(filter)
             .sort({ Price: (price || min || max) ? 1 : -1, _id: -1 })
             .skip((page - 1) * limit)
             .limit(Number(limit));
-        console.log(getAllToys)
+
+        // Step 5: Check if it's an API call
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return res.json({
+                products: getAllToys,
+                totalPages
+            });
+        }
+
+        // Step 6: Render full page
         res.render('toylists', {
             allCategories,
             getAllToys,
             currentPage: Number(page),
             totalPages,
             totalToys,
-            alltoys,
+            alltoys: alltoys, // Optional or remove if not needed
             price: price || '',
             min: min || '',
             max: max || '',
@@ -182,6 +186,8 @@ toyControllerRoute.get('/alltoys', async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 });
+
+
 
 toyControllerRoute.get('/api/toys', async (req, res) => {
     try {
