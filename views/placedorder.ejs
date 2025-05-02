@@ -84,53 +84,59 @@
 
 <body>
     <div style="display: flex; flex-wrap: wrap;">
-    <%- include('common/adminsidebar.ejs') %>
+        <%- include('common/adminsidebar.ejs') %>
 
-    <div class="order-table-container">
-        <h2>Placed Orders</h2>
-        <table class="order-table">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Name</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Subtotal</th>
-                    <th>QR Code</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% orders.forEach(order=> { %>
-                    <tr>
-                        <td><img src="<%= order.image %>" alt="<%= order.name %>"></td>
-                        <td>
-                            <%= order.name %>
-                        </td>
-                        <td>
-                            <%= order.quantity %>
-                        </td>
-                        <td>₹<%= typeof order.price==='number' ? order.price.toFixed(2) : 'N/A' %>
-                        </td>
-                        <td>₹<%= (typeof order.price==='number' && typeof order.quantity==='number' ) ? (order.price
-                                * order.quantity).toFixed(2) : 'N/A' %>
-                        </td>
-                        <td><img src="<%= order.qrCodeUrl %>" alt="QR Code" width="50"></td>
-
-                        <% if (user.role==='Admin' ) { %>
-                            <td>
-                                <% if (order.status !=='Closed' ) { %>
-                                    <button class="close-order-btn" data-id="<%= order._id %>">Close Order</button>
-                                    <% } else { %>
-                                        <span style="color: green;">Closed</span>
-                                        <% } %>
-                            </td>
+        <div class="order-table-container">
+            <h2>Placed Orders</h2>
+            <% orders.forEach(order => { %>
+                <h3> | Status: <%= order.status %> | User: <%= order.user %> | Date: <%= new Date(order.createdAt).toLocaleString() %> </h3>
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Subtotal</th>
+                            <th>QR Code</th>
+                            <% if (user.role === 'Admin') { %>
+                                <th>Action</th>
                             <% } %>
-                    </tr>
-                    <% }) %>
-            </tbody>
-        </table>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% order.items.forEach(item => { %>
+                            <tr>
+                                <td><img src="<%= item.image %>" alt="<%= item.name %>" width="50"></td>
+                                <td><%= item.name %></td>
+                                <td><%= item.quantity %></td>
+        
+                                <!-- Display price breakdown (string) -->
+                                <td>₹<%= item.displayPrice %></td>
+        
+                                <!-- Use unitPrice for numeric subtotal -->
+                                <td>₹<%= (item.unitPrice * item.quantity).toFixed(2) %></td>
+        
+                                <td><img src="<%= item.qrCodeUrl %>" alt="QR Code" width="50"></td>
+        
+                                <% if (user.role === 'Admin') { %>
+                                    <td>
+                                        <% if (order.status !== 'Closed') { %>
+                                            <button class="close-order-btn" data-id="<%= order._id %>">Close Order</button>
+                                        <% } else { %>
+                                            <span style="color: green;">Closed</span>
+                                        <% } %>
+                                    </td>
+                                <% } %>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% }); %>
+        </div>
+        
+
     </div>
-</div>
 </body>
 
 </html>
