@@ -128,6 +128,7 @@
     </style>
 </head>
 
+
 <body>
     <div class="container">
         <h2>Edit Toy</h2>
@@ -146,6 +147,8 @@
 
             <label for="ProductDescription">Product Description:</label>
             <input type="text" name="ProductDescription" value="<%= toy.ProductDescription %>" required>
+            <label for="MinimumOrderQuantity">MinimumOrderQuantity:</label>
+            <input type="text" name="MinimumOrderQuantity" value="<%= toy.MinimumOrderQuantity %>" required>
 
             <% if (user && user.role==="Admin" ) { %>
                 <label for="product_owner" class="form-label">Product Owner:</label>

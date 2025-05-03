@@ -257,8 +257,8 @@ toyControllerRoute.post('/addtoys', upload.single('single_image'), validateToyIn
         const { name, category, minimum_order_quantity, price, price_type, visibility_status, product_owner, a_user_amount, b_user_amount, c_user_amount, d_user_amount, product_description } = req.body;
         // console.log("00000000000000000000000000000000", visibility_status)
         const { email } = req.cookies;
-        const user=await userModel.findOne({email})
-        console.log("this user find during add toys",user)    
+        const user = await userModel.findOne({ email })
+        console.log("this user find during add toys", user)
         const getImage = req.file ? req.file.path : null;
         const toyUrl = `http://localhost:3003/toydetails/${encodeURIComponent(name)}`;
         const qrCode = await QRCode.toDataURL(toyUrl);
@@ -398,15 +398,23 @@ toyControllerRoute.get('/editToy/:id', isAdminOrSupplier, async (req, res) => {
 
 toyControllerRoute.post('/updateToy/:id', isAdminOrSupplier, async (req, res) => {
     try {
-        const { ProductName, Category, Price, ProductImageURL, ProductDescription, product_owner, PriceA, PriceB, PriceC, PriceD } = req.body;
 
+        const { ProductName, Category, MinimumOrderQuantity, Price, ProductImageURL, ProductDescription, product_owner, PriceA, PriceB, PriceC, PriceD } = req.body;
+        // const user = await userModel.findOne({ email })
+        const { id } = req.params;
+        const toys = await AddToyScheema.findById(id);
+        console.log("found toy owner name for toy for update purpose", toys.ProductOwner)
+        // console.log("this user find during add toys", user)
         await AddToyScheema.findByIdAndUpdate(req.params.id, {
             ProductName,
             Category,
             Price,
             ProductImageURL,
             ProductDescription,
-            ProductOwner: product_owner,
+            MinimumOrderQuantity: MinimumOrderQuantity,
+            // ProductOwner: product_owner,
+            ProductOwner: toys.ProductOwner,
+            // ProductOwner: user.name,
             PriceA,
             PriceB,
             PriceC,
