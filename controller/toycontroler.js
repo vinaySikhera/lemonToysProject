@@ -256,6 +256,9 @@ toyControllerRoute.post('/addtoys', upload.single('single_image'), validateToyIn
     try {
         const { name, category, minimum_order_quantity, price, price_type, visibility_status, product_owner, a_user_amount, b_user_amount, c_user_amount, d_user_amount, product_description } = req.body;
         // console.log("00000000000000000000000000000000", visibility_status)
+        const { email } = req.cookies;
+        const user=await userModel.findOne({email})
+        console.log("this user find during add toys",user)    
         const getImage = req.file ? req.file.path : null;
         const toyUrl = `http://localhost:3003/toydetails/${encodeURIComponent(name)}`;
         const qrCode = await QRCode.toDataURL(toyUrl);
@@ -269,7 +272,8 @@ toyControllerRoute.post('/addtoys', upload.single('single_image'), validateToyIn
             Price: price,
             PriceType: price_type,
             VisibilityStatus: visibility_status,
-            ProductOwner: product_owner,
+            // ProductOwner: product_owner,
+            ProductOwner: user.name,
             PriceA: a_user_amount,
             PriceB: b_user_amount,
             PriceC: c_user_amount,

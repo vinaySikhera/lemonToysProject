@@ -115,7 +115,7 @@
                                 <td>₹<%= item.displayPrice %></td>
         
                                 <!-- Use unitPrice for numeric subtotal -->
-                                <td>₹<%= (item.unitPrice * item.quantity).toFixed(2) %></td>
+                                <td>₹<%= (item.displayPrice * item.quantity).toFixed(2) %></td>
         
                                 <td><img src="<%= item.qrCodeUrl %>" alt="QR Code" width="50"></td>
         
@@ -134,8 +134,6 @@
                 </table>
             <% }); %>
         </div>
-        
-
     </div>
 </body>
 

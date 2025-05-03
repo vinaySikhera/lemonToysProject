@@ -149,6 +149,7 @@ app.get('/placed-orders', isAdmin, async (req, res) => {
     try {
         const email = req.cookies?.email;
         const user = await userModel.findOne({ email });
+        console.log('user', user)
 
         let query = {};
         if (user && user.role !== 'Admin') {
