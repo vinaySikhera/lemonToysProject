@@ -613,7 +613,8 @@ app.post('/login', async (req, res) => {
 // and same price calculation for toy details page
 app.get('/toydetails/:id', async (req, res) => {
     try {
-        const { Category } = req.cookies;
+        const { email, role, Category } = req.cookies;
+        if (!email) return res.status(401).redirect("/login");
         const toyId = req.params.id;
         const singleToy = await AddToySchema.findById(toyId);
 
@@ -621,9 +622,7 @@ app.get('/toydetails/:id', async (req, res) => {
             return res.status(404).json({ message: 'Toy not found' });
         }
 
-
         // Final price calculation
-
         const dynamicKey = 'Price' + Category;
         console.log("dynamicKey", dynamicKey)
         const basePrice = singleToy.Price || 0;
@@ -638,7 +637,7 @@ app.get('/toydetails/:id', async (req, res) => {
             category: singleToy.category,
             _id: { $ne: singleToy._id }
         }).limit(4);
-
+ 
         // Add finalPrice to each toy
         const relatedToys = relatedToysRaw.map(toy => {
             const basePrice = toy.Price || 0;
