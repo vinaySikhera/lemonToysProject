@@ -146,53 +146,56 @@ app.post('/confirm-order', async (req, res) => {
 
 
 app.get('/placed-orders', isAdmin, async (req, res) => {
-    try {
-        const email = req.cookies?.email;
-        const user = await userModel.findOne({ email });
-        console.log('user', user)
+  try {
+    const email = req.cookies?.email;
+    const user = await userModel.findOne({ email });
+    console.log('user', user);
 
-        let query = {};
-        if (user && user.role !== 'Admin') {
-            query.userId = user._id; // Non-admin users see only their orders
-        }
-
-        const orders = await orderModel.find(query)
-            .sort({ createdAt: -1 })
-            .populate('cartItems.productId')
-            .populate('userId');
-
-        const formattedOrders = orders.map(order => {
-            const userCategory = order.userId?.category || 'D';
-
-            return {
-                _id: order._id,
-                status: order.status,
-                createdAt: order.createdAt,
-                items: order.cartItems.map(ci => {
-                    const product = ci.productId;
-                    const basePrice = product?.Price || 0;
-                    const dynamicKey = 'Price' + userCategory;
-                    const finalPrice = product?.[dynamicKey] || basePrice;
-
-                    return {
-                        name: product?.ProductName || 'Unknown Product',
-                        image: product?.ProductImageURL || '',
-                        qrCodeUrl: product?.qrCodeUrl || '',
-                        quantity: ci.quantity,
-                        displayPrice: `${basePrice + finalPrice}`,   // for showing on screen
-                        unitPrice: finalPrice                           // for calculation
-                    };
-                })
-                ,
-            };
-
-        });
-
-        res.render('placedorder', { orders: formattedOrders, user });
-    } catch (err) {
-        console.error('Error fetching orders:', err);
-        res.status(500).send('Internal Server Error');
+    let query = {};
+    if (user && user.role !== 'Admin') {
+      query.userId = user._id; // Non-admin users see only their orders
     }
+
+    const orders = await orderModel.find(query)
+      .sort({ createdAt: -1 })
+      .populate('cartItems.productId')
+      .populate('userId'); // This already gives you name, email, etc.
+
+    const formattedOrders = orders.map(order => {
+      const userCategory = order.userId?.category || 'D';
+      const username = order.userId?.name || 'Unknown User';
+
+      const items = order.cartItems.map(ci => {
+        const product = ci.productId;
+        const basePrice = product?.Price || 0;
+        const dynamicKey = 'Price' + userCategory;
+        const finalPrice = product?.[dynamicKey] || basePrice;
+
+        return {
+          name: product?.ProductName || 'Unknown Product',
+          image: product?.ProductImageURL || '',
+          qrCodeUrl: product?.qrCodeUrl || '',
+          quantity: ci.quantity,
+          displayPrice: `${basePrice + finalPrice}`,
+          unitPrice: finalPrice,
+          productOwner: product?.ProductOwner,
+          username: username // pulled directly from order.userId
+        };
+      });
+
+      return {
+        _id: order._id,
+        status: order.status,
+        createdAt: order.createdAt,
+        items
+      };
+    });
+
+    res.render('placedorder', { orders: formattedOrders, user });
+  } catch (err) {
+    console.error('Error fetching orders:', err);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 

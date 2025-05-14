@@ -394,7 +394,7 @@ toyControllerRoute.get('/editToy/:id', isAdminOrSupplier, async (req, res) => {
 
 toyControllerRoute.post('/updateToy/:id', isAdminOrSupplier, async (req, res) => {
     try {
-        const { ProductName, Category, Price, ProductImageURL, ProductDescription, product_owner, PriceA, PriceB, PriceC, PriceD } = req.body;
+        const { ProductName, Category, Price, ProductImageURL,MinimumOrderQuantity, ProductDescription, product_owner, PriceA, PriceB, PriceC, PriceD } = req.body;
 
         await AddToyScheema.findByIdAndUpdate(req.params.id, {
             ProductName,
@@ -402,6 +402,7 @@ toyControllerRoute.post('/updateToy/:id', isAdminOrSupplier, async (req, res) =>
             Price,
             ProductImageURL,
             ProductDescription,
+            MinimumOrderQuantity,   
             ProductOwner: product_owner,
             PriceA,
             PriceB,

@@ -6,84 +6,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>placed order</title>
     <style>
-        .order-table-container {
-            padding: 2rem;
-            max-width: 1200px;
-            margin: auto;
-            font-family: 'Segoe UI', sans-serif;
-        }
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #fafafa;
+  }
 
-        .order-table-container h2 {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            color: #333;
-        }
+  .order-table-container {
+    padding: 2rem;
+    max-width: 100%;
+    margin: auto;
+    flex-grow: 1;
+  }
 
-        .order-table {
-            width: 100%;
-            border-collapse: collapse;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
+  .order-table-container h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #2c3e50;
+    font-size: 2rem;
+  }
 
-        .order-table thead {
-            background-color: #f4f4f4;
-        }
+  .order-table-container h3 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: #444;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.5rem;
+  }
 
-        .order-table th,
-        .order-table td {
-            padding: 12px 15px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
+  .order-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+  }
 
-        .order-table td img {
-            width: 70px;
-            height: auto;
-            object-fit: cover;
-            border-radius: 8px;
-        }
+  .order-table thead {
+    background-color: #eaeaea;
+  }
 
-        .order-table tbody tr:hover {
-            background-color: #f9f9f9;
-        }
+  .order-table th,
+  .order-table td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.95rem;
+    color: #333;
+  }
 
-        .order-summary {
-            margin-top: 2rem;
-            text-align: right;
-            font-size: 1.1rem;
-        }
+  .order-table td img {
+    width: 60px;
+    height: auto;
+    border-radius: 6px;
+  }
 
-        .order-summary strong {
-            color: #222;
-        }
+  .order-table tbody tr:hover {
+    background-color: #f9f9f9;
+  }
 
-        @media (max-width: 768px) {
-            .order-table-container {
-                padding: 1rem;
-            }
+  .close-order-btn {
+    background-color: #e74c3c;
+    color: white;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
 
-            .order-table th,
-            .order-table td {
-                font-size: 0.9rem;
-                padding: 8px;
-            }
+  .close-order-btn:hover {
+    background-color: #c0392b;
+  }
 
-            .order-summary {
-                font-size: 1rem;
-            }
-        }
+  .order-summary {
+    text-align: right;
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+  }
 
-        @media (max-width: 768px) {
-            .order-table-container {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;/
-            }
-        }
-    </style>
+  .order-summary strong {
+    color: #2c3e50;
+  }
+
+  /* Mobile Styles */
+  @media (max-width: 768px) {
+    .order-table-container {
+      padding: 1rem;
+      overflow-x: auto;
+    }
+
+    .order-table th,
+    .order-table td {
+      font-size: 0.85rem;
+      padding: 8px 10px;
+    }
+
+    .order-table td img {
+      width: 50px;
+    }
+
+    .order-table-container h2 {
+      font-size: 1.5rem;
+    }
+
+    .order-table-container h3 {
+      font-size: 1rem;
+    }
+
+    .close-order-btn {
+      font-size: 0.8rem;
+      padding: 5px 10px;
+    }
+  }
+</style>
+
 </head>
 
 <body>
-    <div style="display: flex; flex-wrap: wrap;">
+    <div style="display:flex; flex-wrap: wrap;">
         <%- include('common/adminsidebar.ejs') %>
 
         <div class="order-table-container">
@@ -99,6 +144,8 @@
                             <th>Price</th>
                             <th>Subtotal</th>
                             <th>QR Code</th>
+                            <th>Product Owner</th>
+                            <th>User Name</th>
                             <% if (user.role === 'Admin') { %>
                                 <th>Action</th>
                             <% } %>
@@ -118,7 +165,9 @@
                                 <td>₹<%= (item.displayPrice * item.quantity).toFixed(2) %></td>
         
                                 <td><img src="<%= item.qrCodeUrl %>" alt="QR Code" width="50"></td>
-        
+                                <td><%= (item.productOwner) %></td>
+                                <td><%= (item.username) %></td>
+
                                 <% if (user.role === 'Admin') { %>
                                     <td>
                                         <% if (order.status !== 'Closed') { %>
