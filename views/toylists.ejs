@@ -401,30 +401,32 @@
                                     <%= cat %>
                                 </label><br>
                                 <% }) %>
-                                    <button id="applyCategoryFilter" class="btn">Apply</button>
+                                   <button id="applyCategoryFilter" class="btn">Apply</button>
+
                         </div>
                     </div>
                 </div>
 
-                <div class="filter">
-                    <h3>Filter by Price</h3>
+              <div class="filter">
+    <h3>Filter by Price</h3>
 
-                    <label for="minRange">Min Price</label>
-                    <input type="range" id="minRange" name="minRange" min="1" max="5000" value="1" />
+    <label for="minInput">Min Price</label>
+    <input type="number" id="minInput" name="minInput" min="1" max="5000" value="1" />
 
-                    <label for="maxRange">Max Price</label>
-                    <input type="range" id="maxRange" name="maxRange" min="1" max="5000" value="5000" />
+    <label for="maxInput">Max Price</label>
+    <input type="number" id="maxInput" name="maxInput" min="1" max="5000" value="5000" />
 
-                    <div class="dollor">
-                        <p id="minPrice">RS: 1.00</p>
-                        <p id="maxPrice">RS: 5000.00</p>
-                    </div>
+    <div class="dollor">
+        <p id="minPrice">Rs: 1.00</p>
+        <p id="maxPrice">Rs: 5000.00</p>
+    </div>
 
-                    <br>
-                    <div class="button">
-                        <button id="btn" class="btn">Apply</button>
-                    </div>
-                </div>
+    <br>
+    <div class="button">
+        <button id="btn" class="btn">Apply</button>
+    </div>
+</div>
+
             </div>
 
             <div class="right">
@@ -936,49 +938,82 @@
     });
 
     // --- Price Slider ---
-    const minSlider = document.getElementById('minRange');
-    const maxSlider = document.getElementById('maxRange');
-    const minPrice = document.getElementById('minPrice');
-    const maxPrice = document.getElementById('maxPrice');
+    // const minSlider = document.getElementById('minRange');
+    // const maxSlider = document.getElementById('maxRange');
+    // const minPrice = document.getElementById('minPrice');
+    // const maxPrice = document.getElementById('maxPrice');
 
-    minSlider.addEventListener('input', () => updateSliderDisplay());
-    maxSlider.addEventListener('input', () => updateSliderDisplay());
+    // minSlider.addEventListener('input', () => updateSliderDisplay());
+    // maxSlider.addEventListener('input', () => updateSliderDisplay());
 
-    function updateSliderDisplay() {
-        let minVal = parseInt(minSlider.value);
-        let maxVal = parseInt(maxSlider.value);
+    // function updateSliderDisplay() {
+    //     let minVal = parseInt(minSlider.value);
+    //     let maxVal = parseInt(maxSlider.value);
 
-        if (minVal > maxVal) {
-            maxSlider.value = minVal;
-            maxVal = minVal;
-        }
+    //     if (minVal > maxVal) {
+    //         maxSlider.value = minVal;
+    //         maxVal = minVal;
+    //     }
 
-        if (maxVal < minVal) {
-            minSlider.value = maxVal;
-            minVal = maxVal;
-        }
+    //     if (maxVal < minVal) {
+    //         minSlider.value = maxVal;
+    //         minVal = maxVal;
+    //     }
 
-        minPrice.textContent = "Rs: " + minVal + ".00";
-        maxPrice.textContent = "Rs: " + maxVal + ".00";
+    //     minPrice.textContent = "Rs: " + minVal + ".00";
+    //     maxPrice.textContent = "Rs: " + maxVal + ".00";
+    // }
+
+const minInput = document.getElementById('minInput');
+const maxInput = document.getElementById('maxInput');
+const minPrice = document.getElementById('minPrice');
+const maxPrice = document.getElementById('maxPrice');
+
+// Update display when inputs change
+minInput.addEventListener('input', updatePriceDisplay);
+maxInput.addEventListener('input', updatePriceDisplay);
+
+function updatePriceDisplay() {
+    let minVal = parseInt(minInput.value) || 0;
+    let maxVal = parseInt(maxInput.value) || 0;
+
+    // Automatically fix wrong input range
+    if (minVal > maxVal) {
+        maxInput.value = minVal;
+        maxVal = minVal;
     }
 
+    if (maxVal < minVal) {
+        minInput.value = maxVal;
+        minVal = maxVal;
+    }
+
+    minPrice.textContent = "Rs: " + minVal.toFixed(2);
+    maxPrice.textContent = "Rs: " + maxVal.toFixed(2);
+}
+
+
+
     // --- Apply Price Filter ---
-    document.getElementById('btn').addEventListener('click', () => {
-        const min = minSlider.value;
-        const max = maxSlider.value;
+ document.getElementById('btn').addEventListener('click', () => {
+    // ✅ Use the new manual input fields instead of sliders
+    const min = document.getElementById('minInput').value;
+    const max = document.getElementById('maxInput').value;
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const categoryParam = urlParams.get('category');
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryParam = urlParams.get('category');
 
-        let redirectUrl = `/alltoys?min=${min}&max=${max}`;
-        if (categoryParam) {
-            redirectUrl += `&category=${categoryParam}`;
-        }
-        console.log
-        window.location.href = redirectUrl;
-    });
+    let redirectUrl = `/alltoys?min=${min}&max=${max}`;
+    if (categoryParam) {
+        redirectUrl += `&category=${encodeURIComponent(categoryParam)}`;
+    }
+
+    window.location.href = redirectUrl;
+});
+
 
     // --- Apply Category Filter ---
+document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('applyCategoryFilter').addEventListener('click', (e) => {
         e.preventDefault();
 
@@ -987,25 +1022,27 @@
             if (cb.checked) selectedCategories.push(cb.value);
         });
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const minParam = urlParams.get('min');
-        const maxParam = urlParams.get('max');
+        const minVal = document.getElementById('minInput').value;
+        const maxVal = document.getElementById('maxInput').value;
 
         let redirectUrl = '/alltoys?';
+
         if (selectedCategories.length > 0) {
             redirectUrl += `category=${encodeURIComponent(selectedCategories.join(','))}`;
-            document.getElementById('changeByCategory').innerText = selectedCategories.join(', ');
+            const changeText = document.getElementById('changeByCategory');
+            if (changeText) changeText.innerText = selectedCategories.join(', ');
         } else {
             redirectUrl += 'category=';
         }
 
-        if (minParam && maxParam) {
-            redirectUrl += `&min=${minParam}&max=${maxParam}`;
+        if (minVal && maxVal) {
+            redirectUrl += `&min=${minVal}&max=${maxVal}`;
         }
 
+        // ✅ Redirect the page
         window.location.href = redirectUrl;
     });
-
+});
     // --- Create Product HTML ---
     function createProductHTML(product, Category) {
         const finalPrice = (product.Price || 0) + (product[`Price${Category}`] || 0);

@@ -617,7 +617,6 @@ app.post('/login', async (req, res) => {
 app.get('/toydetails/:id', async (req, res) => {
     try {
         const { email, role, Category } = req.cookies;
-        if (!email) return res.status(401).redirect("/login");
         const toyId = req.params.id;
         const singleToy = await AddToySchema.findById(toyId);
 
@@ -627,43 +626,40 @@ app.get('/toydetails/:id', async (req, res) => {
 
         // Final price calculation
         const dynamicKey = 'Price' + Category;
-        console.log("dynamicKey", dynamicKey)
         const basePrice = singleToy.Price || 0;
-        console.log("basePrice", basePrice)
         const dynamicPrice = singleToy[dynamicKey] || 0;
-        console.log("dynamicPrice", dynamicPrice)
-        const finalPrice = basePrice + dynamicPrice;
-        console.log("finalPrice", finalPrice)
+        let finalPrice = email ? (basePrice + dynamicPrice) : 0;
 
         // Find related toys
         const relatedToysRaw = await AddToySchema.find({
             category: singleToy.category,
             _id: { $ne: singleToy._id }
         }).limit(4);
- 
-        // Add finalPrice to each toy
+
         const relatedToys = relatedToysRaw.map(toy => {
             const basePrice = toy.Price || 0;
-            const dynamicKey = 'Price' + Category;
             const dynamicPrice = toy[dynamicKey] || 0;
-            const finalPrice = basePrice + dynamicPrice;
+            const relatedFinalPrice = email ? (basePrice + dynamicPrice) : 0;
 
             return {
                 ...toy.toObject(),
-                finalPrice
+                finalPrice: relatedFinalPrice
             };
         });
-        // Send all to EJS
+
+        // Render with final price
         res.render('toydetails', {
             singleToy,
             relatedToys,
-            finalPrice // Pass calculated price
+            finalPrice
         });
+
     } catch (error) {
         console.log('Error fetching toy details:', error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
+
 
 
 

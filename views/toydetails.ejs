@@ -434,11 +434,11 @@
                             <%= singleToy.ProductName %> <!-- Correct field name -->
                         </h1>
                         <p>
-                            <% if (finalPrice) { %>
+                            <% if (finalPrice>0) { %>
                                 <p>Price: ₹<%= Math.abs(finalPrice) %>
                                 </p>
                                 <% } else { %>
-                                    <p style="color: red;">Price Not Available</p>
+                                    <p style="color: red;">Price Not Available You need to login to see Prices</p>
                                     <% } %>
                                         <p>Minimum-Order-Quantity: <%= singleToy.MinimumOrderQuantity %>
 
