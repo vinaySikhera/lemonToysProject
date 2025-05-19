@@ -58,18 +58,20 @@ toyControllerRoute.get('/', async (req, res) => {
 toyControllerRoute.get('/search-product', async (req, res) => {
     const { query } = req.query;
     const { email, Category } = req.cookies;
-
-    console.log("Search Query:", query);
-    console.log("Search Query:", Category);
-
+    const user = await userModel.findOne({ email });
+    if (!user) return res.status(401).send("Unauthorized");
+    console.log("Logged in as:", user.name, "| Role:", user.role);
     try {
         let toys;
 
         if (query === 'undefined' || !query) {
-            toys = await AddToyScheema.find();
+            toys = await AddToyScheema.find({
+                  ProductOwner:user.name  
+            });
         } else {
             toys = await AddToyScheema.find({
-                ProductName: { $regex: query, $options: 'i' } // case-insensitive partial match
+                ProductName: { $regex: query, $options: 'i' } // case-insensitive partial match,
+                ,ProductOwner:user.name 
             });
         }
 
@@ -81,6 +83,7 @@ toyControllerRoute.get('/search-product', async (req, res) => {
     }
 
 });
+
 toyControllerRoute.get('/search-user', async (req, res) => {
     const { query } = req.query;
     // console.log("Query:", query);
@@ -394,7 +397,7 @@ toyControllerRoute.get('/editToy/:id', isAdminOrSupplier, async (req, res) => {
 
 toyControllerRoute.post('/updateToy/:id', isAdminOrSupplier, async (req, res) => {
     try {
-        const { ProductName, Category, Price, ProductImageURL,MinimumOrderQuantity, ProductDescription, product_owner, PriceA, PriceB, PriceC, PriceD } = req.body;
+        const { ProductName, Category, Price, ProductImageURL, MinimumOrderQuantity, ProductDescription, product_owner, PriceA, PriceB, PriceC, PriceD } = req.body;
 
         await AddToyScheema.findByIdAndUpdate(req.params.id, {
             ProductName,
@@ -402,7 +405,7 @@ toyControllerRoute.post('/updateToy/:id', isAdminOrSupplier, async (req, res) =>
             Price,
             ProductImageURL,
             ProductDescription,
-            MinimumOrderQuantity,   
+            MinimumOrderQuantity,
             ProductOwner: product_owner,
             PriceA,
             PriceB,
