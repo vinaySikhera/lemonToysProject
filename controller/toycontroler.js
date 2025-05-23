@@ -57,7 +57,7 @@ toyControllerRoute.get('/', async (req, res) => {
 });
 toyControllerRoute.get('/search-product', async (req, res) => {
     const { query } = req.query;
-    const { email, Category } = req.cookies;
+    const { email, Category,role } = req.cookies;
     const user = await userModel.findOne({ email });
     if (!user) return res.status(401).send("Unauthorized");
     console.log("Logged in as:", user.name, "| Role:", user.role);
@@ -65,14 +65,27 @@ toyControllerRoute.get('/search-product', async (req, res) => {
         let toys;
 
         if (query === 'undefined' || !query) {
-            toys = await AddToyScheema.find({
+            if (role === "Admin"){
+                toys = await AddToyScheema.find();
+                
+            }
+            else{
+                toys = await AddToyScheema.find({
                   ProductOwner:user.name  
             });
+            }
         } else {
+            if (role === "Admin"){
+                console.log(query)
+                toys = await AddToyScheema.find({
+                ProductName: { $regex: query, $options: 'i' } // case-insensitive partial match,
+            });
+            }
+            else{
             toys = await AddToyScheema.find({
                 ProductName: { $regex: query, $options: 'i' } // case-insensitive partial match,
                 ,ProductOwner:user.name 
-            });
+            });}
         }
 
         console.log("Search Results:", toys);
